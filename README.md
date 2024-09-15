@@ -4,3 +4,4 @@ Julian McCorkle
 Andres Quast
 Zachary Doran
 Joni Isbell
+Tina Chen
