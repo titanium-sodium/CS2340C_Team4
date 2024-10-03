@@ -5,10 +5,10 @@ import android.os.Bundle;
 
 import com.example.sprintproject.R;
 
-public class AccommodationsPage extends AppCompatActivity {
+public class TransportationPage extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.accomodation_screen);
+        setContentView(R.layout.transportation_screen);
     }
 }
