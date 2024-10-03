@@ -25,7 +25,6 @@
 
         <activity android:name=".views.CreateAccountPage" />
         <activity android:name=".views.LoginPage" />
-        <activity android:name=".views.HomePage" />
         <activity android:name=".views.DestinationsPage" />
         <activity android:name=".views.DiningEstablishmentsPage" />
         <activity android:name=".views.TransportationPage" />
