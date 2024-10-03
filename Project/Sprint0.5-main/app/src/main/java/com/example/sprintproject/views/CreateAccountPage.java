@@ -83,7 +83,7 @@ public class CreateAccountPage extends AppCompatActivity {
     }
 
     private void navigateToHomePage() {
-        Intent intent = new Intent(CreateAccountPage.this, HomePage.class);
+        Intent intent = new Intent(CreateAccountPage.this, LogisticsPage.class);
         startActivity(intent);
         finish();
     }
