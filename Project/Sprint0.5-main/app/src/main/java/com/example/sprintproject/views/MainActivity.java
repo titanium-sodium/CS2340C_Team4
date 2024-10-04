@@ -21,29 +21,38 @@ public class MainActivity extends AppCompatActivity{
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
+        DestinationsPage destinationsPage = new DestinationsPage();
+        DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
+        LogisticsPage logisticsPage = new LogisticsPage();
+        AccommodationsPage accommodationsPage = new AccommodationsPage();
+        TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
+
+        changeFragment(logisticsPage);
+
         binding.navBar.setOnItemSelectedListener(item -> {
 
             int itemId = item.getItemId();
 
             if (itemId == R.id.destinations) {
 
-                changeFragment(new DestinationsPage());
+                changeFragment(destinationsPage);
 
             } else if (itemId == R.id.dining) {
 
-                changeFragment(new DiningEstablishmentsPage());
+                changeFragment(diningEstablishmentsPage);
 
             } else if (itemId == R.id.logisitics) {
 
-                changeFragment(new LogisticsPage());
+                changeFragment(logisticsPage);
 
             } else if (itemId == R.id.accommodations) {
 
-                changeFragment(new AccommodationsPage());
+                changeFragment(accommodationsPage);
 
             } else if (itemId == R.id.communities) {
 
-                changeFragment(new TravelCommunityPage());
+                changeFragment(travelCommunityPage);
 
             }
 
