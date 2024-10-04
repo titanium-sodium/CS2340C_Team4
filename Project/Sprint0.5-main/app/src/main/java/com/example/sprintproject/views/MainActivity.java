@@ -27,23 +27,23 @@ public class MainActivity extends AppCompatActivity{
 
             if (itemId == R.id.destinations) {
 
-                changeFragment(new AccommodationsPage());
+                changeFragment(new DestinationsPage());
 
             } else if (itemId == R.id.dining) {
 
-
+                changeFragment(new DiningEstablishmentsPage());
 
             } else if (itemId == R.id.logisitics) {
 
-
+                changeFragment(new LogisticsPage());
 
             } else if (itemId == R.id.accommodations) {
 
-
+                changeFragment(new AccommodationsPage());
 
             } else if (itemId == R.id.communities) {
 
-
+                changeFragment(new TravelCommunityPage());
 
             }
 
