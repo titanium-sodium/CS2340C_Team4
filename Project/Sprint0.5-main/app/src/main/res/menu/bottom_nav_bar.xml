@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/destinations"
+        android:icon="@drawable/ic_destinations"
+        android:title="Destinations" />
+    <item
+        android:id="@+id/dining"
+        android:icon="@drawable/ic_dining"
+        android:title="Dining" />
+    <item
+        android:id="@+id/logisitics"
+        android:icon="@drawable/ic_logistics"
+        android:title="Logistics" />
+    <item
+        android:id="@+id/accommodations"
+        android:icon="@drawable/ic_accommodations"
+        android:title="Accommodations" />
+    <item
+        android:id="@+id/communities"
+        android:icon="@drawable/ic_communities"
+        android:title="Communities" />
+</menu>
