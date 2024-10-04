@@ -6,6 +6,34 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
+
+    <View
+        android:id="@+id/transparentBackground"
+        android:layout_width="380dp"
+        android:layout_height="140dp"
+        android:layout_gravity="center"
+        android:background="#80ADD8E6"
+        app:layout_constraintBottom_toBottomOf="@id/loginButton"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintVertical_bias="0.62"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/loginText" />
+
+    <TextView
+        android:id="@+id/loginText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:text="Log In"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/usernameInput"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.9" />
+
     <EditText
         android:id="@+id/usernameInput"
         android:layout_width="0dp"
