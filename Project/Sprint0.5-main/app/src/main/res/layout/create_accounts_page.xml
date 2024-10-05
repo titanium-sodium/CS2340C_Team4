@@ -6,12 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".views.CreateAccountPage">
 
+    <View
+        android:id="@+id/transparentBackground"
+        android:layout_width="370dp"
+        android:layout_height="140dp"
+        android:layout_gravity="center"
+        android:background="#80ADD8E6"
+        app:layout_constraintBottom_toTopOf="@id/createAccountButton"
+        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintVertical_bias="0.80"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView" />
+
+
     <TextView
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create New Account"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,9 +75,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Login"
-        app:layout_constraintTop_toBottomOf="@id/createAccountButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createAccountButton"
         android:layout_marginTop="16dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"/>
