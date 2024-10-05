@@ -22,11 +22,11 @@ public class CreateAccountPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText emailInput;
     private EditText passwordInput;
-    private Button createAccountButton;
-    private TextView loginPrompt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_accounts_page);
 
@@ -34,8 +34,8 @@ public class CreateAccountPage extends AppCompatActivity {
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
-        createAccountButton = findViewById(R.id.createAccountButton);
-        loginPrompt = findViewById(R.id.loginPromptTextView);
+        Button createAccountButton = findViewById(R.id.createAccountButton);
+        TextView loginPrompt = findViewById(R.id.loginPromptTextView);
 
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +73,7 @@ public class CreateAccountPage extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(CreateAccountPage.this, "Account created successfully", Toast.LENGTH_SHORT).show();
-                            navigateToHomePage();
+                            navigateToLogin();
                         } else {
                             Toast.makeText(CreateAccountPage.this, "Account creation failed: " + task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
@@ -82,11 +82,6 @@ public class CreateAccountPage extends AppCompatActivity {
                 });
     }
 
-    private void navigateToHomePage() {
-        Intent intent = new Intent(CreateAccountPage.this, LogisticsPage.class);
-        startActivity(intent);
-        finish();
-    }
 
     private void navigateToLogin() {
         Intent intent = new Intent(CreateAccountPage.this, LoginPage.class);
