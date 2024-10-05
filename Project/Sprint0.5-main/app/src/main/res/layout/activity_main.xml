@@ -20,7 +20,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navBar"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         app:backgroundTint="#EDEDED"
         app:itemIconTint="@color/black"
         app:labelVisibilityMode="selected"
