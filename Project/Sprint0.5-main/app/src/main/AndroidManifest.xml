@@ -13,16 +13,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SprintProject"
         tools:targetApi="31">
-
+        <activity
+            android:name=".views.MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SprintProject" />
         <activity
             android:name=".views.SplashPage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".views.CreateAccountPage" />
         <activity android:name=".views.LoginPage" />
         <activity android:name=".views.DestinationsPage" />
@@ -31,7 +34,6 @@
         <activity android:name=".views.AccommodationsPage" />
         <activity android:name=".views.LogisticsPage" />
         <activity android:name=".views.TravelCommunityPage" />
-
     </application>
 
 </manifest>
