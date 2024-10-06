@@ -82,7 +82,6 @@ public class CreateAccountPage extends AppCompatActivity {
                 });
     }
 
-
     private void navigateToLogin() {
         Intent intent = new Intent(CreateAccountPage.this, LoginPage.class);
         startActivity(intent);

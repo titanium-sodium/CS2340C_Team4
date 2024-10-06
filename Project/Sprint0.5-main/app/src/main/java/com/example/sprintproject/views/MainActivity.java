@@ -17,33 +17,48 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //Standard Activity Setup with viewbinding.
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
+        this still encompasses it in essence. */
+        DestinationsPage destinationsPage = new DestinationsPage();
+        DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
+        LogisticsPage logisticsPage = new LogisticsPage();
+        AccommodationsPage accommodationsPage = new AccommodationsPage();
+        TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
+
+        //Sets the initial screen (landing page) on the navbar to the logistics page.
+        changeFragment(logisticsPage);
+
+        /* Depending on the item selected in the navbar, switches to the corresponding screen;
+        by switching to previously established instances, this should hopefully maintain the state
+        when switching back and forth between screens. */
         binding.navBar.setOnItemSelectedListener(item -> {
 
             int itemId = item.getItemId();
 
             if (itemId == R.id.destinations) {
 
-                changeFragment(new AccommodationsPage());
+                changeFragment(destinationsPage);
 
             } else if (itemId == R.id.dining) {
 
-
+                changeFragment(diningEstablishmentsPage);
 
             } else if (itemId == R.id.logisitics) {
 
-
+                changeFragment(logisticsPage);
 
             } else if (itemId == R.id.accommodations) {
 
-
+                changeFragment(accommodationsPage);
 
             } else if (itemId == R.id.communities) {
 
-
+                changeFragment(travelCommunityPage);
 
             }
 
@@ -52,6 +67,7 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    //A method for changing from one screen on the navbar to another.
     private void changeFragment(Fragment fragment) {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
