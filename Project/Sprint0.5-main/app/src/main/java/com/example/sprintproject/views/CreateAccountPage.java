@@ -62,7 +62,8 @@ public class CreateAccountPage extends AppCompatActivity {
         }
 
         if (password.length() < 6) {
-            Toast.makeText(this, "Password should be at least 6 characters long", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Password should be at least 6 characters long", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -72,10 +73,13 @@ public class CreateAccountPage extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(CreateAccountPage.this, "Account created successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateAccountPage.this,
+                                    "Account created successfully",
+                                    Toast.LENGTH_SHORT).show();
                             navigateToLogin();
                         } else {
-                            Toast.makeText(CreateAccountPage.this, "Account creation failed: " + task.getException().getMessage(),
+                            Toast.makeText(CreateAccountPage.this,
+                                    "Account creation failed: " + task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }

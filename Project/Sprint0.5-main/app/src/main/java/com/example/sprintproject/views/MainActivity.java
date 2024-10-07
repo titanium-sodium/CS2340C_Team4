@@ -10,9 +10,9 @@ import android.os.Bundle;
 import com.example.sprintproject.R;
 import com.example.sprintproject.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
