@@ -44,21 +44,29 @@ public class LoginPage extends AppCompatActivity {
 
                 if (!email.isEmpty() && !password.isEmpty()) {
                     auth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(LoginPage.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(LoginPage.this, "Authentication successful.", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(LoginPage.this, MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(LoginPage.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            .addOnCompleteListener(LoginPage.this,
+                                    new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(LoginPage.this,
+                                                    "Authentication successful.",
+                                                    Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(LoginPage.this,
+                                                    MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            Toast.makeText(LoginPage.this,
+                                                    "Authentication failed.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
+                                });
                 } else {
-                    Toast.makeText(LoginPage.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginPage.this,
+                            "Please enter email and password",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
