@@ -2,6 +2,7 @@ package com.example.sprintproject.views;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,26 +12,26 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sprintproject.R;
+import com.example.sprintproject.viewmodels.AuthViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginPage extends AppCompatActivity {
-
     private FirebaseAuth auth;
     private EditText usernameInput;
     private EditText passwordInput;
     private Button loginButton;
     private Button createAccountButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
-        auth = FirebaseAuth.getInstance();
 
+        AuthViewModel viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        auth = viewModel.getAuth();
         usernameInput = findViewById(R.id.usernameInput);
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
