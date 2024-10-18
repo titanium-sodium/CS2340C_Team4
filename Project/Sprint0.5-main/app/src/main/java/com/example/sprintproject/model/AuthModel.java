@@ -11,7 +11,6 @@ public class AuthModel {
     public static synchronized FirebaseAuth getInstance() {
         if (authInstance == null) {
             authInstance = new AuthModel();
-            return auth;
         }
         return auth;
     }
