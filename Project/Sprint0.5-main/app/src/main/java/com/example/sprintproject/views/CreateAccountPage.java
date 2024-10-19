@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sprintproject.R;
+import com.example.sprintproject.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -73,6 +74,7 @@ public class CreateAccountPage extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
+                            UserModel.writeNewUser(email, email, password);
                             Toast.makeText(CreateAccountPage.this,
                                     "Account created successfully",
                                     Toast.LENGTH_SHORT).show();
