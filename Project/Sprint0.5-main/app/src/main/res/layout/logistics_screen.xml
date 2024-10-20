@@ -1,54 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/headerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Logistics Screen Placeholder"
-        android:textSize="24sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
     <Button
         android:id="@+id/visualizeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Visualize Data"
-        app:layout_constraintTop_toBottomOf="@id/headerText"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editPlansButton" />
+
     <TextView
         android:id="@+id/subHeaderText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Contributers"
+        android:layout_marginTop="20dp"
+        android:text="Contributors"
         android:textSize="24dp"
-        app:layout_constraintTop_toBottomOf="@id/visualizeButton"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/visualizeButton" />
 
     <Button
         android:id="@+id/inviteUserButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="Invite User"
-        tools:layout_editor_absoluteX="260dp"
-        tools:layout_editor_absoluteY="743dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/userList" />
 
     <Button
         android:id="@+id/editPlansButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Edit Plans"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="743dp" />
+        app:layout_constraintBottom_toTopOf="@id/visualizeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subHeaderText" />
 </androidx.constraintlayout.widget.ConstraintLayout>
