@@ -38,10 +38,11 @@ abstract class Task implements TaskActions{
         this.status = newStatus;
     }
 }
+
 class RecurringTask extends Task {
     private String reoccuringSchedule;
 
-    public RecurringTask (String title, String description, Date dueDate, String status, String priority, String reoccuringSchedule) {
+    public RecurringTask(String title, String description, Date dueDate, String status, String priority, String reoccuringSchedule) {
         super(title, description, dueDate, status, priority);
         this.reoccuringSchedule = reoccuringSchedule;
     }
@@ -51,6 +52,7 @@ class RecurringTask extends Task {
         super.execute();
     }
 }
+
 class PriorityTask extends Task {
     public PriorityTask (String title, String description, Date dueDate, String status, String priority) {
         super(title, description, dueDate, status, "HIGH");
