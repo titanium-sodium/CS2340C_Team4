@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
-import java.lang.*
+import java.lang.*;
+
 interface ProjectActions {
     void addTeamMember(TeamMember newMember);
     void removeTeamMember(TeamMember removeMember);
@@ -41,8 +42,7 @@ public class Project implements  ProjectActions {
         this.tasks.remove(removeTask);
     }
 
-    public void void addTask(Task newTask)  {
+    public void addTask(Task newTask)  {
         this.tasks.add(newTask);
     }
-
 }
