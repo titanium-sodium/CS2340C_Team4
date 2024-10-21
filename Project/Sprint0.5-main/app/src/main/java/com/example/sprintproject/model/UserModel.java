@@ -17,10 +17,9 @@ public class UserModel {
 
     }
 
-    static DatabaseReference DB = new DBViewModel().getDB();
 
     public static void writeNewUser(String email) {
-
+        DatabaseReference DB = new DBViewModel().getDB();
         UserModel user = new UserModel(email);
         String userId = UUID.randomUUID().toString();
         DB.child("users").child(userId).setValue(user);
@@ -29,4 +28,5 @@ public class UserModel {
     public String getEmail() {
         return email;
     }
+
 }
