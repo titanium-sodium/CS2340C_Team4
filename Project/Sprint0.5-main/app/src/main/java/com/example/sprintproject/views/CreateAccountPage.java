@@ -74,7 +74,7 @@ public class CreateAccountPage extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            UserModel.writeNewUser(email, email, password);
+                            UserModel.writeNewUser(email);
                             Toast.makeText(CreateAccountPage.this,
                                     "Account created successfully",
                                     Toast.LENGTH_SHORT).show();
