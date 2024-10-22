@@ -29,6 +29,7 @@ public class CreateAccountPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText emailInput;
     private EditText passwordInput;
+    private UserViewModel userViewModel = new UserViewModel();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -80,7 +81,7 @@ public class CreateAccountPage extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            UserViewModel userViewModel = new UserViewModel();
+
                             FirebaseUser user = mAuth.getCurrentUser();
                             String userId = UUID.randomUUID().toString();
 
@@ -104,6 +105,8 @@ public class CreateAccountPage extends AppCompatActivity {
 
     private void navigateToLogin() {
         Intent intent = new Intent(CreateAccountPage.this, LoginPage.class);
+        //adding the userId to the bundle for app to use elsewhere.
+        intent.putExtra("userId", userViewModel.getUserUID());
         startActivity(intent);
         finish();
     }
