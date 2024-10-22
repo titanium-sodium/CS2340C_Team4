@@ -1,32 +1,29 @@
 package com.example.sprintproject.model;
 
-import androidx.annotation.Keep;
 
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.google.firebase.database.DatabaseReference;
-import java.util.UUID;
 
-@Keep
 public class UserModel {
 
     private String email;
+    private String userId;
 
-    public UserModel(String email) {
-
+    public UserModel(String userId, String email) {
         this.email = email;
-
+        this.userId = userId;
     }
 
-
-    public static void writeNewUser(String email) {
-        DatabaseReference DB = new DBViewModel().getDB();
-        UserModel user = new UserModel(email);
-        String userId = UUID.randomUUID().toString();
-        DB.child("users").child(userId).setValue(user);
-        System.out.println("Made new user");
-    }
     public String getEmail() {
         return email;
     }
-
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getUserId() {
+        return userId;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }
