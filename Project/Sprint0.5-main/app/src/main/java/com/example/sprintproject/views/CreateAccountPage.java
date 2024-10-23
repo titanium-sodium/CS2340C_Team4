@@ -2,6 +2,8 @@ package com.example.sprintproject.views;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,26 +14,32 @@ import android.widget.Toast;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.UserModel;
+import com.example.sprintproject.viewmodels.AuthViewModel;
+import com.example.sprintproject.viewmodels.UserViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.UUID;
+
 public class CreateAccountPage extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private EditText emailInput;
     private EditText passwordInput;
-
+    private UserViewModel userViewModel = new UserViewModel();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_accounts_page);
+        //auth view model instantiation
+        AuthViewModel viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        mAuth = viewModel.getAuth();
 
-        mAuth = FirebaseAuth.getInstance();
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
@@ -73,8 +81,15 @@ public class CreateAccountPage extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+
                             FirebaseUser user = mAuth.getCurrentUser();
-                            UserModel.writeNewUser(email, email, password);
+                            String userId = UUID.randomUUID().toString();
+
+                            userViewModel.setUserEmail(email);
+                            userViewModel.setUserUID(userId);
+
+                            //creates an instance of user model and writes it to the DB
+                            userViewModel.writeNewUser(userViewModel.getUserModel());
                             Toast.makeText(CreateAccountPage.this,
                                     "Account created successfully",
                                     Toast.LENGTH_SHORT).show();
@@ -90,6 +105,8 @@ public class CreateAccountPage extends AppCompatActivity {
 
     private void navigateToLogin() {
         Intent intent = new Intent(CreateAccountPage.this, LoginPage.class);
+        //adding the userId to the bundle for app to use elsewhere.
+        intent.putExtra("userId", userViewModel.getUserUID());
         startActivity(intent);
         finish();
     }

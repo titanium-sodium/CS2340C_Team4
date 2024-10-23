@@ -13,10 +13,12 @@ import android.widget.Toast;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.viewmodels.AuthViewModel;
+import com.example.sprintproject.viewmodels.DBViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 public class LoginPage extends AppCompatActivity {
     private FirebaseAuth auth;
