@@ -17,17 +17,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //Standard Activity Setup with viewbinding.
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         String userId = getIntent().getStringExtra("userId");
 
-        /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
-        this still encompasses it in essence. */
         DestinationsPage destinationsPage = new DestinationsPage(userId);
         DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
-        LogisticsPage logisticsPage = new LogisticsPage(userId);
+
+        LogisticsPage logisticsPage = new LogisticsPage();
+        Bundle args = new Bundle();
+        args.putString("userId", userId);
+        logisticsPage.setArguments(args);
+
         AccommodationsPage accommodationsPage = new AccommodationsPage();
         TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
 

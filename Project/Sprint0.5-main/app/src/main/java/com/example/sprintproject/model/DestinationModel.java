@@ -4,12 +4,14 @@ import com.example.sprintproject.viewmodels.DBViewModel;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class DestinationModel {
     private String startDate;
     private String endDate;
     private String location;
     private String note;
+    private ArrayList<String> contributors;
 
     public String getStartDate() {
         return startDate;
@@ -22,6 +24,26 @@ public class DestinationModel {
     }
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+    public DestinationModel() {
+        this.contributors = new ArrayList<>();
+    }
+
+    public ArrayList<String> getContributors() {
+        return contributors;
+    }
+
+    public void setContributors(ArrayList<String> contributors) {
+        this.contributors = contributors;
+    }
+
+    public void addContributor(String contributorId) {
+        if (contributors == null) {
+            contributors = new ArrayList<>();
+        }
+        if (!contributors.contains(contributorId)) {
+            contributors.add(contributorId);
+        }
     }
 
     public String getLocation() {
@@ -36,5 +58,4 @@ public class DestinationModel {
     public void setNote(String note) {
         this.note = note;
     }
-
 }
