@@ -28,44 +28,16 @@ public class LoginPage extends AppCompatActivity {
     private EditText passwordInput;
     private Button loginButton;
     private Button createAccountButton;
+
+    //variables for sending userID to other activities
     protected UserModel[] users;
+    protected String matchedUserId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
-        //retrieving user list from database
-        //I *think* this should work, but don't quote me on that.
-        DatabaseReference DB = new DBViewModel().getDB();
-        DB.child("users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
 
-
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                if (task.isSuccessful()) {
-
-                    users = (UserModel[]) task.getResult().getValue();
-
-                }
-
-            }
-
-        });
-
-        //not sure where this fits into everything yet, so putting it here with a placeholder string for now
-        String exampleEmail = "example";
-        String exampleUserId;
-
-        for (int i = 0; i < users.length; i++) {
-
-            if (users[i].getEmail().equals(exampleEmail)) {
-
-                exampleUserId = users[i].getUserId();
-
-            }
-
-        }
 
         AuthViewModel viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         auth = viewModel.getAuth();
@@ -87,11 +59,42 @@ public class LoginPage extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
+                                            //create new instance of DB
+                                            DatabaseReference DB = new DBViewModel().getDB();
+                                            DB.child("users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+
+
+                                                @Override
+                                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                                                    if (task.isSuccessful()) {
+                                                        //creates an array of users to search through
+                                                        users = (UserModel[]) task.getResult().getValue();
+                                                    }
+
+                                                }
+
+                                            });
+
+                                            //not sure where this fits into everything yet, so putting it here with a placeholder string for now
+
+
+                                            for (int i = 0; i < users.length; i++) {
+
+                                                if (users[i].getEmail().equals(email)) {
+
+                                                    matchedUserId = users[i].getUserId();
+
+                                                }
+
+                                            }
+
                                             Toast.makeText(LoginPage.this,
                                                     "Authentication successful.",
                                                     Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(LoginPage.this,
                                                     MainActivity.class);
+                                            intent.putExtra("userId", matchedUserId);
                                             startActivity(intent);
                                             finish();
                                         } else {
