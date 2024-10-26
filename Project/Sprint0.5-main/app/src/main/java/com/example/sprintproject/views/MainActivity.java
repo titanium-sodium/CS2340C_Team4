@@ -21,12 +21,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        String userId = getIntent().getStringExtra("userId");
 
         /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
         this still encompasses it in essence. */
-        DestinationsPage destinationsPage = new DestinationsPage();
+        DestinationsPage destinationsPage = new DestinationsPage(userId);
         DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
-        LogisticsPage logisticsPage = new LogisticsPage();
+        LogisticsPage logisticsPage = new LogisticsPage(userId);
         AccommodationsPage accommodationsPage = new AccommodationsPage();
         TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
 
@@ -75,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
-
     }
 
 }
