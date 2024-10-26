@@ -3,6 +3,7 @@ package com.example.sprintproject.viewmodels;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.example.sprintproject.model.DBModel;
 
 import com.example.sprintproject.model.TravelStats;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,7 +20,7 @@ public class DBViewModel extends ViewModel {
         DB = DBModel.getInstance();
         travelStatsLiveData = new MutableLiveData<>();
     }
-
+    public DatabaseReference getDB() {return DB;}
     public LiveData<TravelStats> getTravelStats() {
         if (travelStatsLiveData == null) {
             travelStatsLiveData = new MutableLiveData<>();
@@ -43,7 +44,7 @@ public class DBViewModel extends ViewModel {
                         }
 
                         // Get planned days from destinations
-                        DB.child("destinations").child(userId)
+                        DB.child("users").child(userId)
                                 .addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot destinationsSnapshot) {

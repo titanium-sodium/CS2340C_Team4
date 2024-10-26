@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.UserModel;
-import com.example.sprintproject.adapters.UserListAdapter;
+import com.example.sprintproject.views.UserListAdapter;
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;

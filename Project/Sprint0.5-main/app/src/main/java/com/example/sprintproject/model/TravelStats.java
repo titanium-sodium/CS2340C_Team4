@@ -16,4 +16,11 @@ public class TravelStats {
     public int getPlannedDays() {
         return plannedDays;
     }
+
+    public void setAllottedDays(int days) {
+        this.allottedDays = days;
+    }
+    public void setPlannedDays(int days) {
+        this.allottedDays = days;
+    }
 }
