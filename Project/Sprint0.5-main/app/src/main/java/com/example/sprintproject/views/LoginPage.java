@@ -1,11 +1,13 @@
 package com.example.sprintproject.views;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,12 +17,18 @@ import com.example.sprintproject.R;
 import com.example.sprintproject.viewmodels.AuthViewModel;
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.example.sprintproject.model.UserModel;
+import com.example.sprintproject.viewmodels.UserViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class LoginPage extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -30,7 +38,7 @@ public class LoginPage extends AppCompatActivity {
     private Button createAccountButton;
 
     //variables for sending userID to other activities
-    protected UserModel[] users;
+    private final UserViewModel userViewModel = new UserViewModel();
     protected String matchedUserId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,40 +68,14 @@ public class LoginPage extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
                                             //create new instance of DB
-                                            DatabaseReference DB = new DBViewModel().getDB();
-                                            DB.child("users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-
-
-                                                @Override
-                                                public void onComplete(@NonNull Task<DataSnapshot> task) {
-
-                                                    if (task.isSuccessful()) {
-                                                        //creates an array of users to search through
-                                                        users = (UserModel[]) task.getResult().getValue();
-                                                    }
-
-                                                }
-
-                                            });
-
-                                            //not sure where this fits into everything yet, so putting it here with a placeholder string for now
-
-
-                                            for (int i = 0; i < users.length; i++) {
-
-                                                if (users[i].getEmail().equals(email)) {
-
-                                                    matchedUserId = users[i].getUserId();
-
-                                                }
-
-                                            }
+                                            userViewModel.findUser(email);
 
                                             Toast.makeText(LoginPage.this,
                                                     "Authentication successful.",
                                                     Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(LoginPage.this,
                                                     MainActivity.class);
+                                            matchedUserId = "hi";
                                             intent.putExtra("userId", matchedUserId);
                                             startActivity(intent);
                                             finish();

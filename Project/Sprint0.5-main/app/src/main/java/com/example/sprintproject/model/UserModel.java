@@ -13,6 +13,7 @@ public class UserModel {
         this.email = email;
         this.userId = userId;
     }
+    public UserModel() {}
 
     public String getEmail() {
         return email;
