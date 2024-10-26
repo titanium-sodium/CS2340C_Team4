@@ -28,7 +28,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class LoginPage extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -39,7 +41,6 @@ public class LoginPage extends AppCompatActivity {
 
     //variables for sending userID to other activities
     private final UserViewModel userViewModel = new UserViewModel();
-    protected String matchedUserId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,18 +68,50 @@ public class LoginPage extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            //create new instance of DB
-                                            userViewModel.findUser(email);
-
+                                            //Toast
                                             Toast.makeText(LoginPage.this,
                                                     "Authentication successful.",
                                                     Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(LoginPage.this,
-                                                    MainActivity.class);
-                                            matchedUserId = "hi";
-                                            intent.putExtra("userId", matchedUserId);
-                                            startActivity(intent);
-                                            finish();
+                                            //Finding the user
+                                            HashMap<String, String> users = new HashMap<>();
+                                            DatabaseReference DB = new DBViewModel().getDB();
+                                            //async wait operation
+                                            DB.child("users").addChildEventListener(new ChildEventListener() {
+                                                @Override
+                                                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                                    UserModel dataSnapshot = new UserModel(snapshot.getValue(UserModel.class).getUserId(),
+                                                            snapshot.getValue(UserModel.class).getEmail());
+                                                    users.put(dataSnapshot.getEmail(), dataSnapshot.getUserId());
+                                                    if (users.get(email) != null) {
+                                                        Log.d("SUCCESS", Objects.requireNonNull(users.get(email)));
+                                                        Intent intent = new Intent(LoginPage.this,
+                                                                MainActivity.class);
+                                                        intent.putExtra("userId", users.get(email));
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                }
+                                                @Override
+                                                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                                    //Do nothing
+                                                }
+
+                                                @Override
+                                                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                                                    //Do nothing
+                                                }
+
+                                                @Override
+                                                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                                    //Do nothing
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    //Do nothing
+                                                }
+
+                                            });
                                         } else {
                                             Toast.makeText(LoginPage.this,
                                                     "Authentication failed.",
