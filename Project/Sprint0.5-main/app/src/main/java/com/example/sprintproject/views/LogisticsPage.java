@@ -15,8 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprintproject.R;
+import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.UserModel;
-import com.example.sprintproject.adapters.UserListAdapter;
+import com.example.sprintproject.views.UserListAdapter;
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -33,11 +34,18 @@ public class LogisticsPage extends Fragment {
     private List<UserModel> contributors;
     private DBViewModel dbViewModel;
     private FirebaseAuth mAuth;
+    private DestinationModel dModel;
+    private String userId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.logistics_screen, container, false);
+
+        // Get userId from arguments
+        if (getArguments() != null) {
+            userId = getArguments().getString("userId");
+        }
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();

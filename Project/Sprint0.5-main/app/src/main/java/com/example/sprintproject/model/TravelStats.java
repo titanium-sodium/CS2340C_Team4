@@ -4,6 +4,10 @@ public class TravelStats {
     private int allottedDays;
     private int plannedDays;
 
+    public TravelStats() {
+        this.allottedDays = 0;
+        this.plannedDays = 0;
+    }
     public TravelStats(int allottedDays, int plannedDays) {
         this.allottedDays = allottedDays;
         this.plannedDays = plannedDays;
@@ -15,5 +19,13 @@ public class TravelStats {
 
     public int getPlannedDays() {
         return plannedDays;
+    }
+
+    public void setAllottedDays() {
+        this.allottedDays = allottedDays;
+    }
+
+    public void setPlannedDays() {
+        this.plannedDays = plannedDays;
     }
 }
