@@ -14,10 +14,12 @@ import android.widget.Toast;
 import com.example.sprintproject.R;
 import com.example.sprintproject.viewmodels.AuthViewModel;
 import com.example.sprintproject.viewmodels.DBViewModel;
+import com.example.sprintproject.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 public class LoginPage extends AppCompatActivity {
@@ -26,11 +28,44 @@ public class LoginPage extends AppCompatActivity {
     private EditText passwordInput;
     private Button loginButton;
     private Button createAccountButton;
+    protected UserModel[] users;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
+        //retrieving user list from database
+        //I *think* this should work, but don't quote me on that.
+        DatabaseReference DB = new DBViewModel().getDB();
+        DB.child("users").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+
+
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+
+                if (task.isSuccessful()) {
+
+                    users = (UserModel[]) task.getResult().getValue();
+
+                }
+
+            }
+
+        });
+
+        //not sure where this fits into everything yet, so putting it here with a placeholder string for now
+        String exampleEmail = "example";
+        String exampleUserId;
+
+        for (int i = 0; i < users.length; i++) {
+
+            if (users[i].getEmail().equals(exampleEmail)) {
+
+                exampleUserId = users[i].getUserId();
+
+            }
+
+        }
 
         AuthViewModel viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         auth = viewModel.getAuth();
