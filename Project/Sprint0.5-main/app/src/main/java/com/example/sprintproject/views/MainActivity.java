@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     AccommodationsPage accommodationsPage = new AccommodationsPage();
     TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
 
+    public static String getUserId() { return userId;}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -88,8 +90,5 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
-    }
-    public static String getUserId() {
-        return userId;
     }
 }

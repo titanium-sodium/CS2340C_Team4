@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Add the travel log button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/travelLogButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Travel Log"
+        app:layout_constraintTop_toTopOf="parent"/>
     <!-- Travel Location Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/locationInputLayout"
@@ -70,9 +77,9 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/vacationTimeTitle"
-        app:layout_constraintTop_toBottomOf="@id/travelLogsTitle" />
-
+        app:layout_constraintTop_toBottomOf="@id/travelLogButton"
+        app:layout_constraintBottom_toTopOf="@id/vacationTimeTitle"/>
+  
     <!-- Vacation Time Section Title -->
     <TextView
         android:id="@+id/vacationTimeTitle"

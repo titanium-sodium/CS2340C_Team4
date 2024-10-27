@@ -18,64 +18,41 @@ public class DestinationsRepository {
     private final DatabaseReference databaseRef;
     private static final String DESTINATIONS_PATH = "destinations";
 
-    // Private constructor for Singleton pattern
     private DestinationsRepository() {
         databaseRef = FirebaseDatabase.getInstance().getReference(DESTINATIONS_PATH);
-        addSampleDataIfNeeded();
     }
 
-    // Singleton getInstance method
     public static synchronized DestinationsRepository getInstance() {
         if (instance == null) {
             instance = new DestinationsRepository();
         }
         return instance;
     }
-
-    private void addSampleDataIfNeeded() {
-        databaseRef.child("user1").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    // Add sample data if no data exists
-                    Map<String, Object> sample1 = new HashMap<>();
-                    sample1.put("location", "Paris, France");
-                    sample1.put("startDate", System.currentTimeMillis());
-                    sample1.put("endDate", System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000));
-                    sample1.put("duration", 7);
-
-                    Map<String, Object> sample2 = new HashMap<>();
-                    sample2.put("location", "Tokyo, Japan");
-                    sample2.put("startDate", System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000));
-                    sample2.put("endDate", System.currentTimeMillis() + (40L * 24 * 60 * 60 * 1000));
-                    sample2.put("duration", 10);
-
-                    DatabaseReference userRef = databaseRef.child("user1");
-                    userRef.push().setValue(sample1);
-                    userRef.push().setValue(sample2);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle potential errors
-            }
-        });
-    }
-
-    // CRUD Operations
-
+  
     public Task<String> addDestination(DestinationModel destination, String userId) {
         String key = databaseRef.child(userId).push().getKey();
         Map<String, Object> destinationValues = new HashMap<>();
         destinationValues.put("location", destination.getLocation());
         destinationValues.put("startDate", destination.getStartDate());
         destinationValues.put("endDate", destination.getEndDate());
-        destinationValues.put("duration", destination.calculateDuration());
+        destinationValues.put("duration", destination.getDuration());
+
 
         return databaseRef.child(userId).child(key).setValue(destinationValues)
                 .continueWith(task -> key);
     }
+
+
+    private Map<String, Object> destinationToMap(DestinationModel destination) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("location", destination.getLocation());
+        result.put("startDate", destination.getStartDate());
+        result.put("endDate", destination.getEndDate());
+        result.put("duration", destination.getDuration());
+        result.put("notes", destination.getNote());
+        result.put("contributors", destination.getContributors());
+        return result;
+  }
 
     public Task<List<DestinationModel>> getAllDestinations(String userId) {
         TaskCompletionSource<List<DestinationModel>> taskCompletionSource = new TaskCompletionSource<>();
@@ -110,11 +87,11 @@ public class DestinationsRepository {
         destinationValues.put("location", destination.getLocation());
         destinationValues.put("startDate", destination.getStartDate());
         destinationValues.put("endDate", destination.getEndDate());
-        destinationValues.put("duration", destination.calculateDuration());
+        destinationValues.put("duration", destination.getDuration());  // Changed from calculateDuration() to getDuration()
 
         return databaseRef.child(userId).child(destination.getId()).updateChildren(destinationValues);
     }
-
+  
     public Task<Void> deleteDestination(String destinationId, String userId) {
         return databaseRef.child(userId).child(destinationId).removeValue();
     }

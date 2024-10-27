@@ -116,22 +116,20 @@ public class LogisticsPage extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         LogisticsNotes notes = new LogisticsNotes();
         Button notesButton = getView().findViewById(R.id.notesButton);
 
         notesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
                 fragmentTransaction.replace(R.id.frameLayout, notes);
                 fragmentTransaction.commit();
-
             }
         });
+    }
 
     private void showInviteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
