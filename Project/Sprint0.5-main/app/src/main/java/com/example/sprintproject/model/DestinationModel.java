@@ -10,8 +10,9 @@ public class DestinationModel {
     private String startDate;
     private String endDate;
     private String location;
-    private String note;
+    private ArrayList<String> notes;
     private ArrayList<String> contributors;
+
 
     public String getStartDate() {
         return startDate;
@@ -25,8 +26,12 @@ public class DestinationModel {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
-    public DestinationModel() {
+    public DestinationModel(String startDate, String endDate, String location) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.location = location;
         this.contributors = new ArrayList<>();
+        this.notes = new ArrayList<>();
     }
 
     public ArrayList<String> getContributors() {
@@ -52,10 +57,10 @@ public class DestinationModel {
     public void setLocation(String location) {
         this.location = location;
     }
-    public String getNote() {
-        return note;
+    public ArrayList<String> getNote() {
+        return notes;
     }
-    public void setNote(String note) {
-        this.note = note;
+    public void addNote(String note) {
+        this.notes.add(note);
     }
 }

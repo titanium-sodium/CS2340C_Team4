@@ -29,9 +29,6 @@ public class DBViewModel extends ViewModel {
         loadTravelStats();
     }
 
-    public DatabaseReference getDB() {
-        return DB;
-    }
     public DatabaseReference getDB() {return DB;}
     public LiveData<TravelStats> getTravelStats() {
         if (travelStatsLiveData.getValue() == null) {
@@ -54,7 +51,12 @@ public class DBViewModel extends ViewModel {
                             travelStatsLiveData.setValue(new TravelStats()); // or default values
                         }
                     }
-
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        System.err.println("Error loading travel stats: " + error.getMessage());
+                    }
+                });
+    }
 
     public LiveData<Boolean> inviteUser(String email) {
         MutableLiveData<Boolean> result = new MutableLiveData<>();

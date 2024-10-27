@@ -13,6 +13,7 @@ import com.example.sprintproject.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private static String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +21,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        String userId = getIntent().getStringExtra("userId");
+        userId = getIntent().getStringExtra("userId");
 
-        DestinationsPage destinationsPage = new DestinationsPage(userId);
+        DestinationsPage destinationsPage = new DestinationsPage();
         DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
 
         LogisticsPage logisticsPage = new LogisticsPage();
@@ -79,5 +80,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
     }
-
+    public static String getUserId() {
+        return userId;
+    }
 }
