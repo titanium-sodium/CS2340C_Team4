@@ -44,7 +44,7 @@ public class LogisticsPage extends Fragment {
 
         // Get userId from arguments
         if (getArguments() != null) {
-            userId = getArguments().getString("userId");
+            userId = MainActivity.getUserId();
         }
 
         // Initialize Firebase Auth
