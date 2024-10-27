@@ -21,11 +21,4 @@ public class TravelStats {
         return plannedDays;
     }
 
-    public void setAllottedDays() {
-        this.allottedDays = allottedDays;
-    }
-
-    public void setPlannedDays() {
-        this.plannedDays = plannedDays;
-    }
 }

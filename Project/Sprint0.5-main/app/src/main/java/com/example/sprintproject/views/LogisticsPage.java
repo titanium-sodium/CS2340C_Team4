@@ -3,6 +3,15 @@ package com.example.sprintproject.views;
 import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +53,7 @@ public class LogisticsPage extends Fragment {
 
         // Get userId from arguments
         if (getArguments() != null) {
-            userId = getArguments().getString("userId");
+            userId = MainActivity.getUserId();
         }
 
         // Initialize Firebase Auth
@@ -102,6 +111,27 @@ public class LogisticsPage extends Fragment {
                 .setPositiveButton("Close", null)
                 .show();
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+        LogisticsNotes notes = new LogisticsNotes();
+        Button notesButton = getView().findViewById(R.id.notesButton);
+
+        notesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FragmentManager fragmentManager = getParentFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                fragmentTransaction.replace(R.id.frameLayout, notes);
+                fragmentTransaction.commit();
+
+            }
+        });
 
     private void showInviteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

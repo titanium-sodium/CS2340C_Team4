@@ -3,6 +3,7 @@ package com.example.sprintproject.viewmodels;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.example.sprintproject.model.DBModel;
 
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
@@ -28,10 +29,7 @@ public class DBViewModel extends ViewModel {
         loadTravelStats();
     }
 
-    public DatabaseReference getDB() {
-        return DB;
-    }
-
+    public DatabaseReference getDB() {return DB;}
     public LiveData<TravelStats> getTravelStats() {
         if (travelStatsLiveData.getValue() == null) {
             loadTravelStats();
@@ -53,7 +51,6 @@ public class DBViewModel extends ViewModel {
                             travelStatsLiveData.setValue(new TravelStats()); // or default values
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError error) {
                         System.err.println("Error loading travel stats: " + error.getMessage());
