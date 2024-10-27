@@ -13,17 +13,17 @@ import java.util.Calendar;
 public class DestinationViewModel extends ViewModel {
     private final MutableLiveData<Long> startDate = new MutableLiveData<>();
     private final MutableLiveData<Long> endDate = new MutableLiveData<>();
-    private final DestinationsRepository repository; // For database operations
+    private DestinationsRepository repository = null; // For database operations
 
     public DestinationViewModel() {
-        repository = reposirtory.getInstance(); // Assuming Singleton pattern
+        repository = repository.getInstance(); // Assuming Singleton pattern
     }
 
-    public LiveData<Long> getStartDate() {
+    public MutableLiveData<Long> getStartDate() {
         return startDate;
     }
 
-    public LiveData<Long> getEndDate() {
+    public MutableLiveData<Long> getEndDate() {
         return endDate;
     }
 
