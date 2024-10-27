@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         this still encompasses it in essence. */
     DestinationsPage destinationsPage = new DestinationsPage();
     DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
-    static LogisticsPage logisticsPage = new LogisticsPage();
+    protected static LogisticsPage logisticsPage = new LogisticsPage();
     AccommodationsPage accommodationsPage = new AccommodationsPage();
     TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
 

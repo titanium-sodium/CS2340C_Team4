@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DestinationModel;
+import com.example.sprintproject.model.DestinationsRepository;
+import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.UserModel;
 import com.example.sprintproject.views.UserListAdapter;
 import com.example.sprintproject.viewmodels.DBViewModel;
@@ -33,6 +35,7 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,10 +79,40 @@ public class LogisticsPage extends Fragment {
         // Set up invite button
         view.findViewById(R.id.inviteUserButton).setOnClickListener(v -> showInviteDialog());
 
+        view.findViewById(R.id.notesButton).setOnClickListener(v -> createNotes());
+
         // Load initial data
         loadContributors();
 
         return view;
+    }
+
+    private void createNotes() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.logistics_notes, null);
+        EditText noteInput = dialogView.findViewById(R.id.userNotes);
+
+        builder.setView(dialogView).setTitle("Add Notes")
+                .setPositiveButton("Submit", (dialog, which) -> {
+                    String notes = noteInput.getText().toString();
+
+                    if (!notes.isEmpty()) {
+                        try {
+
+                            String userId = MainActivity.getUserId();
+                            DatabaseReference DB = new DBViewModel().getDB();
+                            DB.child("users").child(userId).child("destinations").child("notes").child(userId)
+                                    .setValue(new NotesModel(notes));
+
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(), "Invalid date format", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void showVisualization() {
