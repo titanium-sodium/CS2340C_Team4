@@ -1,55 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
+    <!-- Travel Location Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/locationInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Travel Location"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/locationInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Start Date Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/startDateButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Select Start Date"
+        app:layout_constraintEnd_toStartOf="@+id/endDateButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/locationInputLayout" />
+
+    <!-- End Date Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/endDateButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Select End Date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/startDateButton"
+        app:layout_constraintTop_toTopOf="@+id/startDateButton" />
+
+    <!-- Save Travel Log Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Save Travel Log"
+        app:layout_constraintTop_toBottomOf="@id/startDateButton" />
+
+    <!-- Section Title -->
     <TextView
-        android:id="@+id/headerText"
+        android:id="@+id/travelLogsTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Destination Screen Placeholder"
-        android:textSize="24sp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp"
+        android:text="Travel Logs"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
-    <Button
-        android:id="@+id/travelLogButton"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Log Travel"
-        android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@+id/headerText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"
-        />
-    <Button
-        android:id="@+id/calculateVacationTime"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Calculate Vacation Time"
-        android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@+id/travelLogButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"
-        />
+        app:layout_constraintTop_toBottomOf="@id/saveButton" />
 
-
-
+    <!-- Travel Logs RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+        android:id="@+id/travelLogsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/calculateVacationTime"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/vacationTimeTitle"
+        app:layout_constraintTop_toBottomOf="@id/travelLogsTitle" />
+
+    <!-- Vacation Time Section Title -->
+    <TextView
+        android:id="@+id/vacationTimeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Allocated Vacation Time"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/vacationDurationInput"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Vacation Duration Input -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/vacationDurationInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:hint="Duration (days)"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/calculateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Calculate Missing Value"
+            app:layout_constraintTop_toBottomOf="@id/vacationDurationInput"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Visualization Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/visualizeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Visualize Data"
+        android:src="@android:drawable/ic_menu_view"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Share Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/shareButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Share Trip"
+        android:src="@android:drawable/ic_menu_share"
+        app:layout_constraintBottom_toTopOf="@id/visualizeButton"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
