@@ -28,7 +28,7 @@ public class DestinationsRepository {
         }
         return instance;
     }
-
+  
     public Task<String> addDestination(DestinationModel destination, String userId) {
         String key = databaseRef.child(userId).push().getKey();
         Map<String, Object> destinationValues = new HashMap<>();
@@ -37,9 +37,11 @@ public class DestinationsRepository {
         destinationValues.put("endDate", destination.getEndDate());
         destinationValues.put("duration", destination.getDuration());
 
+
         return databaseRef.child(userId).child(key).setValue(destinationValues)
                 .continueWith(task -> key);
     }
+
 
     private Map<String, Object> destinationToMap(DestinationModel destination) {
         Map<String, Object> result = new HashMap<>();
@@ -50,6 +52,34 @@ public class DestinationsRepository {
         result.put("notes", destination.getNote());
         result.put("contributors", destination.getContributors());
         return result;
+  }
+
+    public Task<List<DestinationModel>> getAllDestinations(String userId) {
+        TaskCompletionSource<List<DestinationModel>> taskCompletionSource = new TaskCompletionSource<>();
+
+        databaseRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<DestinationModel> destinations = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    DestinationModel destination = new DestinationModel(
+                            snapshot.child("location").getValue(String.class),
+                            snapshot.child("startDate").getValue(Long.class),
+                            snapshot.child("endDate").getValue(Long.class)
+                    );
+                    destination.setId(snapshot.getKey());
+                    destinations.add(destination);
+                }
+                taskCompletionSource.setResult(destinations);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                taskCompletionSource.setException(databaseError.toException());
+            }
+        });
+
+        return taskCompletionSource.getTask();
     }
 
     public Task<Void> updateDestination(DestinationModel destination, String userId) {
@@ -61,6 +91,7 @@ public class DestinationsRepository {
 
         return databaseRef.child(userId).child(destination.getId()).updateChildren(destinationValues);
     }
+  
     public Task<Void> deleteDestination(String destinationId, String userId) {
         return databaseRef.child(userId).child(destinationId).removeValue();
     }
