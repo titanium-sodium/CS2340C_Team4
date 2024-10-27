@@ -66,9 +66,11 @@ public class DestinationsPage extends Fragment {
         calculateTimeButton.setOnClickListener(v -> openCalculateTimeForm());
         // Find and setup the RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.travelLogsRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         // Sample data
+        DatabaseReference DB = new DBViewModel().getDB();
+
         List<String> destinations = Arrays.asList("Atlanta", "New York", "Tokyo", "Paris");
         List<Integer> daysPlanned = Arrays.asList(5, 3, 7, 4);
 
@@ -120,11 +122,10 @@ public class DestinationsPage extends Fragment {
                             // Convert string dates to milliseconds (you might want to use a DatePicker instead)
                             long startTime = Long.parseLong(startTimeStr);
                             long endTime = Long.parseLong(endTimeStr);
+                            DatabaseReference DB = new DBViewModel().getDB();
 
                             DestinationModel destination = new DestinationModel(startTime, endTime, location);
-                            DestinationsRepository.getInstance().addDestination(destination, userId)
-                                    .addOnSuccessListener(id -> Toast.makeText(getContext(), "Travel log added successfully", Toast.LENGTH_SHORT).show())
-                                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to add travel log", Toast.LENGTH_SHORT).show());
+                            DB.child("users").child(MainActivity.getUserId()).child("destinations").child(location+startTimeStr).setValue(destination);
                         } catch (NumberFormatException e) {
                             Toast.makeText(getContext(), "Invalid date format", Toast.LENGTH_SHORT).show();
                         }

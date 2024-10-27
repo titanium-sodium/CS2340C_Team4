@@ -3,6 +3,7 @@ package com.example.sprintproject.viewmodels;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.views.MainActivity;
@@ -11,7 +12,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-public class NotesViewModel {
+public class NotesViewModel extends ViewModel {
 
     private MutableLiveData<String> noteMessage;
     private NotesModel notesModel;
@@ -20,9 +21,7 @@ public class NotesViewModel {
     DatabaseReference DB = new DBViewModel().getDB();
 
     public NotesViewModel() {
-
         noteMessage = new MutableLiveData<>();
-
         notesModel = new NotesModel("");
 
         DB.child("users").child(userId).child("destinations").child("notes").child(userId)

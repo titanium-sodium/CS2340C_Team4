@@ -41,7 +41,7 @@
         android:minLines="5"
         android:scrollbars="vertical"
         android:scrollHorizontally="false"
-        android:text="@{noteViewModel.getMessage()}"
+        android:text="@{String.valueOf(noteViewModel.getMessage())}"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerText"

@@ -73,20 +73,18 @@ public class LoginPage extends AppCompatActivity {
                                                     "Authentication successful.",
                                                     Toast.LENGTH_SHORT).show();
                                             //Finding the user
-                                            HashMap<String, String> users = new HashMap<>();
                                             DatabaseReference DB = new DBViewModel().getDB();
                                             //async wait operation
                                             DB.child("users").addChildEventListener(new ChildEventListener() {
                                                 @Override
                                                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                                    UserModel dataSnapshot = new UserModel(Objects.requireNonNull(snapshot.getValue(UserModel.class)).getUserId(),
-                                                            Objects.requireNonNull(snapshot.getValue(UserModel.class)).getEmail());
-                                                    users.put(dataSnapshot.getEmail(), dataSnapshot.getUserId());
-                                                    if (users.get(email) != null) {
-                                                        Log.d("SUCCESS", Objects.requireNonNull(users.get(email)));
-                                                        Intent intent = new Intent(LoginPage.this,
-                                                                MainActivity.class);
-                                                        intent.putExtra("userId", users.get(email));
+                                                    String userId = snapshot.getKey();
+                                                    String userEmail = snapshot.child("email").getValue(String.class);
+
+                                                    if (userEmail != null && userEmail.equals(email)) {
+                                                        Log.d("SUCCESS", "User found: " + userId);
+                                                        Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                                                        intent.putExtra("userId", userId);
                                                         startActivity(intent);
                                                         finish();
                                                     }
