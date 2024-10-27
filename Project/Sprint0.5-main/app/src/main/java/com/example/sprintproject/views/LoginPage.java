@@ -79,8 +79,8 @@ public class LoginPage extends AppCompatActivity {
                                             DB.child("users").addChildEventListener(new ChildEventListener() {
                                                 @Override
                                                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                                    UserModel dataSnapshot = new UserModel(snapshot.getValue(UserModel.class).getUserId(),
-                                                            snapshot.getValue(UserModel.class).getEmail());
+                                                    UserModel dataSnapshot = new UserModel(Objects.requireNonNull(snapshot.getValue(UserModel.class)).getUserId(),
+                                                            Objects.requireNonNull(snapshot.getValue(UserModel.class)).getEmail());
                                                     users.put(dataSnapshot.getEmail(), dataSnapshot.getUserId());
                                                     if (users.get(email) != null) {
                                                         Log.d("SUCCESS", Objects.requireNonNull(users.get(email)));

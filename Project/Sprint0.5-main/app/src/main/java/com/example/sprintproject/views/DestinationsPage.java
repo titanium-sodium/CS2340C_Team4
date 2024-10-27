@@ -63,7 +63,7 @@ public class DestinationsPage extends Fragment {
         travelLogButton.setOnClickListener(v -> opentravelLogForm());
 
         // Find and setup the RecyclerView
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.travelLogsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Sample data
