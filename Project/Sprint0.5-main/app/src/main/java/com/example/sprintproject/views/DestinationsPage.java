@@ -62,6 +62,8 @@ public class DestinationsPage extends Fragment {
         Button travelLogButton = view.findViewById(R.id.travelLogButton);
         travelLogButton.setOnClickListener(v -> opentravelLogForm());
 
+        Button calculateTimeButton = view.findViewById(R.id.calculateButton);
+        calculateTimeButton.setOnClickListener(v -> openCalculateTimeForm());
         // Find and setup the RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.travelLogsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -75,6 +77,29 @@ public class DestinationsPage extends Fragment {
         recyclerView.setAdapter(destinationAdapter);
 
         return view;
+    }
+
+    private void openCalculateTimeForm() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.calculate_vacationtime, null);
+        EditText durationInput = dialogView.findViewById(R.id.durationInput);
+        EditText startTimeInput = dialogView.findViewById(R.id.startDateInput);
+        EditText endTimeInput = dialogView.findViewById(R.id.endDateInput);
+
+        builder.setView(dialogView).setTitle("Add Travel Log")
+                .setPositiveButton("Submit", (dialog, which) -> {
+                    String durationStr = durationInput.getText().toString();
+                    String startTimeStr = startTimeInput.getText().toString();
+                    String endTimeStr = endTimeInput.getText().toString();
+
+                    if (!durationStr.isEmpty() && !startTimeStr.isEmpty() && !endTimeStr.isEmpty()) {
+                        //Logic for calculation
+                    } else {
+                        Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void opentravelLogForm() {
