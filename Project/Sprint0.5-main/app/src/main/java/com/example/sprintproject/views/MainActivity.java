@@ -13,6 +13,7 @@ import com.example.sprintproject.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private static String userId;
 
     /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
         this still encompasses it in essence. */
@@ -25,12 +26,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //Standard Activity Setup with viewbinding.
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        userId = getIntent().getStringExtra("userId");
+      
+        DestinationsPage destinationsPage = new DestinationsPage();
+        DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
 
+        LogisticsPage logisticsPage = new LogisticsPage();
+        Bundle args = new Bundle();
+        args.putString("userId", userId);
+        logisticsPage.setArguments(args);
 
+        AccommodationsPage accommodationsPage = new AccommodationsPage();
+        TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
 
         //Sets the initial screen (landing page) on the navbar to the logistics page.
         changeFragment(logisticsPage);
@@ -78,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
-
     }
-
+    public static String getUserId() {
+        return userId;
+    }
 }

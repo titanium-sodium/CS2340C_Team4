@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel;
 import com.example.sprintproject.model.UserModel;
 import com.google.firebase.database.DatabaseReference;
 
-public class UserViewModel extends ViewModel {
 
+
+public class UserViewModel extends ViewModel {
     private UserModel userModel;
     public UserViewModel() {
         userModel = new UserModel("", "");
