@@ -14,6 +14,14 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
+    /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
+        this still encompasses it in essence. */
+    DestinationsPage destinationsPage = new DestinationsPage();
+    DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
+    protected static LogisticsPage logisticsPage = new LogisticsPage();
+    AccommodationsPage accommodationsPage = new AccommodationsPage();
+    TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -22,16 +30,11 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
-        this still encompasses it in essence. */
-        DestinationsPage destinationsPage = new DestinationsPage();
-        DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
-        LogisticsPage logisticsPage = new LogisticsPage();
-        AccommodationsPage accommodationsPage = new AccommodationsPage();
-        TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
+
 
         //Sets the initial screen (landing page) on the navbar to the logistics page.
         changeFragment(logisticsPage);
+        binding.navBar.getMenu().findItem(R.id.logisitics).setChecked(true);
 
         /* Depending on the item selected in the navbar, switches to the corresponding screen;
         by switching to previously established instances, this should hopefully maintain the state

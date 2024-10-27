@@ -15,20 +15,21 @@ import com.example.sprintproject.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link LogisticsPage#newInstance} factory method to
+ * Use the {@link LogisticsNotes#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LogisticsPage extends Fragment {
+public class LogisticsNotes extends Fragment {
 
+    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-
+    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    public LogisticsPage() {
+    public LogisticsNotes() {
         // Required empty public constructor
     }
 
@@ -38,11 +39,11 @@ public class LogisticsPage extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment LogisticsPage.
+     * @return A new instance of fragment LogisticsNotes.
      */
-
-    public static LogisticsPage newInstance(String param1, String param2) {
-        LogisticsPage fragment = new LogisticsPage();
+    // TODO: Rename and change types and number of parameters
+    public static LogisticsNotes newInstance(String param1, String param2) {
+        LogisticsNotes fragment = new LogisticsNotes();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -53,22 +54,20 @@ public class LogisticsPage extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Button backButton = getView().findViewById(R.id.notesBackButton);
 
-
-        LogisticsNotes notes = new LogisticsNotes();
-        Button notesButton = getView().findViewById(R.id.notesButton);
-
-        notesButton.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 FragmentManager fragmentManager = getParentFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                fragmentTransaction.replace(R.id.frameLayout, notes);
+                fragmentTransaction.replace(R.id.frameLayout, MainActivity.logisticsPage);
                 fragmentTransaction.commit();
 
             }
+
         });
 
     }
@@ -77,6 +76,6 @@ public class LogisticsPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.logistics_screen, container, false);
+        return inflater.inflate(R.layout.logistics_notes, container, false);
     }
 }
