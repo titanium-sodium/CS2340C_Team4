@@ -1,5 +1,6 @@
 package com.example.sprintproject.viewmodels;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -13,17 +14,17 @@ import java.util.Calendar;
 public class DestinationViewModel extends ViewModel {
     private final MutableLiveData<Long> startDate = new MutableLiveData<>();
     private final MutableLiveData<Long> endDate = new MutableLiveData<>();
-    private DestinationsRepository repository = null; // For database operations
+//    private final DestinationsRepository repository; // For database operations
 
     public DestinationViewModel() {
-        repository = repository.getInstance(); // Assuming Singleton pattern
+         // Assuming Singleton pattern
     }
 
-    public MutableLiveData<Long> getStartDate() {
+    public LiveData<Long> getStartDate() {
         return startDate;
     }
 
-    public MutableLiveData<Long> getEndDate() {
+    public LiveData<Long> getEndDate() {
         return endDate;
     }
 

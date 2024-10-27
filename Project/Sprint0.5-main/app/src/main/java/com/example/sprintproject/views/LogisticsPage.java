@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LogisticsPage extends Fragment {
     private RecyclerView userList;
@@ -116,54 +117,54 @@ public class LogisticsPage extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LogisticsNotes notes = new LogisticsNotes();
-        Button notesButton = getView().findViewById(R.id.notesButton);
-
-        notesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fragmentManager = getParentFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                fragmentTransaction.replace(R.id.frameLayout, notes);
-                fragmentTransaction.commit();
-            }
-        });
+//        LogisticsNotes notes = new LogisticsNotes();
+//        Button notesButton = requireView().findViewById(R.id.notesButton);
+//
+//        notesButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                FragmentManager fragmentManager = getParentFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//
+//                fragmentTransaction.replace(R.id.frameLayout, notes);
+//                fragmentTransaction.commit();
+//            }
+//        });
     }
 
-    private void showInviteDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        View dialogView = getLayoutInflater().inflate(R.layout.invite_dialog, null);
-        EditText emailInput = dialogView.findViewById(R.id.emailInput);
+private void showInviteDialog() {
+    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+    View dialogView = getLayoutInflater().inflate(R.layout.invite_dialog, null);
+    EditText emailInput = dialogView.findViewById(R.id.emailInput);
 
-        builder.setView(dialogView)
-                .setTitle("Invite User")
-                .setPositiveButton("Invite", (dialog, which) -> {
-                    String email = emailInput.getText().toString();
-                    if (!email.isEmpty()) {
-                        inviteUser(email);
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
+    builder.setView(dialogView)
+            .setTitle("Invite User")
+            .setPositiveButton("Invite", (dialog, which) -> {
+                String email = emailInput.getText().toString();
+                if (!email.isEmpty()) {
+                    inviteUser(email);
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+}
 
-    private void inviteUser(String email) {
-        dbViewModel.inviteUser(email).observe(getViewLifecycleOwner(), success -> {
-            if (success) {
-                Toast.makeText(getContext(), "Invitation sent!", Toast.LENGTH_SHORT).show();
-                loadContributors();
-            } else {
-                Toast.makeText(getContext(), "Failed to send invitation", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+private void inviteUser(String email) {
+    dbViewModel.inviteUser(email).observe(getViewLifecycleOwner(), success -> {
+        if (success) {
+            Toast.makeText(getContext(), "Invitation sent!", Toast.LENGTH_SHORT).show();
+            loadContributors();
+        } else {
+            Toast.makeText(getContext(), "Failed to send invitation", Toast.LENGTH_SHORT).show();
+        }
+    });
+}
 
-    private void loadContributors() {
-        dbViewModel.getContributors().observe(getViewLifecycleOwner(), users -> {
-            contributors.clear();
-            contributors.addAll(users);
-            adapter.notifyDataSetChanged();
-        });
-    }
+private void loadContributors() {
+    dbViewModel.getContributors().observe(getViewLifecycleOwner(), users -> {
+        contributors.clear();
+        contributors.addAll(users);
+        adapter.notifyDataSetChanged();
+    });
+}
 }

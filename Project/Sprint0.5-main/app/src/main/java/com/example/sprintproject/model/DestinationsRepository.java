@@ -63,9 +63,9 @@ public class DestinationsRepository {
                 List<DestinationModel> destinations = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     DestinationModel destination = new DestinationModel(
-                            snapshot.child("location").getValue(String.class),
                             snapshot.child("startDate").getValue(Long.class),
-                            snapshot.child("endDate").getValue(Long.class)
+                            snapshot.child("endDate").getValue(Long.class),
+                            snapshot.child("location").getValue(String.class)
                     );
                     destination.setId(snapshot.getKey());
                     destinations.add(destination);
