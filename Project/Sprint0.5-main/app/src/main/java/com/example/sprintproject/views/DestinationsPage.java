@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DBModel;
@@ -28,6 +30,7 @@ import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DestinationsRepository;
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,17 +41,15 @@ import com.google.firebase.database.ValueEventListener;
  */
 public class DestinationsPage extends Fragment {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    // Change this line to directly use the static method
-    private String userId = MainActivity.getUserId();
-
     public DestinationsPage() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            userId = MainActivity.getUserId();
+            // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+            // Change this line to directly use the static method
+            String userId = MainActivity.getUserId();
         }
     }
 
@@ -70,10 +71,29 @@ public class DestinationsPage extends Fragment {
 
         // Sample data
         DatabaseReference DB = new DBViewModel().getDB();
+        String userID = MainActivity.getUserId();
+        List<String> destinations = new ArrayList<>();
+        List<Integer> daysPlanned = new ArrayList<>();
 
-        List<String> destinations = Arrays.asList("Atlanta", "New York", "Tokyo", "Paris");
-        List<Integer> daysPlanned = Arrays.asList(5, 3, 7, 4);
+        DB.child("users").child(userID).child("destinations").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot destinationsSnapshot : snapshot.getChildren()) {
+                        Log.d("TEST", String.valueOf(destinationsSnapshot));
+                        DestinationModel destination = destinationsSnapshot.getValue(DestinationModel.class);
+                        destinations.add(destination.getLocation());
+                        daysPlanned.add(destination.getDuration());
 
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //Do nothing
+            }
+        });
         // Setup adapter
         DestinationAdapter destinationAdapter = new DestinationAdapter(destinations, daysPlanned);
         recyclerView.setAdapter(destinationAdapter);
