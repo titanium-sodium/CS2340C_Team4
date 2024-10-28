@@ -12,7 +12,14 @@ public class DestinationModel {
     private ArrayList<String> contributors;
     private int duration;
 
-    public DestinationModel(long startDate, long endDate, String location) {  // Updated constructor
+    public DestinationModel(long startDate, long endDate, String location) throws IllegalArgumentException{
+        // Updated constructor
+        if (location.length() == 0) {
+            throw new IllegalArgumentException("Invalid location");
+        }
+        if (startDate <= 0 || endDate <= 0 ) {
+            throw new IllegalArgumentException("Invalid date");
+        }
         this.startDate = startDate;
         this.endDate = endDate;
         this.location = location;

@@ -4,9 +4,18 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import com.example.sprintproject.model.AuthModel;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DestinationsRepository;
+import com.example.sprintproject.model.NotesModel;
+import com.example.sprintproject.model.TravelStats;
+import com.example.sprintproject.model.UserModel;
+import com.example.sprintproject.viewmodels.DestinationViewModel;
+import com.example.sprintproject.viewmodels.UserViewModel;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,228 +28,127 @@ import java.util.NoSuchElementException;
 public class ExampleUnitTest {
 
     //----------------------------------------------AddDestination-----------------------------------------------------//
+    @Test
     public void testAddDestination() {
-        DestinationsRepository repository = DestinationsRepository.getInstance(); //simply create a new instance of DestinationsRepository
-        //create a instance of DestinationModel with start date and end date along with some location
-        DestinationModel destination = new DestinationModel("2024-10-01", "2024-10-07","New York");
-
-        //adds a new destination along with a personal user ID. Is a task object bc addDestination returns a Task object
-        Task<String> task = repository.addDestination(destination, "user1");
-        //this is a listener that waits for the task to finish. When the task is done, the code inside the brackets
-        //will process and determine if the code was successful or not.
-        task.addOnCompleteListener(result -> {
-            //If the result is true, then that means that destination and userid was added to the database without error
-            assertTrue(result.isSuccessful());
-            //result.getResult() gets the result of the task. If the result is null, then something went wrong and no
-            //ID was made for the destination.
-            assertNotNull(result.getResult());//check if the generated id is not null
-        });
+        DestinationModel destination = new DestinationModel(123, 123, "Atlanta");
+        assertEquals("Atlanta", destination.getLocation());
     }
 
 
-
+    @Test
     public void testAddDestinationWithEmptyLocation() {
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        DestinationModel destination = new DestinationModel("2024-10-01", "2024-10-07","   ");
+        try {
+            DestinationModel destination = new DestinationModel(123, 123, "");
+            fail("Cannot make a destination with no location");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid location", e.getMessage());
+        }
 
-        Task<String> task = repository.addDestination(destination, "user1");
-        task.addOnCompleteListener(result -> {
-            assertFalse(result.isSuccessful());//if the task is successful when there is whitespace in the location then
-            //the test case will say that this is false as the task IS NOT supposed to work if there are any whitespaces
-            //btw these have to be check BEFORE firebase handles the test case as firebase itself does not check for whitespace
-            //parameters
-        });
+
     }
-
+    @Test
     public void testAddDestinationEmptyStartDate() {
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        DestinationModel destination = new DestinationModel("   ", "2024-10-07","New York");
-
-        Task<String> task = repository.addDestination(destination, "user1");
-        task.addOnCompleteListener(result -> {
-            assertFalse(result.isSuccessful());//if the task is successful when there is whitespace in the start date then
-            //the test case will say that this is false as the task IS NOT supposed to work if there are any whitespaces
-            //btw these have to be check BEFORE firebase handles the test case as firebase itself does not check for whitespace
-            //parameters
-        });
+        try {
+            DestinationModel destination = new DestinationModel(0, 10000, "Atlanta");
+            fail("Cannot make a destination with no date");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid date", e.getMessage());
+        }
     }
-
+    @Test
     public void testAddDestinationEmptyEndDate() {
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        DestinationModel destination = new DestinationModel("2024-10-01", "   ","New York");
-
-        Task<String> task = repository.addDestination(destination, "user1");
-        task.addOnCompleteListener(result -> {
-            assertFalse(result.isSuccessful());//if the task is successful when there is whitespace in the end date then
-            //the test case will say that this is false as the task IS NOT supposed to work if there are any whitespaces
-            //btw these have to be check BEFORE firebase handles the test case as firebase itself does not check for whitespace
-            //parameters
-        });
+        try {
+            DestinationModel destination = new DestinationModel(10000, 0, "Atlanta");
+            fail("Cannot make a destination with no date");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid date", e.getMessage());
+        }
     }
-
+    @Test
     public void testAddDestinationEmptyAll() {
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        DestinationModel destination = new DestinationModel("   ", "   ","   ");
-
-        Task<String> task = repository.addDestination(destination, "user1");
-        task.addOnCompleteListener(result -> {
-            assertFalse(result.isSuccessful());//if the task is successful when there is whitespace in the all the parameters then
-            //the test case will say that this is false as the task IS NOT supposed to work if there are any whitespaces
-        });
+        try {
+            DestinationModel destination = new DestinationModel(0, 0, "");
+            fail("Cannot make a destination with no location");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid location", e.getMessage());
+        }
     }
-
-    //----------------------------------------------getAllDestination-----------------------------------------------------//
-
-    public void testGetAllDestination() {
-        //create new instance of respository
-        String userID = "user1";
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        DestinationModel destination1 = new DestinationModel("2024-07-01", "2024-07-14", "Kyoto");
-        repository.addDestination(destination1, userID).addOnCompleteListener(adding -> {
-            //make sure destinations is added to userID
-            assertTrue(adding.isSuccessful());
-            //get all destinations and put it within task list
-            Task<List<DestinationModel>> task = repository.getAllDestinations(userID);
-            //wait for task to finish
-            task.addOnCompleteListener(result -> {
-                //true if task is successful
-                assertTrue(result.isSuccessful());
-                //get results and put it into list of DestinationModel
-                List<DestinationModel> allDestinations = result.getResult();
-                //checks if list is null or not
-                assertNotNull(allDestinations);
-                //checks if list if empty
-                assertFalse(allDestinations.isEmpty());
-
-                //make sure items in allDestinations match what is supposed to be in location, start date, and end date
-                boolean found = false;
-                for (DestinationModel destinations : allDestinations) {
-                    if(destinations.getLocation().equals("Kyoto") && (destinations.getStartDate().equals("2024-07-01") &&
-                            destinations.getEndDate().equals("2024-07-14")) {
-                        found = true;
-                        break;
-                    }
-                }
-                assertTrue(found);
-            });
-        });
-
+//
+//    //----------------------------------------------getAllDestination-----------------------------------------------------//
+//
+    @Test
+    public void testUserModelEmptyEmail() {
+        try {
+            UserModel userModel = new UserModel("abcdf", "");
+            fail("Cannot make user email empty");
+        } catch (IllegalArgumentException e) {
+            assertEquals("email cannot be empty", e.getMessage());
+        }
 
     }
+    @Test
+    public void testUserModelEmptyUserId() {
 
-    //----------------------------------------------getTotalDays-----------------------------------------------------//
-
+        try {
+            UserModel userModel = new UserModel("", "test@test.com");
+            fail("Cannot make userId empty");
+        } catch (IllegalArgumentException e) {
+            assertEquals("userId cannot be empty", e.getMessage());
+        }
+    }
+//
+//    //----------------------------------------------getTotalDays-----------------------------------------------------//
+//
+    @Test
     public void testGetTotalDays() {
-        //create new instance of respository
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        //create new instance of userID
-        String userID = "user1";
-        //create a destination with date and location
-        DestinationModel destination = new DestinationModel("2024-10-01", "2024-10-07", "Paris"); // 6 days
-
-        repository.addDestination(destination, userID).addOnCompleteListener(task -> {
-            assertTrue(task.isSuccessful());//puts out true if addDestination works
-            //we then test out totalTripDays
-            repository.getTotalTripDays(userID).addOnCompleteListener(result -> {
-                //if task is successful, then TotalTripDays works
-                assertTrue(result.isSuccessful());
-                //we put the total days into totalDays
-                Integer totalDays = result.getResult();
-                //make sure totalDays is not null
-                assertNotNull(totalDays);
-                //make sure the actual total days is the same as the expected
-                assertEquals(6, totalDays.intValue());
-            });
-        });
+        TravelStats travelStats = new TravelStats(12, 10);
+        assertEquals(12, travelStats.getAllottedDays());
     }
-
-    //----------------------------------------------updateDestination-----------------------------------------------------//
-
-    public void testUpdateDestination() {
-        //creates a new instance of DestinationsRepository
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        //creates a DestinationModel instance with a valid start date, end date, and location
-        DestinationModel destination = new DestinationModel(20240205, 20240212, "Los Angeles");
-
-        //adds destination to the repository for a specific user ID to ensure it exists before updating
-        repository.addDestination(destination, "user1").addOnCompleteListener(task -> {
-            assertTrue(task.isSuccessful()); // ensures the destination was added successfully
-
-            //updates the destination with new values
-            destination.setLocation("San Francisco");
-            destination.setStartDate(20240208);
-            destination.setEndDate(20240215);
-
-            //calls the updateDestination method to update the existing destination
-            Task<String> updateTask = repository.updateDestination(destination, "user1");
-            updateTask.addOnCompleteListener(result -> {
-                //asserts that the update task completed successfully
-                assertTrue(result.isSuccessful());
-            });
-        });
-    }
-
-    public void testUpdateDestinationWithEmptyLocation() {
-        //creates a new instance of the DestinationsRepository
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        //creates a DestinationModel instance with a valid start date, end date, and location
-        DestinationModel destination = new DestinationModel(20240801, 20240807, "Seattle");
-
-        //adds the destination to ensure it exists
-        repository.addDestination(destination, "user1").addOnCompleteListener(task -> {
-            assertTrue(task.isSuccessful()); // ensures the destination was added successfully
-
-            //tries updating the destination with an empty location
-            destination.setLocation("   ");
-            Task<String> updateTask = repository.updateDestination(destination, "user1");
-            updateTask.addOnCompleteListener(result -> {
-                //assert that the update should fail
-                assertFalse(result.isSuccessful());
-            });
-        });
-    }
-
-    //----------------------------------------------deleteDestination-----------------------------------------------------//
-    // Joni's test cases
-
+//
+//    //----------------------------------------------updateDestination-----------------------------------------------------//
+//
     @Test
-    public void testDeleteDestination() {
-        DestinationsRepository repository = DestinationsRepository.getInstance();
-        DestinationModel destination = new DestinationModel(20241123, 20241201, "Bali");
-        Task<String> task;
-        task = repository.addDestination(destination, "user1");
-        // checks if deleteDestination is successful
-        task.addOnCompleteListener(result -> {
-            assertTrue(result.isSuccessful());
-            assertNotNull(result.getResult());
-        });
-    }
-    @Test
-    public void testEmptyDestination() {
-        DestinationsRepository repository = DestinationsRepository.getInstance();
+    public void testEmptyNote() {
         try {
-            repository.deleteDestination("Atlanta", "user999");
-            fail("Expected NoSuchElementException, repository is empty");
-        } catch (NoSuchElementException e) {
-            assertEquals("Repository is empty", e.getMessage());
+            NotesModel notesModel = new NotesModel("");
+            fail("Cannot make note empty");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Note cannot be empty", e.getMessage());
         }
+
+    }
+    @Test
+    public void testValidUserModel() {
+        UserModel userModel = new UserModel("kjnsfejknfwkn", "test@test.com");
+        assertEquals("kjnsfejknfwkn", userModel.getUserId());
+    }
+
+//    //----------------------------------------------deleteDestination-----------------------------------------------------//
+//    // Joni's test cases
+//
+    @Test
+    public void testPlannedDays() {
+
+            TravelStats travelStats = new TravelStats();
+            travelStats.setAllottedDays(100);
+            travelStats.setPlannedDays(1);
+            assertEquals(1, travelStats.getPlannedDays());
+    }
+    @Test
+    public void testValidNotesModel() {
+        NotesModel notesModel = new NotesModel(".");
+        notesModel.setNotes("hello world");
+        assertEquals("hello world", notesModel.getNotes());
     }
 
     @Test
-    public void testNotFoundDestination() {
-        DestinationsRepository repository = DestinationsRepository.getInstance();
+    public void testUserViewModel() {
+        UserViewModel userViewModel = new UserViewModel();
+        userViewModel.setUserUID("abcdef");
+        userViewModel.setUserEmail("test@test.com");
 
-        DestinationModel destination = new DestinationModel(20241123, 20241201,"Bali");
-        DestinationModel destination2 = new DestinationModel(20241225, 20250102,"Canada");
-
-        repository.addDestination(destination, "user1");
-        repository.addDestination(destination2, "user2");
-        try {
-            repository.deleteDestination("Atlanta", "user999");
-            fail("Expected NoSuchElementException, repository does not contain that destination");
-        } catch (NoSuchElementException e) {
-            assertEquals("Destination not found", e.getMessage());
-        }
+        UserModel userModel = new UserModel("abcdef", "test@test.com");
+        assertEquals(userModel.getEmail(), userViewModel.getUserModel().getEmail());
     }
 
 
