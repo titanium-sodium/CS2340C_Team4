@@ -52,10 +52,11 @@ public class DestinationsRepository {
         result.put("notes", destination.getNote());
         result.put("contributors", destination.getContributors());
         return result;
-  }
+    }
 
     public Task<List<DestinationModel>> getAllDestinations(String userId) {
-        TaskCompletionSource<List<DestinationModel>> taskCompletionSource = new TaskCompletionSource<>();
+        TaskCompletionSource<List<DestinationModel>> taskCompletionSource =
+                new TaskCompletionSource<>();
 
         databaseRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -87,11 +88,13 @@ public class DestinationsRepository {
         destinationValues.put("location", destination.getLocation());
         destinationValues.put("startDate", destination.getStartDate());
         destinationValues.put("endDate", destination.getEndDate());
-        destinationValues.put("duration", destination.getDuration());  // Changed from calculateDuration() to getDuration()
+        destinationValues.put("duration", destination.getDuration());
+        // Changed from calculateDuration() to getDuration()
 
-        return databaseRef.child(userId).child(destination.getId()).updateChildren(destinationValues);
+        return databaseRef.child(userId).child(destination.getId())
+                .updateChildren(destinationValues);
     }
-  
+
     public Task<Void> deleteDestination(String destinationId, String userId) {
         return databaseRef.child(userId).child(destinationId).removeValue();
     }
@@ -121,7 +124,8 @@ public class DestinationsRepository {
         return taskCompletionSource.getTask();
     }
 
-    public Task<Boolean> hasDateOverlap(long startDate, long endDate, String userId, String excludeId) {
+    public Task<Boolean> hasDateOverlap(
+            long startDate, long endDate, String userId, String excludeId) {
         TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
 
         databaseRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -137,8 +141,8 @@ public class DestinationsRepository {
                     Long existingEnd = snapshot.child("endDate").getValue(Long.class);
 
                     if (existingStart != null && existingEnd != null) {
-                        if ((startDate >= existingStart && startDate <= existingEnd) ||
-                                (endDate >= existingStart && endDate <= existingEnd)) {
+                        if ((startDate >= existingStart && startDate <= existingEnd)
+                                || (endDate >= existingStart && endDate <= existingEnd)) {
                             hasOverlap = true;
                             break;
                         }

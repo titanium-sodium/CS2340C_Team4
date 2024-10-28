@@ -29,7 +29,8 @@ public class TravelStats {
 
     public void setPlannedDays(int plannedDays) throws IllegalArgumentException {
         if (plannedDays > this.allottedDays) {
-            throw new IllegalArgumentException("Cannot have more planned days than total trip days");
+            throw new IllegalArgumentException(
+                    "Cannot have more planned days than total trip days");
         }
         this.plannedDays = plannedDays;
     }

@@ -45,7 +45,8 @@ public class TravelStatsViewModel extends ViewModel {
                     // Update the LiveData
                     TravelStats currentStats = travelStats.getValue();
                     if (currentStats != null) {
-                        travelStats.setValue(new TravelStats(allottedDays, currentStats.getPlannedDays()));
+                        travelStats.setValue(new TravelStats(allottedDays,
+                                currentStats.getPlannedDays()));
                     } else {
                         travelStats.setValue(new TravelStats(allottedDays, 0));
                     }
@@ -59,7 +60,8 @@ public class TravelStatsViewModel extends ViewModel {
             DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
             return userRef.child("plannedDays").setValue(newPlannedDays)
                     .addOnSuccessListener(aVoid -> {
-                        travelStats.setValue(new TravelStats(currentStats.getAllottedDays(), newPlannedDays));
+                        travelStats.setValue(new TravelStats(currentStats.getAllottedDays(),
+                                newPlannedDays));
                     });
         }
         return database.child("users").child(userId).child("travelStats")

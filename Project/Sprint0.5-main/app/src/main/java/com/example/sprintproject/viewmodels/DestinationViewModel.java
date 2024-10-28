@@ -4,10 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.sprintproject.model.UserModel;
-import com.google.firebase.database.DatabaseReference;
 
-import java.util.Calendar;
+
 import java.util.concurrent.TimeUnit;
 
 
