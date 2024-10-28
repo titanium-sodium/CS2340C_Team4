@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -30,6 +31,7 @@ import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DestinationsRepository;
 import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.UserModel;
+import com.example.sprintproject.viewmodels.NotesAdapter;
 import com.example.sprintproject.viewmodels.NotesViewModel;
 import com.example.sprintproject.views.UserListAdapter;
 import com.example.sprintproject.viewmodels.DBViewModel;
@@ -38,7 +40,10 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +57,10 @@ public class LogisticsPage extends Fragment {
     private FirebaseAuth mAuth;
     private DestinationModel dModel;
     private String userId;
+
+    private List<String> notes = new ArrayList<>();
+    private List<String> usernames = new ArrayList<>();
+    private NotesAdapter notesAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,10 +99,55 @@ public class LogisticsPage extends Fragment {
         return view;
     }
 
+    private void loadNotes() {
+
+        DatabaseReference DB = new DBViewModel().getDB();
+        DB.child("users").child(userId).child("destinations").child("notes").child(userId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        notes.clear();
+
+                        for (DataSnapshot noteSnapshot : snapshot.getChildren()) {
+
+                            if (noteSnapshot.getKey().equals("notes")) {
+
+                                NotesModel notesModel = noteSnapshot.getValue(NotesModel.class);
+
+
+                            }
+
+                        }
+
+                        if (notesAdapter != null) {
+
+                            notesAdapter.notifyDataSetChanged();
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+    }
+
     private void createNotes() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.logistics_notes, null);
         EditText noteInput = dialogView.findViewById(R.id.userNotes);
+
+        RecyclerView recyclerView = dialogView.findViewById(R.id.userListScroll)
+                .findViewById(R.id.notesRecyclerView);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        notesAdapter = new NotesAdapter(notes, usernames);
+        recyclerView.setAdapter(notesAdapter);
 
         builder.setView(dialogView).setTitle("Add Notes")
                 .setPositiveButton("Submit", (dialog, which) -> {
