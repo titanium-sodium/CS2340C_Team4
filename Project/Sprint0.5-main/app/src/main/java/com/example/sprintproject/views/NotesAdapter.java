@@ -50,9 +50,9 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     }
 
     static class NoteViewHolder extends RecyclerView.ViewHolder {
-        TextView noteText;
-        TextView userEmail;
-        TextView timestamp;
+        private TextView noteText;
+        private TextView userEmail;
+        private TextView timestamp;
 
         NoteViewHolder(View itemView) {
             super(itemView);
@@ -60,5 +60,18 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             userEmail = itemView.findViewById(R.id.userEmail);
             timestamp = itemView.findViewById(R.id.timestamp);
         }
+
+        public TextView getNoteText() {
+            return noteText;
+        }
+
+        public TextView getUserEmail() {
+            return userEmail;
+        }
+
+        public TextView getTimeStamp() {
+            return timestamp;
+        }
+
     }
 }
