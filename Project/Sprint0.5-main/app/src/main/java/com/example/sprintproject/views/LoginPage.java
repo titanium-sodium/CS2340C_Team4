@@ -72,34 +72,30 @@ public class LoginPage extends AppCompatActivity {
                                             Toast.makeText(LoginPage.this,
                                                     "Authentication successful.",
                                                     Toast.LENGTH_SHORT).show();
-                                            //Finding the user
-                                            HashMap<String, String> users = new HashMap<>();
+                                            //Finding the user.
                                             DatabaseReference db = new DBViewModel().getDB();
                                             //async wait operation
                                             db.child("users").addChildEventListener(
                                                     new ChildEventListener() {
                                                     @Override
-                                                public void onChildAdded(
-                                                        @NonNull DataSnapshot snapshot,
-                                                        @Nullable String previousChildName) {
-                                                        UserModel dataSnapshot = new UserModel(
-                                                            snapshot.getValue(UserModel.class)
-                                                                    .getUserId(),
-                                                            snapshot.getValue(UserModel.class)
-                                                                    .getEmail());
-                                                        users.put(dataSnapshot.getEmail(),
-                                                            dataSnapshot.getUserId());
-                                                        if (users.get(email) != null) {
-                                                            Log.d("SUCCESS",
-                                                                Objects.requireNonNull(users
-                                                                        .get(email)));
-                                                            Intent intent = new Intent(
-                                                                LoginPage.this,
-                                                                MainActivity.class);
-                                                            intent.putExtra("userId",
-                                                                users.get(email));
-                                                            startActivity(intent);
-                                                            finish();
+                                                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                                                        try {
+                                                            String userId = snapshot.getKey();
+                                                            String userEmail = snapshot.child("email").getValue(String.class);
+
+                                                            if (userEmail != null && userEmail.equals(email)) {
+                                                                Log.d("SUCCESS", "User found: " + userId);
+                                                                Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                                                                intent.putExtra("userId", userId);
+                                                                startActivity(intent);
+                                                                finish();
+                                                            }
+                                                        } catch (Exception e) {
+                                                            Log.e("Firebase", "Error retrieving user data", e);
+                                                            Toast.makeText(LoginPage.this,
+                                                                    "Error retrieving user data",
+                                                                    Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                     @Override

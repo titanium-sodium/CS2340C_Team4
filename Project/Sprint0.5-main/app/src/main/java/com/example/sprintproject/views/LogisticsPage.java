@@ -29,7 +29,7 @@ import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 
-import com.example.sprintproject.viewmodels.NotesAdapter;
+import com.example.sprintproject.views.NotesAdapter;
 
 
 import com.example.sprintproject.viewmodels.DBViewModel;

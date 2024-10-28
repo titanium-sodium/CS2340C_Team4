@@ -15,7 +15,9 @@ public class NotesModel {
         this.timestamp = System.currentTimeMillis();
         this.timestamp = System.currentTimeMillis();
     }
-
+    public NotesModel() {
+        //Empty constructor
+    }
     // Getters and setters
     public String getNotes() {
         return notes;

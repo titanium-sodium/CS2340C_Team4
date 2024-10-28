@@ -10,7 +10,11 @@ public class TravelStats {
         this.plannedDays = 0;
     }
 
-    public TravelStats(int allottedDays, int plannedDays) {
+    public TravelStats(int allottedDays, int plannedDays) throws IllegalArgumentException {
+        if (plannedDays > allottedDays) {
+            throw new IllegalArgumentException(
+                    "Cannot have more planned days than total trip days");
+        }
         this.allottedDays = allottedDays;
         this.plannedDays = plannedDays;
     }
@@ -27,11 +31,7 @@ public class TravelStats {
         return plannedDays;
     }
 
-    public void setPlannedDays(int plannedDays) throws IllegalArgumentException {
-        if (plannedDays > this.allottedDays) {
-            throw new IllegalArgumentException(
-                    "Cannot have more planned days than total trip days");
-        }
+    public void setPlannedDays(int plannedDays)  {
         this.plannedDays = plannedDays;
     }
 }
