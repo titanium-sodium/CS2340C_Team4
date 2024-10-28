@@ -12,7 +12,13 @@ public class UserModel {
     private ArrayList<DestinationModel> destinations;
     private TravelStats travelStats;
 
-    public UserModel(String userId, String email) {
+    public UserModel(String userId, String email) throws IllegalArgumentException {
+        if (userId.length() == 0) {
+            throw new IllegalArgumentException("userId cannot be empty");
+        }
+        if (email.length() == 0) {
+            throw new IllegalArgumentException("email cannot be empty");
+        }
         this.email = email;
         this.userId = userId;
         this.destinations = new ArrayList<>();
