@@ -73,12 +73,12 @@ public class LoginPage extends AppCompatActivity {
                                                     "Authentication successful.",
                                                     Toast.LENGTH_SHORT).show();
                                             //Finding the user
-                                            HashMap<String, String> users = new HashMap<>();
                                             DatabaseReference DB = new DBViewModel().getDB();
                                             //async wait operation
                                             DB.child("users").addChildEventListener(new ChildEventListener() {
                                                 @Override
                                                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
                                                     try {
                                                         String userId = snapshot.getKey();
                                                         String userEmail = snapshot.child("email").getValue(String.class);

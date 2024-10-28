@@ -20,6 +20,8 @@ public class DestinationModel {
         this.notes = new ArrayList<>();
         calculateDuration();
     }
+    public DestinationModel() {
+    }
 
     public String getId() {
         return id;

@@ -1,4 +1,5 @@
 package com.example.sprintproject.viewmodels;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import com.example.sprintproject.R;
 import java.util.List;
 
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
+
 
     private List<String> destinations;
     private List<Integer> daysPlanned;

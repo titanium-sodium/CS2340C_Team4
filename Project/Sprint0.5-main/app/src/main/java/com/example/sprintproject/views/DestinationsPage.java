@@ -4,6 +4,10 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +27,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Locale;
 
 import com.example.sprintproject.R;
@@ -30,6 +37,19 @@ import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DestinationsRepository;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class DestinationsPage extends Fragment {
+
+    public DestinationsPage() {}
+  
 import com.example.sprintproject.viewmodels.DestinationViewModel;
 import com.example.sprintproject.viewmodels.TravelStatsViewModel;
 
@@ -44,6 +64,7 @@ public class DestinationsPage extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         userId = MainActivity.getUserId();
         if (userId == null || userId.isEmpty()) {
             if (getActivity() != null) {
@@ -100,18 +121,36 @@ public class DestinationsPage extends Fragment {
 
         // Set up RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.travelLogsRecyclerView);
-        if (recyclerView != null) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-            List<String> destinations = Arrays.asList("Atlanta", "New York", "Tokyo", "Paris");
-            List<Integer> daysPlanned = Arrays.asList(5, 3, 7, 4);
+        // Sample data
+        DatabaseReference DB = new DBViewModel().getDB();
+        String userID = MainActivity.getUserId();
+        List<String> destinations = new ArrayList<>();
+        List<Integer> daysPlanned = new ArrayList<>();
 
-            DestinationAdapter destinationAdapter = new DestinationAdapter(destinations, daysPlanned);
-            recyclerView.setAdapter(destinationAdapter);
-        }
+        DB.child("users").child(userID).child("destinations").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot destinationsSnapshot : snapshot.getChildren()) {
+                        Log.d("TEST", String.valueOf(destinationsSnapshot));
+                        DestinationModel destination = destinationsSnapshot.getValue(DestinationModel.class);
+                        destinations.add(destination.getLocation());
+                        daysPlanned.add(destination.getDuration());
 
-        // Load and observe travel stats
-        loadTravelStats();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //Do nothing
+            }
+        });
+        // Setup adapter
+        DestinationAdapter destinationAdapter = new DestinationAdapter(destinations, daysPlanned);
+        recyclerView.setAdapter(destinationAdapter);
 
         return view;
     }
@@ -155,7 +194,25 @@ public class DestinationsPage extends Fragment {
         builder.setView(dialogView)
                 .setTitle("Add Travel Log")
                 .setPositiveButton("Submit", (dialog, which) -> {
-                    submitTravelLog(locationInput, startTimeInput, endTimeInput);
+                    String location = locationInput.getText().toString();
+                    String startTimeStr = startTimeInput.getText().toString();
+                    String endTimeStr = endTimeInput.getText().toString();
+
+                    if (!location.isEmpty() && !startTimeStr.isEmpty() && !endTimeStr.isEmpty()) {
+                        try {
+                            // Convert string dates to milliseconds (you might want to use a DatePicker instead)
+                            long startTime = Long.parseLong(startTimeStr);
+                            long endTime = Long.parseLong(endTimeStr);
+                            DatabaseReference DB = new DBViewModel().getDB();
+
+                            DestinationModel destination = new DestinationModel(startTime, endTime, location);
+                            DB.child("users").child(MainActivity.getUserId()).child("destinations").child(location+startTimeStr).setValue(destination);
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(), "Invalid date format", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
