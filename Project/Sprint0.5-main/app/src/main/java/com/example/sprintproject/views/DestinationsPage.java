@@ -4,11 +4,9 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import androidx.fragment.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,41 +15,28 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Locale;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DestinationsRepository;
 import com.example.sprintproject.model.TravelStats;
+import com.example.sprintproject.viewmodels.DBViewModel;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
-import com.google.firebase.database.ChildEventListener;
+import com.example.sprintproject.viewmodels.DestinationViewModel;
+import com.example.sprintproject.viewmodels.TravelStatsViewModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class DestinationsPage extends Fragment {
-
-    public DestinationsPage() {}
-  
-import com.example.sprintproject.viewmodels.DestinationViewModel;
-import com.example.sprintproject.viewmodels.TravelStatsViewModel;
 
 public class DestinationsPage extends Fragment {
     private DestinationViewModel destinationViewModel;
@@ -60,27 +45,17 @@ public class DestinationsPage extends Fragment {
     private TextView allottedDaysText;
     private TextView plannedDaysText;
     private String userId;
+    private DestinationAdapter destinationAdapter;
+    private List<String> destinations = new ArrayList<>();
+    private List<Integer> daysPlanned = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         userId = MainActivity.getUserId();
         if (userId == null || userId.isEmpty()) {
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), "Please log in to access this page",
-                        Toast.LENGTH_LONG).show();
-                // Simplified navigation to login
-                try {
-                    Intent intent = new Intent(getActivity(), LoginPage.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    getActivity().finish();
-                } catch (Exception e) {
-                    getActivity().finish();
-                }
-                return;
-            }
+            navigateToLogin();
+            return;
         }
         destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
         travelStatsViewModel = new ViewModelProvider(this).get(TravelStatsViewModel.class);
@@ -90,14 +65,7 @@ public class DestinationsPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (userId == null || userId.isEmpty()) {
-            // Simplified navigation to login
-            if (getActivity() != null) {
-                Intent intent = new Intent(getActivity(), LoginPage.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                getActivity().finish();
-            }
-            // Return an empty view since we're navigating away
+            navigateToLogin();
             return new View(getContext());
         }
 
@@ -121,38 +89,54 @@ public class DestinationsPage extends Fragment {
 
         // Set up RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.travelLogsRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Sample data
-        DatabaseReference DB = new DBViewModel().getDB();
-        String userID = MainActivity.getUserId();
-        List<String> destinations = new ArrayList<>();
-        List<Integer> daysPlanned = new ArrayList<>();
-
-        DB.child("users").child(userID).child("destinations").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot destinationsSnapshot : snapshot.getChildren()) {
-                        Log.d("TEST", String.valueOf(destinationsSnapshot));
-                        DestinationModel destination = destinationsSnapshot.getValue(DestinationModel.class);
-                        destinations.add(destination.getLocation());
-                        daysPlanned.add(destination.getDuration());
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                //Do nothing
-            }
-        });
-        // Setup adapter
-        DestinationAdapter destinationAdapter = new DestinationAdapter(destinations, daysPlanned);
+        // Initialize adapter with empty lists
+        destinationAdapter = new DestinationAdapter(destinations, daysPlanned);
         recyclerView.setAdapter(destinationAdapter);
 
+        // Load data from Firebase
+        loadDestinationsData();
+        loadTravelStats();
+
         return view;
+    }
+
+    private void loadDestinationsData() {
+        DatabaseReference DB = new DBViewModel().getDB();
+        DB.child("users").child(userId).child("destinations")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        destinations.clear();
+                        daysPlanned.clear();
+
+                        for (DataSnapshot destinationSnapshot : snapshot.getChildren()) {
+                            if (!destinationSnapshot.getKey().equals("notes")) {
+                                DestinationModel destination = destinationSnapshot.getValue(DestinationModel.class);
+                                if (destination != null) {
+                                    destinations.add(destination.getLocation());
+                                    // Calculate duration from start and end dates
+                                    long durationInMillis = destination.getEndDate() - destination.getStartDate();
+                                    int durationInDays = (int) (durationInMillis / (1000 * 60 * 60 * 24)) + 1;
+                                    daysPlanned.add(durationInDays);
+                                }
+                            }
+                        }
+
+                        // Update the adapter
+                        if (destinationAdapter != null) {
+                            destinationAdapter.notifyDataSetChanged();
+                        }
+
+                        Log.d("DestinationsPage", "Loaded destinations: " + destinations.size());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("DestinationsPage", "Error loading destinations: " + error.getMessage());
+                    }
+                });
     }
 
     private void loadTravelStats() {
@@ -174,6 +158,17 @@ public class DestinationsPage extends Fragment {
         }
         if (plannedDaysText != null) {
             plannedDaysText.setText(String.format("Planned Days: %d", stats.getPlannedDays()));
+        }
+    }
+
+    private void navigateToLogin() {
+        if (getActivity() != null) {
+            Toast.makeText(getActivity(), "Please log in to access this page",
+                    Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getActivity(), LoginPage.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            getActivity().finish();
         }
     }
 
@@ -200,14 +195,21 @@ public class DestinationsPage extends Fragment {
 
                     if (!location.isEmpty() && !startTimeStr.isEmpty() && !endTimeStr.isEmpty()) {
                         try {
-                            // Convert string dates to milliseconds (you might want to use a DatePicker instead)
-                            long startTime = Long.parseLong(startTimeStr);
-                            long endTime = Long.parseLong(endTimeStr);
-                            DatabaseReference DB = new DBViewModel().getDB();
+                            Date startDate = sdf.parse(startTimeStr);
+                            Date endDate = sdf.parse(endTimeStr);
 
-                            DestinationModel destination = new DestinationModel(startTime, endTime, location);
-                            DB.child("users").child(MainActivity.getUserId()).child("destinations").child(location+startTimeStr).setValue(destination);
-                        } catch (NumberFormatException e) {
+                            if (startDate != null && endDate != null) {
+                                DatabaseReference DB = new DBViewModel().getDB();
+                                DestinationModel destination = new DestinationModel(
+                                        startDate.getTime(),
+                                        endDate.getTime(),
+                                        location
+                                );
+                                DB.child("users").child(userId).child("destinations")
+                                        .child(location + startDate.getTime())
+                                        .setValue(destination);
+                            }
+                        } catch (ParseException e) {
                             Toast.makeText(getContext(), "Invalid date format", Toast.LENGTH_SHORT).show();
                         }
                     } else {
@@ -224,16 +226,13 @@ public class DestinationsPage extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.calculate_vacationtime, null);
 
-        // Initialize input fields
         EditText durationInput = dialogView.findViewById(R.id.durationInput);
         EditText startDateInput = dialogView.findViewById(R.id.startDateInput);
         EditText endDateInput = dialogView.findViewById(R.id.endDateInput);
 
-        // Set up date pickers
         setupDatePicker(startDateInput, "Select Start Date");
         setupDatePicker(endDateInput, "Select End Date");
 
-        // Add calculate button inside the form
         Button calculateButton = dialogView.findViewById(R.id.calculateButton);
         if (calculateButton != null) {
             calculateButton.setOnClickListener(v -> {
@@ -261,7 +260,6 @@ public class DestinationsPage extends Fragment {
         String startDateStr = startDateInput.getText().toString();
         String endDateStr = endDateInput.getText().toString();
 
-        // Count filled fields
         int filledFields = 0;
         if (!durationStr.isEmpty()) filledFields++;
         if (!startDateStr.isEmpty()) filledFields++;
@@ -274,7 +272,6 @@ public class DestinationsPage extends Fragment {
         }
 
         try {
-            // Calculate based on which fields are filled
             if (!startDateStr.isEmpty() && !endDateStr.isEmpty()) {
                 // Calculate duration
                 Date startDate = sdf.parse(startDateStr);
@@ -331,57 +328,6 @@ public class DestinationsPage extends Fragment {
             Toast.makeText(getContext(), "Vacation time saved", Toast.LENGTH_SHORT).show();
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Invalid duration format", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void submitTravelLog(EditText locationInput, EditText startTimeInput, EditText endTimeInput) {
-        if (userId == null || userId.isEmpty()) {
-            Toast.makeText(getContext(), "User not authenticated. Please log in again.",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        String location = locationInput.getText().toString();
-        String startTimeStr = startTimeInput.getText().toString();
-        String endTimeStr = endTimeInput.getText().toString();
-
-        if (location.isEmpty() || startTimeStr.isEmpty() || endTimeStr.isEmpty()) {
-            Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            Date startDate = sdf.parse(startTimeStr);
-            Date endDate = sdf.parse(endTimeStr);
-
-            if (startDate.after(endDate)) {
-                Toast.makeText(getContext(), "Start date cannot be after end date",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Calculate the number of days for this trip
-            long diffInMillies = endDate.getTime() - startDate.getTime();
-            int tripDays = (int) (diffInMillies / (1000 * 60 * 60 * 24)) + 1;
-
-            DestinationModel destination = new DestinationModel(
-                    startDate.getTime(),
-                    endDate.getTime(),
-                    location
-            );
-
-            // Save destination and update planned days
-            DestinationsRepository.getInstance().addDestination(destination, userId)
-                    .addOnSuccessListener(id -> {
-                        travelStatsViewModel.addPlannedDays(userId, tripDays);
-                        Toast.makeText(getContext(), "Travel log added successfully",
-                                Toast.LENGTH_SHORT).show();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(getContext(),
-                            "Failed to add travel log: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-
-        } catch (ParseException e) {
-            Toast.makeText(getContext(), "Invalid date format", Toast.LENGTH_SHORT).show();
         }
     }
 
