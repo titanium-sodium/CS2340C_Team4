@@ -153,6 +153,51 @@ public class ExampleUnitTest {
         });
     }
 
+    //----------------------------------------------updateDestination-----------------------------------------------------//
+
+    public void testUpdateDestination() {
+        //creates a new instance of DestinationsRepository
+        DestinationsRepository repository = DestinationsRepository.getInstance();
+        //creates a DestinationModel instance with a valid start date, end date, and location
+        DestinationModel destination = new DestinationModel(20240205, 20240212, "Los Angeles");
+
+        //adds destination to the repository for a specific user ID to ensure it exists before updating
+        repository.addDestination(destination, "user1").addOnCompleteListener(task -> {
+            assertTrue(task.isSuccessful()); // ensures the destination was added successfully
+
+            //updates the destination with new values
+            destination.setLocation("San Francisco");
+            destination.setStartDate(20240208);
+            destination.setEndDate(20240215);
+
+            //calls the updateDestination method to update the existing destination
+            Task<String> updateTask = repository.updateDestination(destination, "user1");
+            updateTask.addOnCompleteListener(result -> {
+                //asserts that the update task completed successfully
+                assertTrue(result.isSuccessful());
+            });
+        });
+    }
+
+    public void testUpdateDestinationWithEmptyLocation() {
+        //creates a new instance of the DestinationsRepository
+        DestinationsRepository repository = DestinationsRepository.getInstance();
+        //creates a DestinationModel instance with a valid start date, end date, and location
+        DestinationModel destination = new DestinationModel(20240801, 20240807, "Seattle");
+
+        //adds the destination to ensure it exists
+        repository.addDestination(destination, "user1").addOnCompleteListener(task -> {
+            assertTrue(task.isSuccessful()); // ensures the destination was added successfully
+
+            //tries updating the destination with an empty location
+            destination.setLocation("   ");
+            Task<String> updateTask = repository.updateDestination(destination, "user1");
+            updateTask.addOnCompleteListener(result -> {
+                //assert that the update should fail
+                assertFalse(result.isSuccessful());
+            });
+        });
+    }
 
 
     @Test
