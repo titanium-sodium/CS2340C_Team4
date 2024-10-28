@@ -41,13 +41,20 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
-        TextView userEmailText;
-        TextView userIdText;
+        private TextView userEmailText;
+        private TextView userIdText;
 
         UserViewHolder(View itemView) {
             super(itemView);
             userEmailText = itemView.findViewById(R.id.userEmail);
             userIdText = itemView.findViewById(R.id.userId);
+        }
+
+        public TextView getSserEmailText() {
+            return userEmailText;
+        }
+        public TextView getUserIdText() {
+            return userIdText;
         }
     }
 }

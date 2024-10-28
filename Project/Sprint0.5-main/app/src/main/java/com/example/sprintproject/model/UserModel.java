@@ -1,8 +1,7 @@
 package com.example.sprintproject.model;
 
 
-import com.example.sprintproject.viewmodels.DBViewModel;
-import com.google.firebase.database.DatabaseReference;
+
 import java.util.ArrayList;
 
 public class UserModel {
@@ -12,13 +11,21 @@ public class UserModel {
     private ArrayList<DestinationModel> destinations;
     private TravelStats travelStats;
 
-    public UserModel(String userId, String email) {
+    public UserModel(String userId, String email) throws IllegalArgumentException {
+        if (userId.length() == 0) {
+            throw new IllegalArgumentException("userId cannot be empty");
+        }
+        if (email.length() == 0) {
+            throw new IllegalArgumentException("email cannot be empty");
+        }
         this.email = email;
         this.userId = userId;
         this.destinations = new ArrayList<>();
-        this.travelStats = new TravelStats(0,0);
+        this.travelStats = new TravelStats(0, 0);
     }
-    public UserModel() {}
+    public UserModel() {
+
+    }
 
     public String getEmail() {
         return email;
@@ -32,7 +39,8 @@ public class UserModel {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    public ArrayList<DestinationModel> getDestinations() { return destinations; }
+    public ArrayList<DestinationModel> getDestinations() {
+        return destinations; }
     public void addDestinations(DestinationModel destination) {
         destinations.add(destination);
     }

@@ -17,14 +17,14 @@ public class NotesViewModel extends ViewModel {
     private MutableLiveData<String> noteMessage;
     private NotesModel notesModel;
 
-    String userId = MainActivity.getUserId();
-    DatabaseReference DB = new DBViewModel().getDB();
+    private String userId = MainActivity.getUserId();
+    private DatabaseReference db = new DBViewModel().getDB();
 
     public NotesViewModel() {
         noteMessage = new MutableLiveData<>();
         notesModel = new NotesModel("");
 
-        DB.child("users").child(userId).child("destinations").child("notes").child(userId)
+        db.child("users").child(userId).child("destinations").child("notes").child(userId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -41,7 +41,7 @@ public class NotesViewModel extends ViewModel {
 
                                 notesModel.setNotes("");
                                 noteMessage.setValue("");
-                                DB.child("users").child(userId).child("destinations")
+                                db.child("users").child(userId).child("destinations")
                                         .child("notes").child(userId).setValue("");
 
                             }
@@ -63,12 +63,19 @@ public class NotesViewModel extends ViewModel {
 
     }
 
+    public DatabaseReference getDatabaseReference() {
+        return db;
+    }
+    public String getUserID() {
+        return userId;
+    }
+
     public void updateMessage(String note) {
 
         notesModel.setNotes(note);
         noteMessage.setValue(notesModel.getNotes());
 
-        DB.child("users").child(userId).child("destinations")
+        db.child("users").child(userId).child("destinations")
                 .child("notes").child(userId).setValue(note);
 
     }

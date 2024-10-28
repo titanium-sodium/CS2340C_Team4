@@ -10,12 +10,12 @@ import com.google.firebase.database.DatabaseReference;
 public class UserViewModel extends ViewModel {
     private UserModel userModel;
     public UserViewModel() {
-        userModel = new UserModel("", "");
+        userModel = new UserModel("temp", "temp@temp.com");
     }
     //writes a new user into the database
     public void writeNewUser(UserModel user) {
-        DatabaseReference DB = new DBViewModel().getDB();
-        DB.child("users").child(user.getUserId()).setValue(user);
+        DatabaseReference db = new DBViewModel().getDB();
+        db.child("users").child(user.getUserId()).setValue(user);
     }
     public UserModel getUserModel() {
         return userModel;

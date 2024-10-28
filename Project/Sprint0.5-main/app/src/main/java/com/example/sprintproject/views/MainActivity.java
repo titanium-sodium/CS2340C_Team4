@@ -17,13 +17,14 @@ public class MainActivity extends AppCompatActivity {
 
     /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
         this still encompasses it in essence. */
-    DestinationsPage destinationsPage = new DestinationsPage();
-    DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
+    private DestinationsPage destinationsPage = new DestinationsPage();
+    private DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
     protected static LogisticsPage logisticsPage = new LogisticsPage();
-    AccommodationsPage accommodationsPage = new AccommodationsPage();
-    TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
+    private AccommodationsPage accommodationsPage = new AccommodationsPage();
+    private TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
 
-    public static String getUserId() { return userId;}
+    public static String getUserId() {
+        return userId; }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,4 +87,23 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
     }
+
+    public DestinationsPage getDestinationsPage() {
+        return destinationsPage;
+    }
+
+    public DiningEstablishmentsPage getDiningDEstablishmentsPage() {
+        return diningEstablishmentsPage;
+    }
+
+    public AccommodationsPage getAccomodationsPage() {
+        return accommodationsPage;
+    }
+
+    public TravelCommunityPage getTravelCommunityPage() {
+        return travelCommunityPage;
+    }
+
+
+
 }
