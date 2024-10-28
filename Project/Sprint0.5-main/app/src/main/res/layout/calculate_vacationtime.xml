@@ -7,27 +7,40 @@
     android:padding="16dp">
 
     <EditText
+        android:id="@+id/durationInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Duration (days)"
+        android:inputType="number" />
+
+    <EditText
         android:id="@+id/startDateInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter start date"
-        android:inputType="text" />
+        android:layout_marginTop="8dp"
+        android:hint="Start Date"
+        android:focusable="false"
+        android:clickable="true"
+        android:inputType="none"/>
+
     <EditText
         android:id="@+id/endDateInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter end date"
-        android:inputType="text" />
-    <EditText
-        android:id="@+id/durationInput"
+        android:layout_marginTop="8dp"
+        android:hint="End Date"
+        android:focusable="false"
+        android:clickable="true"
+        android:inputType="none"/>
+
+    <Button
+        android:id="@+id/calculateButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter start date"
-        android:inputType="text" />
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/calculateVacationTimeButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+
         android:text="Calculate Vacation Time"
         app:layout_constraintTop_toTopOf="parent"/>
+        android:layout_marginTop="16dp"
+        android:text="Calculate" />
 </LinearLayout>

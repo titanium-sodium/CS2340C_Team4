@@ -4,17 +4,17 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.sprintproject.model.DestinationsRepository;
 import com.example.sprintproject.model.UserModel;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 
 public class DestinationViewModel extends ViewModel {
     private final MutableLiveData<Long> startDate = new MutableLiveData<>();
     private final MutableLiveData<Long> endDate = new MutableLiveData<>();
-//    private final DestinationsRepository repository; // For database operations
+    private final MutableLiveData<Integer> duration = new MutableLiveData<>();
 
     public DestinationViewModel() {
          // Assuming Singleton pattern
@@ -38,6 +38,28 @@ public class DestinationViewModel extends ViewModel {
         calculateDuration();
     }
 
+    public void calculateStartDate(Integer durationDays, Long endDate) {
+        if (durationDays != null && endDate != null) {
+            // Calculate start date by subtracting duration from end date
+            long startMillis = endDate - TimeUnit.DAYS.toMillis(durationDays);
+            startDate.setValue(startMillis);
+        }
+    }
+
+    public void calculateEndDate(Integer durationDays, Long startDate) {
+        if (durationDays != null && startDate != null) {
+            // Calculate end date by adding duration to start date
+            long endMillis = startDate + TimeUnit.DAYS.toMillis(durationDays);
+            endDate.setValue(endMillis);
+        }
+    }
+
+
+    public LiveData<Integer> getDuration() {
+        return duration;
+    }
+
+    // Modify existing calculateDuration to store the value
     private void calculateDuration() {
         Long start = startDate.getValue();
         Long end = endDate.getValue();
@@ -46,13 +68,31 @@ public class DestinationViewModel extends ViewModel {
             // Calculate duration in days
             long durationInMillis = end - start;
             int durationInDays = (int) (durationInMillis / (1000 * 60 * 60 * 24));
-            // Update duration in repository or LiveData as needed
+            duration.setValue(durationInDays);
         }
     }
 
+    // Add setter for duration
+    public void setDuration(Integer days) {
+        duration.setValue(days);
+    }
+
+    // Modify existing validation to include duration calculations
     public boolean validateDates() {
         Long start = startDate.getValue();
         Long end = endDate.getValue();
+        Integer durationDays = duration.getValue();
+
+        if (durationDays != null) {
+            if (start == null && end != null) {
+                calculateStartDate(durationDays, end);
+                return true;
+            }
+            if (end == null && start != null) {
+                calculateEndDate(durationDays, start);
+                return true;
+            }
+        }
 
         if (start == null || end == null) {
             return false;

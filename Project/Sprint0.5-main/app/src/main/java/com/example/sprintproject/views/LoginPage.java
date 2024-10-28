@@ -78,15 +78,23 @@ public class LoginPage extends AppCompatActivity {
                                             DB.child("users").addChildEventListener(new ChildEventListener() {
                                                 @Override
                                                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                                    String userId = snapshot.getKey();
-                                                    String userEmail = snapshot.child("email").getValue(String.class);
 
-                                                    if (userEmail != null && userEmail.equals(email)) {
-                                                        Log.d("SUCCESS", "User found: " + userId);
-                                                        Intent intent = new Intent(LoginPage.this, MainActivity.class);
-                                                        intent.putExtra("userId", userId);
-                                                        startActivity(intent);
-                                                        finish();
+                                                    try {
+                                                        String userId = snapshot.getKey();
+                                                        String userEmail = snapshot.child("email").getValue(String.class);
+
+                                                        if (userEmail != null && userEmail.equals(email)) {
+                                                            Log.d("SUCCESS", "User found: " + userId);
+                                                            Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                                                            intent.putExtra("userId", userId);
+                                                            startActivity(intent);
+                                                            finish();
+                                                        }
+                                                    } catch (Exception e) {
+                                                        Log.e("Firebase", "Error retrieving user data", e);
+                                                        Toast.makeText(LoginPage.this,
+                                                                "Error retrieving user data",
+                                                                Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
                                                 @Override

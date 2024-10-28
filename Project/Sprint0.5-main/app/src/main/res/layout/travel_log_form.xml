@@ -10,18 +10,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Name of Destination"
-        android:inputType="text" />
+        android:inputType="text"
+        android:layout_marginBottom="8dp" />
+
     <EditText
         android:id="@+id/startTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Estimated Start Time"
-        android:inputType="text" />
+        android:hint="Start Date (MM/DD/YYYY)"
+        android:focusable="false"
+        android:clickable="true"
+        android:inputType="none"
+        android:layout_marginBottom="8dp" />
+
     <EditText
         android:id="@+id/endTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Estimated End Time"
-        android:inputType="text" />
+        android:hint="End Date (MM/DD/YYYY)"
+        android:focusable="false"
+        android:clickable="true"
+        android:inputType="none"
+        android:layout_marginBottom="8dp" />
 
 </LinearLayout>
