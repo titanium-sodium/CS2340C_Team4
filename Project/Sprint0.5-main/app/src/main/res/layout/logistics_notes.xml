@@ -1,69 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<layout>
-
-    <data>
-        <variable
-
-            name = "noteViewModel"
-            type = "com.example.sprintproject.viewmodels.NotesViewModel"
-
-        />
-    </data>
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/headerText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Notes"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteY="5dp" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <EditText
         android:id="@+id/userNotes"
-        android:layout_width="0dp"
-        android:layout_height="180dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your notes here"
+        android:minLines="3"
         android:gravity="top|start"
-        android:hint="Add your notes here!"
-        android:inputType="textMultiLine"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:lines="20"
-        android:minLines="5"
-        android:scrollbars="vertical"
-        android:scrollHorizontally="false"
-        android:text="@{String.valueOf(noteViewModel.getMessage())}"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerText"
-        app:layout_constraintVertical_chainStyle="packed" />
+        android:inputType="textMultiLine" />
 
-    <ScrollView
-        android:id="@+id/userListScroll"
-        android:layout_width="409dp"
-        android:layout_height="496dp"
-        app:layout_constraintTop_toBottomOf="@+id/userNotes"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="234dp">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/notesRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-
-</layout>
+</LinearLayout>
