@@ -38,11 +38,9 @@ public class DBViewModel extends ViewModel {
         String mainActivityUserId = MainActivity.getUserId();
         if (mainActivityUserId != null) {
             setCurrentUserId(mainActivityUserId);
-            Log.d(TAG, "Initialized DBViewModel with userId from MainActivity: "
-                    + mainActivityUserId);
+            Log.d(TAG, "Initialized DBViewModel with userId from MainActivity: " + mainActivityUserId);
         } else {
-            Log.d(TAG,
-                    "No userId available from MainActivity during DBViewModel initialization");
+            Log.d(TAG, "No userId available from MainActivity during DBViewModel initialization");
         }
     }
 
@@ -112,8 +110,7 @@ public class DBViewModel extends ViewModel {
 
                             if (snapshot.exists()) {
                                 if (snapshot.hasChild("allottedDays")) {
-                                    Object allottedValue = snapshot.child(
-                                            "allottedDays").getValue();
+                                    Object allottedValue = snapshot.child("allottedDays").getValue();
                                     if (allottedValue != null) {
                                         if (allottedValue instanceof Long) {
                                             allottedDays = ((Long) allottedValue).intValue();
@@ -139,8 +136,7 @@ public class DBViewModel extends ViewModel {
                                 }
                             } else {
                                 TravelStats newStats = new TravelStats();
-                                db.child("users").child(currentUserId)
-                                        .child("travelStats").setValue(newStats);
+                                db.child("users").child(currentUserId).child("travelStats").setValue(newStats);
                             }
 
                             TravelStats stats = new TravelStats();
@@ -266,13 +262,28 @@ public class DBViewModel extends ViewModel {
                             db.child("users").child(currentUserId)
                                     .child("contributors")
                                     .child(invitedUserId)
+                                    .child("email")
                                     .setValue(email)
                                     .addOnSuccessListener(aVoid -> {
                                         // Add current user as contributor to invited user
+                                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                                        String currentUserEmail = auth.getCurrentUser() != null ?
+                                                auth.getCurrentUser().getEmail() : "";
+
                                         db.child("users").child(invitedUserId)
                                                 .child("contributors")
                                                 .child(currentUserId)
-                                                .setValue(user);
+                                                .child("email")
+                                                .setValue(currentUserEmail)
+                                                .addOnSuccessListener(unused -> {
+                                                    // Share data after successful invitation
+                                                    shareDataWithUser(invitedUserId);
+                                                    result.setValue(true);
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e(TAG, "Failed to add reverse contributor: " + e.getMessage());
+                                                    result.setValue(false);
+                                                });
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.e(TAG, "Failed to add contributor: " + e.getMessage());
@@ -300,27 +311,44 @@ public class DBViewModel extends ViewModel {
         return result;
     }
 
-    private void shareDataWithContributor(String contributorId) {
+    private void shareDataWithUser(String targetUserId) {
+        // Share travelStats
+        db.child("users").child(currentUserId).child("travelStats")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            db.child("users").child(targetUserId)
+                                    .child("travelStats")
+                                    .setValue(snapshot.getValue())
+                                    .addOnFailureListener(e -> Log.e(TAG,
+                                            "Error sharing travelStats: " + e.getMessage()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error reading travelStats for sharing: " + error.getMessage());
+                    }
+                });
+
         // Share destinations
         db.child("users").child(currentUserId).child("destinations")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
-                            // Convert to List before saving
-                            List<Object> destinationsList = new ArrayList<>();
-                            for (DataSnapshot child : snapshot.getChildren()) {
-                                destinationsList.add(child.getValue());
-                            }
-                            db.child("users").child(contributorId)
+                            db.child("users").child(targetUserId)
                                     .child("destinations")
-                                    .setValue(destinationsList);
+                                    .setValue(snapshot.getValue())
+                                    .addOnFailureListener(e -> Log.e(TAG,
+                                            "Error sharing destinations: " + e.getMessage()));
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Error sharing data: " + error.getMessage());
+                        Log.e(TAG, "Error reading destinations for sharing: " + error.getMessage());
                     }
                 });
 
@@ -330,23 +358,17 @@ public class DBViewModel extends ViewModel {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
-                            // Convert to List before saving
-                            List<NotesModel> notesList = new ArrayList<>();
-                            for (DataSnapshot child : snapshot.getChildren()) {
-                                NotesModel note = child.getValue(NotesModel.class);
-                                if (note != null) {
-                                    notesList.add(note);
-                                }
-                            }
-                            db.child("users").child(contributorId)
+                            db.child("users").child(targetUserId)
                                     .child("notes")
-                                    .setValue(notesList);
+                                    .setValue(snapshot.getValue())
+                                    .addOnFailureListener(e -> Log.e(TAG,
+                                            "Error sharing notes: " + e.getMessage()));
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Error sharing notes: " + error.getMessage());
+                        Log.e(TAG, "Error reading notes for sharing: " + error.getMessage());
                     }
                 });
     }
@@ -378,8 +400,11 @@ public class DBViewModel extends ViewModel {
 
                         // Save entire list
                         db.child("users").child(currentUserId).child("notes")
-                                .setValue(notesList)
-                                .addOnSuccessListener(aVoid -> loadNotes())
+                                .setValue(notesList).addOnSuccessListener(aVoid -> {
+                                    loadNotes();
+                                    // Share the updated notes with all contributors
+                                    shareNotesWithContributors(notesList);
+                                })
                                 .addOnFailureListener(e -> Log.e(TAG, "Error adding note: "
                                         + e.getMessage()));
                     }
@@ -387,6 +412,34 @@ public class DBViewModel extends ViewModel {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.e(TAG, "Error reading existing notes: " + error.getMessage());
+                    }
+                });
+    }
+
+    private void shareNotesWithContributors(List<NotesModel> notes) {
+        // Get current contributors
+        db.child("users").child(currentUserId).child("contributors")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
+                            String contributorId = contributorSnapshot.getKey();
+                            if (contributorId != null) {
+                                // Update notes for each contributor
+                                db.child("users").child(contributorId)
+                                        .child("notes")
+                                        .setValue(notes)
+                                        .addOnFailureListener(e -> Log.e(TAG,
+                                                "Error sharing notes with contributor " + contributorId
+                                                        + ": " + e.getMessage()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error getting contributors for note sharing: "
+                                + error.getMessage());
                     }
                 });
     }
