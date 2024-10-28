@@ -72,7 +72,7 @@ public class LoginPage extends AppCompatActivity {
                                             Toast.makeText(LoginPage.this,
                                                     "Authentication successful.",
                                                     Toast.LENGTH_SHORT).show();
-                                            //Finding the user
+                                            //Finding the user.
                                             DatabaseReference db = new DBViewModel().getDB();
                                             //async wait operation
                                             db.child("users").addChildEventListener(
