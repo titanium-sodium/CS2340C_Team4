@@ -120,8 +120,10 @@ public class DestinationsPage extends Fragment {
                                         .getValue(DestinationModel.class);
                                 if (destination != null) {
                                     destinations.add(destination.getLocation());
-                                    long durationInMillis = destination.getEndDate() - destination.getStartDate();
-                                    int durationInDays = (int) (durationInMillis / (1000 * 60 * 60 * 24)) + 1;
+                                    long durationInMillis = destination.getEndDate()
+                                            - destination.getStartDate();
+                                    int durationInDays = (int) (durationInMillis
+                                            / (1000 * 60 * 60 * 24)) + 1;
                                     daysPlanned.add(durationInDays);
                                     totalPlannedDays += durationInDays;
                                 }
@@ -129,7 +131,7 @@ public class DestinationsPage extends Fragment {
                         }
 
                         // Update the plannedDays in travelStats
-                        DB.child("users").child(userId).child("travelStats")
+                        db.child("users").child(userId).child("travelStats")
                                 .child("plannedDays")
                                 .setValue(totalPlannedDays);
 
@@ -160,7 +162,9 @@ public class DestinationsPage extends Fragment {
     }
 
     private void updateStatsDisplay(TravelStats stats) {
-        if (stats == null) {return};
+        if (stats == null) {
+            return;
+        }
 
         if (allottedDaysText != null) {
             allottedDaysText.setText(String.format("Allotted Days: %d", stats.getAllottedDays()));
@@ -182,7 +186,9 @@ public class DestinationsPage extends Fragment {
     }
 
     private void openTravelLogForm() {
-        if (getContext() == null) return;
+        if (getContext() == null) {
+            return;
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.travel_log_form, null);
@@ -208,21 +214,23 @@ public class DestinationsPage extends Fragment {
                             Date endDate = sdf.parse(endTimeStr);
 
                             if (startDate != null && endDate != null) {
-                                DatabaseReference DB = new DBViewModel().getDB();
+                                DatabaseReference db = new DBViewModel().getDB();
                                 DestinationModel destination = new DestinationModel(
                                         startDate.getTime(),
                                         endDate.getTime(),
                                         location
                                 );
-                                DB.child("users").child(userId).child("destinations")
+                                db.child("users").child(userId).child("destinations")
                                         .child(location + startDate.getTime())
                                         .setValue(destination);
                             }
                         } catch (ParseException e) {
-                            Toast.makeText(getContext(), "Invalid date format", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Invalid date format",
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Please fill all fields",
+                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -230,7 +238,9 @@ public class DestinationsPage extends Fragment {
     }
 
     private void openCalculateTimeForm() {
-        if (getContext() == null) return;
+        if (getContext() == null) {
+            return;
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.calculate_vacationtime, null);
@@ -270,9 +280,15 @@ public class DestinationsPage extends Fragment {
         String endDateStr = endDateInput.getText().toString();
 
         int filledFields = 0;
-        if (!durationStr.isEmpty()) filledFields++;
-        if (!startDateStr.isEmpty()) filledFields++;
-        if (!endDateStr.isEmpty()) filledFields++;
+        if (!durationStr.isEmpty()) {
+            filledFields++;
+        }
+        if (!startDateStr.isEmpty()) {
+            filledFields++;
+        }
+        if (!endDateStr.isEmpty()) {
+            filledFields++;
+        }
 
         if (filledFields != 2) {
             Toast.makeText(getContext(), "Please fill exactly two fields to calculate the third",
@@ -318,7 +334,8 @@ public class DestinationsPage extends Fragment {
         }
     }
 
-    private void saveVacationTime(EditText durationInput, EditText startTimeInput, EditText endTimeInput) {
+    private void saveVacationTime(EditText durationInput, EditText startTimeInput,
+                                  EditText endTimeInput) {
         if (userId == null || userId.isEmpty()) {
             Toast.makeText(getContext(), "User not authenticated. Please log in again.",
                     Toast.LENGTH_SHORT).show();
@@ -327,7 +344,8 @@ public class DestinationsPage extends Fragment {
 
         String durationStr = durationInput.getText().toString();
         if (durationStr.isEmpty()) {
-            Toast.makeText(getContext(), "Please calculate duration first", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Please calculate duration first",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -341,7 +359,9 @@ public class DestinationsPage extends Fragment {
     }
 
     private void setupDatePicker(EditText editText, String title) {
-        if (editText == null || getContext() == null) return;
+        if (editText == null || getContext() == null) {
+            return;
+        }
 
         editText.setFocusable(false);
         editText.setOnClickListener(v -> {

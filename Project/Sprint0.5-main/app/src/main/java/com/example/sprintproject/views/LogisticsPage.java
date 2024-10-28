@@ -5,39 +5,32 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 
-import androidx.annotation.NonNull;
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
 
 import android.util.Log;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.EditText;
 import android.widget.Toast;
-import androidx.fragment.app.Fragment;
+
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprintproject.R;
-import com.example.sprintproject.views.NotesAdapter;
-import com.example.sprintproject.views.UserListAdapter;
+
 import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 
 import com.example.sprintproject.viewmodels.NotesAdapter;
-import com.example.sprintproject.viewmodels.NotesViewModel;
-import com.example.sprintproject.views.UserListAdapter;
+
 
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.github.mikephil.charting.charts.PieChart;
@@ -47,10 +40,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,9 +88,7 @@ public class LogisticsPage extends Fragment {
         Log.d(TAG, "RecyclerViews initialized successfully");
     }
 
-    private List<String> notes = new ArrayList<>();
-    private List<String> usernames = new ArrayList<>();
-    private NotesAdapter notesAdapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -156,7 +144,8 @@ public class LogisticsPage extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.logistics_notes, null);
         EditText noteInput = dialogView.findViewById(R.id.userNotes);
-        RecyclerView notesView = dialogView.findViewById(R.id.notesRecyclerView); // Changed to match layout ID
+        RecyclerView notesView = dialogView.findViewById(R.id.notesRecyclerView);
+        // Changed to match layout ID
 
         // Set up notes RecyclerView in dialog
         notesView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -304,7 +293,8 @@ public class LogisticsPage extends Fragment {
                     if (!email.isEmpty()) {
                         inviteUser(email);
                     } else {
-                        Toast.makeText(getContext(), "Please enter an email address", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(),
+                                "Please enter an email address", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -314,10 +304,12 @@ public class LogisticsPage extends Fragment {
     private void inviteUser(String email) {
         dbViewModel.inviteUser(email).observe(getViewLifecycleOwner(), success -> {
             if (success) {
-                Toast.makeText(getContext(), "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),
+                        "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
                 loadContributors();
             } else {
-                Toast.makeText(getContext(), "Failed to send invitation. User not found.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),
+                        "Failed to send invitation. User not found.", Toast.LENGTH_SHORT).show();
             }
         });
     }

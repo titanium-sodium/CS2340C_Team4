@@ -22,7 +22,7 @@ import java.util.List;
 
 public class DBViewModel extends ViewModel {
     private static DBViewModel instance;
-    private final DatabaseReference DB;
+    private final DatabaseReference db;
     private final MutableLiveData<TravelStats> travelStatsLiveData;
     private final MutableLiveData<List<UserModel>> contributorsLiveData;
     private final MutableLiveData<List<NotesModel>> notesLiveData;
@@ -30,7 +30,7 @@ public class DBViewModel extends ViewModel {
     private String currentUserId;
 
     public DBViewModel() {
-        DB = DBModel.getInstance();
+        db = DBModel.getInstance();
         travelStatsLiveData = new MutableLiveData<>();
         contributorsLiveData = new MutableLiveData<>();
         notesLiveData = new MutableLiveData<>();
@@ -38,14 +38,16 @@ public class DBViewModel extends ViewModel {
         String mainActivityUserId = MainActivity.getUserId();
         if (mainActivityUserId != null) {
             setCurrentUserId(mainActivityUserId);
-            Log.d(TAG, "Initialized DBViewModel with userId from MainActivity: " + mainActivityUserId);
+            Log.d(TAG, "Initialized DBViewModel with userId from MainActivity: "
+                    + mainActivityUserId);
         } else {
-            Log.d(TAG, "No userId available from MainActivity during DBViewModel initialization");
+            Log.d(TAG,
+                    "No userId available from MainActivity during DBViewModel initialization");
         }
     }
 
     public DatabaseReference getDB() {
-        return DB;
+        return db;
     }
 
     public void setCurrentUserId(String userId) {
@@ -94,13 +96,13 @@ public class DBViewModel extends ViewModel {
     }
 
     private void loadTravelStats() {
-        if (currentUserId == null || DB == null) {
+        if (currentUserId == null || db == null) {
             Log.e(TAG, "Cannot load travel stats: missing requirements");
             travelStatsLiveData.setValue(new TravelStats());
             return;
         }
 
-        DB.child("users").child(currentUserId).child("travelStats")
+        db.child("users").child(currentUserId).child("travelStats")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -110,7 +112,8 @@ public class DBViewModel extends ViewModel {
 
                             if (snapshot.exists()) {
                                 if (snapshot.hasChild("allottedDays")) {
-                                    Object allottedValue = snapshot.child("allottedDays").getValue();
+                                    Object allottedValue = snapshot.child(
+                                            "allottedDays").getValue();
                                     if (allottedValue != null) {
                                         if (allottedValue instanceof Long) {
                                             allottedDays = ((Long) allottedValue).intValue();
@@ -136,7 +139,8 @@ public class DBViewModel extends ViewModel {
                                 }
                             } else {
                                 TravelStats newStats = new TravelStats();
-                                DB.child("users").child(currentUserId).child("travelStats").setValue(newStats);
+                                db.child("users").child(currentUserId)
+                                        .child("travelStats").setValue(newStats);
                             }
 
                             TravelStats stats = new TravelStats();
@@ -172,7 +176,7 @@ public class DBViewModel extends ViewModel {
             return;
         }
 
-        DB.child("users").child(currentUserId).child("contributors")
+        db.child("users").child(currentUserId).child("contributors")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -213,7 +217,7 @@ public class DBViewModel extends ViewModel {
             return;
         }
 
-        DB.child("users").child(currentUserId).child("notes")
+        db.child("users").child(currentUserId).child("notes")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -248,7 +252,7 @@ public class DBViewModel extends ViewModel {
             return result;
         }
 
-        DB.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+        db.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 boolean userFound = false;
@@ -259,13 +263,13 @@ public class DBViewModel extends ViewModel {
                             String invitedUserId = user.getUserId();
 
                             // Add contributor to current user
-                            DB.child("users").child(currentUserId)
+                            db.child("users").child(currentUserId)
                                     .child("contributors")
                                     .child(invitedUserId)
                                     .setValue(email)
                                     .addOnSuccessListener(aVoid -> {
                                         // Add current user as contributor to invited user
-                                        DB.child("users").child(invitedUserId)
+                                        db.child("users").child(invitedUserId)
                                                 .child("contributors")
                                                 .child(currentUserId)
                                                 .setValue(user);
@@ -298,7 +302,7 @@ public class DBViewModel extends ViewModel {
 
     private void shareDataWithContributor(String contributorId) {
         // Share destinations
-        DB.child("users").child(currentUserId).child("destinations")
+        db.child("users").child(currentUserId).child("destinations")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -308,7 +312,7 @@ public class DBViewModel extends ViewModel {
                             for (DataSnapshot child : snapshot.getChildren()) {
                                 destinationsList.add(child.getValue());
                             }
-                            DB.child("users").child(contributorId)
+                            db.child("users").child(contributorId)
                                     .child("destinations")
                                     .setValue(destinationsList);
                         }
@@ -321,7 +325,7 @@ public class DBViewModel extends ViewModel {
                 });
 
         // Share notes
-        DB.child("users").child(currentUserId).child("notes")
+        db.child("users").child(currentUserId).child("notes")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -334,7 +338,7 @@ public class DBViewModel extends ViewModel {
                                     notesList.add(note);
                                 }
                             }
-                            DB.child("users").child(contributorId)
+                            db.child("users").child(contributorId)
                                     .child("notes")
                                     .setValue(notesList);
                         }
@@ -355,7 +359,7 @@ public class DBViewModel extends ViewModel {
         NotesModel newNote = new NotesModel(note);
 
         // First get existing notes
-        DB.child("users").child(currentUserId).child("notes")
+        db.child("users").child(currentUserId).child("notes")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -373,10 +377,11 @@ public class DBViewModel extends ViewModel {
                         notesList.add(newNote);
 
                         // Save entire list
-                        DB.child("users").child(currentUserId).child("notes")
+                        db.child("users").child(currentUserId).child("notes")
                                 .setValue(notesList)
                                 .addOnSuccessListener(aVoid -> loadNotes())
-                                .addOnFailureListener(e -> Log.e(TAG, "Error adding note: " + e.getMessage()));
+                                .addOnFailureListener(e -> Log.e(TAG, "Error adding note: "
+                                        + e.getMessage()));
                     }
 
                     @Override
