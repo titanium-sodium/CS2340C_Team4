@@ -183,7 +183,7 @@ public class DBViewModel extends ViewModel {
                         List<UserModel> contributors = new ArrayList<>();
                         for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
                             String contributorId = contributorSnapshot.getKey();
-                            String contributorEmail = contributorSnapshot.getValue(String.class);
+                            String contributorEmail = contributorSnapshot.child("email").getValue(String.class);
 
                             if (contributorId != null && contributorEmail != null) {
                                 UserModel contributor = new UserModel();
