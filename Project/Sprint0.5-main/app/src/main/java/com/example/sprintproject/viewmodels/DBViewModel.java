@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.example.sprintproject.model.AuthModel;
 import com.example.sprintproject.model.DBModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
@@ -77,7 +79,7 @@ public class DBViewModel extends ViewModel {
             if (mainActivityUserId != null) {
                 setCurrentUserId(mainActivityUserId);
             } else {
-                FirebaseAuth auth = FirebaseAuth.getInstance();
+                FirebaseAuth auth = AuthModel.getInstance();
                 if (auth.getCurrentUser() != null) {
                     setCurrentUserId(auth.getCurrentUser().getUid());
                 }
@@ -255,7 +257,8 @@ public class DBViewModel extends ViewModel {
                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                     try {
                         UserModel user = userSnapshot.getValue(UserModel.class);
-                        if (user != null && user.getEmail().equals(email)) {
+                        Log.d("EMAIL", "useremail:" + user.getEmail()+"email:" + email );
+                        if (user.getEmail() != null && user.getEmail().equals(email)) {
                             String invitedUserId = user.getUserId();
 
                             // Add contributor to current user
@@ -268,7 +271,7 @@ public class DBViewModel extends ViewModel {
                                         // Add current user as contributor to invited user
                                         FirebaseAuth auth = FirebaseAuth.getInstance();
                                         String currentUserEmail = auth.getCurrentUser() != null ?
-                                                auth.getCurrentUser().getEmail() : "";
+                                            auth.getCurrentUser().getEmail() : "";
 
                                         db.child("users").child(invitedUserId)
                                                 .child("contributors")
