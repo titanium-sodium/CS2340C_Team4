@@ -290,7 +290,7 @@ public class LogisticsPage extends Fragment {
                 .setTitle("Invite Travel Partner")
                 .setPositiveButton("Send Invitation", (dialog, which) -> {
                     String email = emailInput.getText().toString().trim();
-                    if (!email.isEmpty()) {
+                    if (email != null && !email.isEmpty()) {
                         inviteUser(email);
                     } else {
                         Toast.makeText(getContext(),
