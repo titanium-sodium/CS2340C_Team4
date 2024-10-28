@@ -6,13 +6,13 @@ public class NotesModel {
     private String userEmail;
     private long timestamp;
 
-    // Default constructor required for Firebase
-    public NotesModel() {
-        this.timestamp = System.currentTimeMillis();
-    }
 
-    public NotesModel(String notes) {
+    public NotesModel(String notes) throws IllegalArgumentException {
+        if (notes.length() == 0) {
+            throw new IllegalArgumentException("Note cannot be empty");
+        }
         this.notes = notes;
+        this.timestamp = System.currentTimeMillis();
         this.timestamp = System.currentTimeMillis();
     }
 

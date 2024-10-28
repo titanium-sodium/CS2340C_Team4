@@ -27,7 +27,10 @@ public class TravelStats {
         return plannedDays;
     }
 
-    public void setPlannedDays(int plannedDays) {
+    public void setPlannedDays(int plannedDays) throws IllegalArgumentException {
+        if (plannedDays > this.allottedDays) {
+            throw new IllegalArgumentException("Cannot have more planned days than total trip days");
+        }
         this.plannedDays = plannedDays;
     }
 }
