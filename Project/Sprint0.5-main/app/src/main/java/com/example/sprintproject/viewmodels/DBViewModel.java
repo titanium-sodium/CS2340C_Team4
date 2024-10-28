@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModel;
 import com.example.sprintproject.model.DBModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
+import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.views.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
@@ -23,6 +25,7 @@ public class DBViewModel extends ViewModel {
     private final DatabaseReference DB;
     private final MutableLiveData<TravelStats> travelStatsLiveData;
     private final MutableLiveData<List<UserModel>> contributorsLiveData;
+    private final MutableLiveData<List<NotesModel>> notesLiveData;
     private static final String TAG = "DBViewModel";
     private String currentUserId;
 
@@ -30,8 +33,8 @@ public class DBViewModel extends ViewModel {
         DB = DBModel.getInstance();
         travelStatsLiveData = new MutableLiveData<>();
         contributorsLiveData = new MutableLiveData<>();
+        notesLiveData = new MutableLiveData<>();
 
-        // Try to get userId from MainActivity on initialization
         String mainActivityUserId = MainActivity.getUserId();
         if (mainActivityUserId != null) {
             setCurrentUserId(mainActivityUserId);
@@ -59,9 +62,9 @@ public class DBViewModel extends ViewModel {
         Log.d(TAG, "Setting currentUserId: " + userId);
         this.currentUserId = userId;
 
-        // Load data with new userId
         loadTravelStats();
         loadContributors();
+        loadNotes();
     }
 
     public String getCurrentUserId() {
@@ -73,14 +76,10 @@ public class DBViewModel extends ViewModel {
             String mainActivityUserId = MainActivity.getUserId();
             if (mainActivityUserId != null) {
                 setCurrentUserId(mainActivityUserId);
-                Log.d(TAG, "Retrieved and set userId from MainActivity: " + mainActivityUserId);
             } else {
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 if (auth.getCurrentUser() != null) {
                     setCurrentUserId(auth.getCurrentUser().getUid());
-                    Log.d(TAG, "Retrieved and set userId from FirebaseAuth: " + currentUserId);
-                } else {
-                    Log.e(TAG, "No userId available from any source");
                 }
             }
         }
@@ -95,28 +94,17 @@ public class DBViewModel extends ViewModel {
     }
 
     private void loadTravelStats() {
-        if (currentUserId == null) {
-            Log.e(TAG, "Cannot load travel stats: userId is null");
+        if (currentUserId == null || DB == null) {
+            Log.e(TAG, "Cannot load travel stats: missing requirements");
             travelStatsLiveData.setValue(new TravelStats());
             return;
         }
-
-        if (DB == null) {
-            Log.e(TAG, "Cannot load travel stats: DB reference is null");
-            travelStatsLiveData.setValue(new TravelStats());
-            return;
-        }
-
-        Log.d(TAG, "Loading travel stats for userId: " + currentUserId);
 
         DB.child("users").child(currentUserId).child("travelStats")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         try {
-                            Log.d(TAG, "Snapshot exists: " + snapshot.exists());
-                            Log.d(TAG, "Snapshot value: " + snapshot.getValue());
-
                             int allottedDays = 0;
                             int plannedDays = 0;
 
@@ -147,7 +135,6 @@ public class DBViewModel extends ViewModel {
                                     }
                                 }
                             } else {
-                                // Initialize travel stats for new users
                                 TravelStats newStats = new TravelStats();
                                 DB.child("users").child(currentUserId).child("travelStats").setValue(newStats);
                             }
@@ -190,38 +177,64 @@ public class DBViewModel extends ViewModel {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         List<UserModel> contributors = new ArrayList<>();
-
                         for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
                             String contributorId = contributorSnapshot.getKey();
-                            if (contributorId != null) {
-                                DB.child("users").child(contributorId)
-                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot userSnapshot) {
-                                                UserModel user = userSnapshot.getValue(UserModel.class);
-                                                if (user != null) {
-                                                    contributors.add(user);
-                                                    contributorsLiveData.setValue(contributors);
-                                                }
-                                            }
+                            String contributorEmail = contributorSnapshot.getValue(String.class);
 
-                                            @Override
-                                            public void onCancelled(DatabaseError error) {
-                                                Log.e(TAG, "Error loading contributor: " + error.getMessage());
-                                            }
-                                        });
+                            if (contributorId != null && contributorEmail != null) {
+                                UserModel contributor = new UserModel();
+                                contributor.setUserId(contributorId);
+                                contributor.setEmail(contributorEmail);
+                                contributors.add(contributor);
                             }
                         }
-
-                        if (!snapshot.exists()) {
-                            contributorsLiveData.setValue(new ArrayList<>());
-                        }
+                        contributorsLiveData.setValue(contributors);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError error) {
                         Log.e(TAG, "Error loading contributors: " + error.getMessage());
                         contributorsLiveData.setValue(new ArrayList<>());
+                    }
+                });
+    }
+
+    public LiveData<List<NotesModel>> getNotes() {
+        if (notesLiveData.getValue() == null) {
+            loadNotes();
+        }
+        return notesLiveData;
+    }
+
+    private void loadNotes() {
+        if (currentUserId == null) {
+            Log.e(TAG, "Cannot load notes: userId is null");
+            notesLiveData.setValue(new ArrayList<>());
+            return;
+        }
+
+        DB.child("users").child(currentUserId).child("notes")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        List<NotesModel> notes = new ArrayList<>();
+                        for (DataSnapshot noteSnapshot : snapshot.getChildren()) {
+                            try {
+                                NotesModel note = noteSnapshot.getValue(NotesModel.class);
+                                if (note != null) {
+                                    notes.add(note);
+                                }
+                            } catch (DatabaseException e) {
+                                Log.e(TAG, "Error parsing note: " + e.getMessage());
+                            }
+                        }
+                        notesLiveData.setValue(notes);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Log.e(TAG, "Error loading notes: " + error.getMessage());
+                        notesLiveData.setValue(new ArrayList<>());
                     }
                 });
     }
@@ -235,34 +248,37 @@ public class DBViewModel extends ViewModel {
             return result;
         }
 
-        // Find user by email similar to LoginPage approach
         DB.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 boolean userFound = false;
                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    UserModel user = userSnapshot.getValue(UserModel.class);
-                    if (user != null && user.getEmail().equals(email)) {
-                        // Found the user, add them as contributor
-                        String invitedUserId = user.getUserId();
-                        DB.child("users").child(currentUserId)
-                                .child("contributors")
-                                .child(invitedUserId)
-                                .setValue(true)
-                                .addOnSuccessListener(aVoid -> {
-                                    result.setValue(true);
-                                    // Also add the current user as contributor to invited user's list
-                                    DB.child("users").child(invitedUserId)
-                                            .child("contributors")
-                                            .child(currentUserId)
-                                            .setValue(true);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e(TAG, "Failed to add contributor: " + e.getMessage());
-                                    result.setValue(false);
-                                });
-                        userFound = true;
-                        break;
+                    try {
+                        UserModel user = userSnapshot.getValue(UserModel.class);
+                        if (user != null && user.getEmail().equals(email)) {
+                            String invitedUserId = user.getUserId();
+
+                            // Add contributor to current user
+                            DB.child("users").child(currentUserId)
+                                    .child("contributors")
+                                    .child(invitedUserId)
+                                    .setValue(email)
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Add current user as contributor to invited user
+                                        DB.child("users").child(invitedUserId)
+                                                .child("contributors")
+                                                .child(currentUserId)
+                                                .setValue(user);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e(TAG, "Failed to add contributor: " + e.getMessage());
+                                        result.setValue(false);
+                                    });
+                            userFound = true;
+                            break;
+                        }
+                    } catch (DatabaseException e) {
+                        Log.e(TAG, "Error parsing user data: " + e.getMessage());
                     }
                 }
                 if (!userFound) {
@@ -280,15 +296,93 @@ public class DBViewModel extends ViewModel {
         return result;
     }
 
-    public void updateAllottedDays(int days) {
-        if (days >= 0 && currentUserId != null) {
-            DB.child("users").child(currentUserId).child("destinations").child("duration")
-                    .setValue(days)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "Successfully updated allotted days to: " + days);
-                        loadTravelStats();
-                    })
-                    .addOnFailureListener(e -> Log.e(TAG, "Failed to update allotted days: " + e.getMessage()));
+    private void shareDataWithContributor(String contributorId) {
+        // Share destinations
+        DB.child("users").child(currentUserId).child("destinations")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Convert to List before saving
+                            List<Object> destinationsList = new ArrayList<>();
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                destinationsList.add(child.getValue());
+                            }
+                            DB.child("users").child(contributorId)
+                                    .child("destinations")
+                                    .setValue(destinationsList);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error sharing data: " + error.getMessage());
+                    }
+                });
+
+        // Share notes
+        DB.child("users").child(currentUserId).child("notes")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Convert to List before saving
+                            List<NotesModel> notesList = new ArrayList<>();
+                            for (DataSnapshot child : snapshot.getChildren()) {
+                                NotesModel note = child.getValue(NotesModel.class);
+                                if (note != null) {
+                                    notesList.add(note);
+                                }
+                            }
+                            DB.child("users").child(contributorId)
+                                    .child("notes")
+                                    .setValue(notesList);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error sharing notes: " + error.getMessage());
+                    }
+                });
+    }
+
+    public void addNote(String note) {
+        if (currentUserId == null || note.isEmpty()) {
+            return;
         }
+
+        NotesModel newNote = new NotesModel(note);
+
+        // First get existing notes
+        DB.child("users").child(currentUserId).child("notes")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<NotesModel> notesList = new ArrayList<>();
+
+                        // Add existing notes
+                        for (DataSnapshot noteSnap : snapshot.getChildren()) {
+                            NotesModel existingNote = noteSnap.getValue(NotesModel.class);
+                            if (existingNote != null) {
+                                notesList.add(existingNote);
+                            }
+                        }
+
+                        // Add new note
+                        notesList.add(newNote);
+
+                        // Save entire list
+                        DB.child("users").child(currentUserId).child("notes")
+                                .setValue(notesList)
+                                .addOnSuccessListener(aVoid -> loadNotes())
+                                .addOnFailureListener(e -> Log.e(TAG, "Error adding note: " + e.getMessage()));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error reading existing notes: " + error.getMessage());
+                    }
+                });
     }
 }
