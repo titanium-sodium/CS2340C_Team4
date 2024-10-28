@@ -112,29 +112,31 @@ public class DestinationsPage extends Fragment {
                         destinations.clear();
                         daysPlanned.clear();
 
+                        int totalPlannedDays = 0;
+
                         for (DataSnapshot destinationSnapshot : snapshot.getChildren()) {
                             if (!destinationSnapshot.getKey().equals("notes")) {
                                 DestinationModel destination = destinationSnapshot
                                         .getValue(DestinationModel.class);
                                 if (destination != null) {
                                     destinations.add(destination.getLocation());
-                                    // Calculate duration from start and end dates
-                                    long durationInMillis = destination
-                                            .getEndDate() - destination.getStartDate();
-                                    int durationInDays = (int) (durationInMillis
-                                            / (1000 * 60 * 60 * 24)) + 1;
+                                    long durationInMillis = destination.getEndDate() - destination.getStartDate();
+                                    int durationInDays = (int) (durationInMillis / (1000 * 60 * 60 * 24)) + 1;
                                     daysPlanned.add(durationInDays);
+                                    totalPlannedDays += durationInDays;
                                 }
                             }
                         }
+
+                        // Update the plannedDays in travelStats
+                        DB.child("users").child(userId).child("travelStats")
+                                .child("plannedDays")
+                                .setValue(totalPlannedDays);
 
                         // Update the adapter
                         if (destinationAdapter != null) {
                             destinationAdapter.notifyDataSetChanged();
                         }
-
-                        Log.d("DestinationsPage", "Loaded destinations: "
-                                + destinations.size());
                     }
 
                     @Override
