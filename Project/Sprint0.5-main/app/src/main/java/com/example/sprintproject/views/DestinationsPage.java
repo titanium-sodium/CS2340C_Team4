@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,7 +28,7 @@ import java.util.Locale;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DestinationModel;
-import com.example.sprintproject.model.DestinationsRepository;
+
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
@@ -103,8 +104,8 @@ public class DestinationsPage extends Fragment {
     }
 
     private void loadDestinationsData() {
-        DatabaseReference DB = new DBViewModel().getDB();
-        DB.child("users").child(userId).child("destinations")
+        DatabaseReference db = new DBViewModel().getDB();
+        db.child("users").child(userId).child("destinations")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -113,12 +114,15 @@ public class DestinationsPage extends Fragment {
 
                         for (DataSnapshot destinationSnapshot : snapshot.getChildren()) {
                             if (!destinationSnapshot.getKey().equals("notes")) {
-                                DestinationModel destination = destinationSnapshot.getValue(DestinationModel.class);
+                                DestinationModel destination = destinationSnapshot
+                                        .getValue(DestinationModel.class);
                                 if (destination != null) {
                                     destinations.add(destination.getLocation());
                                     // Calculate duration from start and end dates
-                                    long durationInMillis = destination.getEndDate() - destination.getStartDate();
-                                    int durationInDays = (int) (durationInMillis / (1000 * 60 * 60 * 24)) + 1;
+                                    long durationInMillis = destination
+                                            .getEndDate() - destination.getStartDate();
+                                    int durationInDays = (int) (durationInMillis
+                                            / (1000 * 60 * 60 * 24)) + 1;
                                     daysPlanned.add(durationInDays);
                                 }
                             }
@@ -129,12 +133,14 @@ public class DestinationsPage extends Fragment {
                             destinationAdapter.notifyDataSetChanged();
                         }
 
-                        Log.d("DestinationsPage", "Loaded destinations: " + destinations.size());
+                        Log.d("DestinationsPage", "Loaded destinations: "
+                                + destinations.size());
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("DestinationsPage", "Error loading destinations: " + error.getMessage());
+                        Log.e("DestinationsPage", "Error loading destinations: "
+                                + error.getMessage());
                     }
                 });
     }
@@ -147,11 +153,12 @@ public class DestinationsPage extends Fragment {
     }
 
     private void observeTravelStats() {
-        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(), this::updateStatsDisplay);
+        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(),
+                this::updateStatsDisplay);
     }
 
     private void updateStatsDisplay(TravelStats stats) {
-        if (stats == null) return;
+        if (stats == null) {return};
 
         if (allottedDaysText != null) {
             allottedDaysText.setText(String.format("Allotted Days: %d", stats.getAllottedDays()));

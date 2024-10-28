@@ -28,7 +28,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
     @Override
     public NotesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_note, parent,false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_note, parent, false);
         return new ViewHolder(view);
 
     }
@@ -50,8 +51,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView noteText;
-        public TextView usernameText;
+        private TextView noteText;
+        private TextView usernameText;
 
         public ViewHolder(@NonNull View itemView) {
 
@@ -61,6 +62,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder> 
 
         }
 
+        public TextView getNoteText() {
+            return noteText;
+        }
+        public TextView getUsernameText() {
+            return usernameText;
+        }
     }
 
 }

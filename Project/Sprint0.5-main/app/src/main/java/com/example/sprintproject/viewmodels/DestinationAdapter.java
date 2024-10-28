@@ -1,5 +1,4 @@
 package com.example.sprintproject.viewmodels;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +24,11 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
     @NonNull
     @Override
-    public DestinationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DestinationAdapter.ViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent, int viewType) {
         //We inflate the layout here
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_destination, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_destination, parent, false);
         return new ViewHolder(view);
     }
 
@@ -45,14 +46,21 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView destinationText;
-        public TextView daysPlannedText;
+        private TextView destinationText;
+        private TextView daysPlannedText;
 
         public ViewHolder(@NonNull View itemView) {
             //takes the variables destinationText and daysPlannedText and passes the data onto text
             super(itemView);
             destinationText = itemView.findViewById(R.id.destinationText);
             daysPlannedText = itemView.findViewById(R.id.daysText);
+        }
+        public TextView getDestinationText() {
+            return destinationText;
+        }
+
+        public TextView getDaysPlannedText() {
+            return daysPlannedText;
         }
     }
 }
