@@ -9,6 +9,7 @@ import com.example.sprintproject.model.DestinationsRepository;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -197,6 +198,49 @@ public class ExampleUnitTest {
                 assertFalse(result.isSuccessful());
             });
         });
+    }
+
+    //----------------------------------------------deleteDestination-----------------------------------------------------//
+    // Joni's test cases
+
+    @Test
+    public void testDeleteDestination() {
+        DestinationsRepository repository = DestinationsRepository.getInstance();
+        DestinationModel destination = new DestinationModel(20241123, 20241201, "Bali");
+        Task<String> task;
+        task = repository.addDestination(destination, "user1");
+        // checks if deleteDestination is successful
+        task.addOnCompleteListener(result -> {
+            assertTrue(result.isSuccessful());
+            assertNotNull(result.getResult());
+        });
+    }
+    @Test
+    public void testEmptyDestination() {
+        DestinationsRepository repository = DestinationsRepository.getInstance();
+        try {
+            repository.deleteDestination("Atlanta", "user999");
+            fail("Expected NoSuchElementException, repository is empty");
+        } catch (NoSuchElementException e) {
+            assertEquals("Repository is empty", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNotFoundDestination() {
+        DestinationsRepository repository = DestinationsRepository.getInstance();
+
+        DestinationModel destination = new DestinationModel(20241123, 20241201,"Bali");
+        DestinationModel destination2 = new DestinationModel(20241225, 20250102,"Canada");
+
+        repository.addDestination(destination, "user1");
+        repository.addDestination(destination2, "user2");
+        try {
+            repository.deleteDestination("Atlanta", "user999");
+            fail("Expected NoSuchElementException, repository does not contain that destination");
+        } catch (NoSuchElementException e) {
+            assertEquals("Destination not found", e.getMessage());
+        }
     }
 
 
