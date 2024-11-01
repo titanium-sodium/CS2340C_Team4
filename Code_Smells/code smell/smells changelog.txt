@@ -1,0 +1,9 @@
+Switch Statement in Order.java; change to an if/else statement, since there are only two discount types.
+
+GiftCardItem.java is a Lazy Class; Since there's code checking if an item is an instance of GiftCardItem (Order's hasGiftCard method), deletion of the class isn't an option - instead, move the hasGiftCard method to GiftCardItem, and give it an item List parameter.
+
+Feature Envy in Order.java; the sendConfirmationEmail method seems more concerned with the EmailSender class - move the method from Order.java to EmailSender.java.
+
+Data Classes: Item.java and TaxableItem.java; move the logic for calculating the total price of a TaxableItem to a new method in TaxableItem.java or Item.java.
+
+Large Class: Order.java; Method Extractions - see above.
