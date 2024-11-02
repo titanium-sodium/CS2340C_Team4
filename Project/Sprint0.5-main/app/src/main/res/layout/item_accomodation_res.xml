@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="15dp"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Address"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/hotelText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="3dp"
+            android:text="Hotel Name"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingTop="3dp" >
+
+            <TextView
+                android:id="@+id/ciText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check-in:"
+                android:textStyle="bold|italic"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/ciTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:text="MM/DD, HH:MM" />
+
+            <TextView
+                android:id="@+id/coText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check-out:"
+                android:textStyle="bold|italic"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/coTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:text="MM/DD, HH:MM" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingTop="3dp"
+            android:paddingBottom="2dp">
+
+            <TextView
+                android:id="@+id/roomsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rooms Booked:"
+                android:textStyle="bold|italic"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/roomCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:text="XX" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/roomTypeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="Room Type"
+            android:textStyle="bold"
+            android:background="@drawable/rounded_corner_bg"/>
+
+        <TextView
+            android:id="@+id/websiteText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="2dp"
+
+            android:text="www.examplewebsite.com"
+            android:textStyle="italic"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
