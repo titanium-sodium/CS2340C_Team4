@@ -4,6 +4,8 @@ GiftCardItem.java is a Lazy Class; Since there's code checking if an item is an 
 
 Feature Envy in Order.java; the sendConfirmationEmail method seems more concerned with the EmailSender class - move the method from Order.java to EmailSender.java.
 
-Data Classes: Item.java and TaxableItem.java; move the logic for calculating the total price of a TaxableItem to a new method in TaxableItem.java or Item.java.
+Data Classes: Item.java and TaxableItem.java; move the logic for calculating the total price of a TaxableItem to a new method in TaxableItem.java.
 
 Large Class: Order.java; Method Extractions - see above.
+
+Variable Extraction: Extracted two hard code numbers for the discounts from Order.java's calculateTotalPrice method in order to maintain flexibility and clarity.

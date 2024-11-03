@@ -12,28 +12,25 @@ public class Order {
     }
 
     public double calculateTotalPrice() {
-    	double total = 0.0;
-    	for (Item item : items) {
-        	double price = item.getPrice();
+        double total = 0.0;
+        final double FIXED_DISCOUNT = 10.0;
+        final double PERCENT_DISCOUNT = 0.9;
+        for (Item item : items) {
+            double price = item.getPrice();
             if (item.getDiscountType() == DiscountType.PERCENTAGE) {
                 price -= item.getDiscountAmount() * price;
             } else {
                 price -= item.getDiscountAmount();
             }
-        	total += price * item.getQuantity();
-       	    if (item instanceof TaxableItem) {
-                TaxableItem taxableItem = (TaxableItem) item;
-                double tax = taxableItem.getTaxRate() / 100.0 * item.getPrice();
-                total += tax;
-            }
+            total += price * item.getQuantity();
         }
-    	if (hasGiftCard(items)) {
-        	total -= 10.0; // subtract $10 for gift card
-    	}
-    	if (total > 100.0) {
-        	total *= 0.9; // apply 10% discount for orders over $100
-    	}
-    	return total;
+        if (GiftCardItem.hasGiftCard(items)) {
+            total -= FIXED_DISCOUNT; // subtract $10 for gift card
+        }
+        if (total > 100.0) {
+            total *= PERCENT_DISCOUNT; // apply 10% discount for orders over $100
+        }
+        return total;
     }
 
     public void addItem(Item item) {
@@ -68,18 +65,18 @@ public class Order {
         this.customerEmail = customerEmail;
     }
 
-   public void printOrder() {
+    public void printOrder() {
         System.out.println("Order Details:");
         for (Item item : items) {
             System.out.println(item.getName() + " - " + item.getPrice());
         }
-   }
+    }
 
-   public void addItemsFromAnotherOrder(Order otherOrder) {
+    public void addItemsFromAnotherOrder(Order otherOrder) {
         for (Item item : otherOrder.getItems()) {
             items.add(item);
         }
-   }
+    }
 
 }
 
