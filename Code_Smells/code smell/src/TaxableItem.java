@@ -4,14 +4,13 @@ public class TaxableItem extends Item {
     
     public TaxableItem(String name, double price, int quantity, DiscountType discountType, double discountAmount){
         super(name, price, quantity, discountType, discountAmount);
+        price = applyTaxRate(price);
     }
 
-    public double getTaxRate(){
-        return taxRate;
-    }
-    public void setTaxRate(double rate) {
-        if(rate>=0){
-            taxRate = rate;
-        }
+
+    public double applyTaxRate(double price) {
+        double tax = taxRate / 100.0 * price;
+        price += tax;
+        return  price;
     }
 }
