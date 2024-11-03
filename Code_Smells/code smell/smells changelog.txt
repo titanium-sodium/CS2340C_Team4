@@ -1,3 +1,5 @@
+Participating Members: Julian McCorkle, Zachary Doran, Tina Chen, Benjamin Liu, Jacqueline Isbell
+
 Switch Statement in Order.java; change to an if/else statement, since there are only two discount types.
 
 GiftCardItem.java is a Lazy Class; Since there's code checking if an item is an instance of GiftCardItem (Order's hasGiftCard method), deletion of the class isn't an option - instead, move the hasGiftCard method to GiftCardItem, and give it an item List parameter.
