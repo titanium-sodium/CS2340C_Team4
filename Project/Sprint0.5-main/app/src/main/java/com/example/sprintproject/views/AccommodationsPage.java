@@ -1,5 +1,6 @@
 package com.example.sprintproject.views;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,8 +8,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.sprintproject.R;
+import com.example.sprintproject.model.LodgingModel;
+import com.example.sprintproject.model.ReservationModel;
+import com.example.sprintproject.viewmodels.AccomodationsViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,46 +23,55 @@ import com.example.sprintproject.R;
  */
 public class AccommodationsPage extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
-
+    private AccomodationsViewModel accomodationsViewModel;
     public AccommodationsPage() {
-        // Required empty public constructor
+        accomodationsViewModel = new AccomodationsViewModel();
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AccommodationsPage.
-     */
-    public static AccommodationsPage newInstance(String param1, String param2) {
+    public static AccommodationsPage newInstance() {
         AccommodationsPage fragment = new AccommodationsPage();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.accomodation_screen, container, false);
+        View view = inflater.inflate(R.layout.accomodation_screen, container, false);
+
+        //Button
+        view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccomodationsForm());
+
+        return view;
+    }
+
+    private void openAccomodationsForm() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.accomodation_res_dialog, null);
+        EditText checkInInput = dialogView.findViewById(R.id.checkInEditText);
+        EditText checkOutInput = dialogView.findViewById(R.id.checkOutInput);
+        EditText addressInput = dialogView.findViewById(R.id.addressEditText);
+        EditText numberRooms = dialogView.findViewById(R.id.roomCountEditText);
+        EditText roomType = dialogView.findViewById(R.id.roomTypeDropdown);
+
+        builder.setView(dialogView)
+                .setTitle("New Accomodation")
+                .setPositiveButton("Add Accomodation", (dialog, which) -> {
+
+                    if (true) {
+                        accomodationsViewModel.addAccomodations(new LodgingModel());
+                    } else {
+                        Toast.makeText(getContext(),
+                                "Please enter all fields", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }

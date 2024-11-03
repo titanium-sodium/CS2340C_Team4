@@ -4,6 +4,8 @@ import com.example.sprintproject.model.DiningDBModel;
 import com.example.sprintproject.model.ReservationModel;
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.UUID;
+
 public class DiningReservationViewModel {
     private DatabaseReference diningDB;
     public DiningReservationViewModel() {
@@ -11,6 +13,9 @@ public class DiningReservationViewModel {
     }
 
     public void addReservation(ReservationModel reservationModel) {
-        //TODO
+        String reservationId = UUID.randomUUID().toString();
+
+        diningDB.child(reservationId).setValue(reservationModel);
+
     }
 }

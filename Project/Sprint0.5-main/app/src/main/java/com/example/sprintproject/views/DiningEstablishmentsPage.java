@@ -79,7 +79,7 @@ public class DiningEstablishmentsPage extends Fragment {
                         ));
                     } else {
                         Toast.makeText(getContext(),
-                                "Please enter an email address", Toast.LENGTH_SHORT).show();
+                                "Please enter all fields", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
