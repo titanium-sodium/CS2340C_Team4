@@ -61,7 +61,7 @@
             android:textSize="16sp"/>
 
         <EditText
-            android:id="@+id/editTextText3"
+            android:id="@+id/checkOutInput"
             android:layout_width="221dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -29,6 +29,8 @@ import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 
+import com.example.sprintproject.viewmodels.ChartViewModel;
+import com.example.sprintproject.viewmodels.InviteUserViewModel;
 import com.example.sprintproject.views.NotesAdapter;
 
 
@@ -53,6 +55,8 @@ public class LogisticsPage extends Fragment {
     private List<UserModel> contributors;
     private List<NotesModel> notes;
     private DBViewModel dbViewModel;
+    private ChartViewModel chartViewModel = new ChartViewModel();
+    private InviteUserViewModel inviteUserViewModel = new InviteUserViewModel();
     private FirebaseAuth mAuth;
     private String userId;
     private static final String TAG = "LogisticsPage";
@@ -165,13 +169,13 @@ public class LogisticsPage extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
+    //Main method for chart visualization
     private void showVisualization() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View chartView = getLayoutInflater().inflate(R.layout.chart_dialog, null);
         PieChart pieChart = chartView.findViewById(R.id.pieChart);
 
-        configureChart(pieChart);
+        chartViewModel.configureChart(pieChart);
         loadChartData(pieChart);
 
         AlertDialog dialog = builder.setView(chartView)
@@ -192,94 +196,7 @@ public class LogisticsPage extends Fragment {
         dialog.show();
     }
 
-    private void configureChart(PieChart pieChart) {
-        pieChart.setUsePercentValues(true);
-        pieChart.getDescription().setEnabled(false);
-        pieChart.setExtraOffsets(5, 10, 5, 5);
-        pieChart.setDragDecelerationFrictionCoef(0.95f);
-        pieChart.setDrawHoleEnabled(true);
-        pieChart.setHoleColor(Color.WHITE);
-        pieChart.setTransparentCircleRadius(61f);
-        pieChart.setDrawCenterText(true);
-        pieChart.setCenterTextSize(16f);
 
-        Legend legend = pieChart.getLegend();
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
-        legend.setDrawInside(false);
-        legend.setTextSize(12f);
-    }
-
-    private void loadChartData(PieChart pieChart) {
-        dbViewModel.getTravelStats().observe(getViewLifecycleOwner(), stats -> {
-            if (stats != null) {
-                updateChartWithStats(pieChart, stats);
-            } else {
-                showEmptyChart(pieChart);
-            }
-        });
-    }
-
-    private void updateChartWithStats(PieChart pieChart, TravelStats stats) {
-        List<PieEntry> entries = new ArrayList<>();
-        float totalValue = stats.getAllottedDays() + stats.getPlannedDays();
-
-        if (totalValue > 0) {
-            entries.add(new PieEntry(stats.getAllottedDays(), "Allotted Days"));
-            entries.add(new PieEntry(stats.getPlannedDays(), "Planned Days"));
-        } else {
-            entries.add(new PieEntry(1, "No Travel Days"));
-        }
-
-        PieDataSet dataSet = new PieDataSet(entries, "Travel Days Distribution");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.rgb(64, 89, 128));
-        colors.add(Color.rgb(231, 76, 60));
-        dataSet.setColors(colors);
-
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter(pieChart));
-        data.setValueTextSize(14f);
-        data.setValueTextColor(Color.WHITE);
-
-        pieChart.setData(data);
-
-        String summaryText = createSummaryText(stats, totalValue);
-        pieChart.setCenterText(summaryText);
-
-        pieChart.animateY(1400);
-        pieChart.invalidate();
-    }
-
-    private String createSummaryText(TravelStats stats, float totalValue) {
-        if (totalValue > 0) {
-            String text = String.format("Allotted: %d days\nPlanned: %d days",
-                    stats.getAllottedDays(), stats.getPlannedDays());
-            if (stats.getPlannedDays() > stats.getAllottedDays() && stats.getAllottedDays() > 0) {
-                text += "\n⚠️ Exceeds allotted time";
-            }
-            return text;
-        }
-        return "No travel days recorded";
-    }
-
-    private void showEmptyChart(PieChart pieChart) {
-        List<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(1, "No Data Available"));
-
-        PieDataSet dataSet = new PieDataSet(entries, "");
-        dataSet.setColor(Color.GRAY);
-
-        PieData data = new PieData(dataSet);
-        data.setValueFormatter(new PercentFormatter(pieChart));
-        pieChart.setData(data);
-        pieChart.setCenterText("No travel data available");
-        pieChart.invalidate();
-    }
 
     private void showInviteDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -302,7 +219,7 @@ public class LogisticsPage extends Fragment {
     }
 
     private void inviteUser(String email) {
-        dbViewModel.inviteUser(email).observe(getViewLifecycleOwner(), success -> {
+        inviteUserViewModel.inviteUser(email).observe(getViewLifecycleOwner(), success -> {
             if (success) {
                 Toast.makeText(getContext(),
                         "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
@@ -331,6 +248,15 @@ public class LogisticsPage extends Fragment {
                 notes.addAll(notesList);
             }
             notesAdapter.notifyDataSetChanged();
+        });
+    }
+    private void loadChartData(PieChart pieChart) {
+        dbViewModel.getTravelStats().observe(getViewLifecycleOwner(), stats -> {
+            if (stats != null) {
+                chartViewModel.updateChartWithStats(pieChart, stats);
+            } else {
+                chartViewModel.showEmptyChart(pieChart);
+            }
         });
     }
 }
