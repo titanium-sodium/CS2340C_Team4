@@ -1,7 +1,7 @@
 package com.example.sprintproject.viewmodels;
 
 import com.example.sprintproject.model.DiningDBModel;
-import com.example.sprintproject.model.ReservationModel;
+import com.example.sprintproject.model.DiningReservation;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.UUID;
@@ -12,10 +12,14 @@ public class DiningReservationViewModel {
         diningDB = DiningDBModel.getInstance();
     }
 
-    public void addReservation(ReservationModel reservationModel) {
+    public void addReservation(DiningReservation reservationModel) {
         String reservationId = UUID.randomUUID().toString();
 
         diningDB.child(reservationId).setValue(reservationModel);
+        updateUI();
+    }
 
+    private void updateUI() {
+        //TODO Andres
     }
 }

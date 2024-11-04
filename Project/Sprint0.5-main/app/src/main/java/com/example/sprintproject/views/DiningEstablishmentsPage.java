@@ -12,8 +12,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sprintproject.R;
-import com.example.sprintproject.model.ReservationModel;
+import com.example.sprintproject.model.DiningReservation;
 import com.example.sprintproject.viewmodels.DiningReservationViewModel;
+import com.example.sprintproject.viewmodels.FilterViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,10 +54,10 @@ public class DiningEstablishmentsPage extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.dining_reservations_screen, container, false);
-
+        FilterViewModel filterButton = new FilterViewModel(true);
         //Button
         view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
-
+        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter()));
         return view;
     }
 
@@ -74,7 +75,7 @@ public class DiningEstablishmentsPage extends Fragment {
                     String time = timeInput.getText().toString().trim();;
                     String location = locationInput.getText().toString().trim();;
                     if (!website.isEmpty() && !time.isEmpty() && !location.isEmpty()) {
-                        diningReservationViewModel.addReservation(new ReservationModel(
+                        diningReservationViewModel.addReservation(new DiningReservation(
                                 MainActivity.getUserId(), website, location, time
                         ));
                     } else {
