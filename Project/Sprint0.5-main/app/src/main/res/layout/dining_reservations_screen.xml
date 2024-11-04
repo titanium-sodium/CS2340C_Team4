@@ -8,7 +8,6 @@
         android:id="@+id/diningText"
         android:layout_width="match_parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toStartOf="recyclerView_dining"
         app:layout_constraintTop_toTopOf="parent"
         android:gravity="center"
         android:layout_height="100dp"
