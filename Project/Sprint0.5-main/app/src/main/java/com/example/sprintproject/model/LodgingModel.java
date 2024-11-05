@@ -10,6 +10,8 @@ public class LodgingModel {
     private int numberOfRooms;
     private String roomType;
     private String location;
+    private String hotelName;
+    private String website;
     private ArrayList<String> notes;
     private ArrayList<String> contributors;
     private int duration;
@@ -29,6 +31,7 @@ public class LodgingModel {
         this.location = location;
         this.notes = new ArrayList<>();
         this.contributors = new ArrayList<>();
+        this.hotelName = hotelName;
         calculateDuration();
     }
 
@@ -77,6 +80,14 @@ public class LodgingModel {
         this.roomType = roomType;
     }
 
+    public void setHotelName(String name) {
+        this.hotelName = name;
+    }
+
+    public void setWebsite(String URL) {
+        this.website = URL;
+    }
+
     public String getLocation() {
         return location;
     }
@@ -107,6 +118,15 @@ public class LodgingModel {
     public ArrayList<String> getContributors() {
         return contributors;
     }
+
+    public String getHotelName() {
+        return hotelName;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
 
     public void setContributors(ArrayList<String> contributors) {
         this.contributors = contributors;
