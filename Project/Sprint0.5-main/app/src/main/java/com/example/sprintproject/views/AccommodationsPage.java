@@ -13,8 +13,8 @@ import android.widget.Toast;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.LodgingModel;
-import com.example.sprintproject.model.ReservationModel;
 import com.example.sprintproject.viewmodels.AccomodationsViewModel;
+import com.example.sprintproject.viewmodels.FilterViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,10 +44,10 @@ public class AccommodationsPage extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.accomodation_screen, container, false);
-
+        FilterViewModel filterButton = new FilterViewModel(true);
         //Button
         view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccomodationsForm());
-
+        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter()));
         return view;
     }
 
@@ -65,7 +65,7 @@ public class AccommodationsPage extends Fragment {
                 .setPositiveButton("Add Accomodation", (dialog, which) -> {
 
                     if (true) {
-                        accomodationsViewModel.addAccomodations(new LodgingModel());
+                        accomodationsViewModel.addAccommodations(new LodgingModel());
                     } else {
                         Toast.makeText(getContext(),
                                 "Please enter all fields", Toast.LENGTH_SHORT).show();
