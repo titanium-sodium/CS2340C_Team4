@@ -9,8 +9,8 @@ import java.util.UUID;
 
 public class DiningReservationViewModel {
     private DatabaseReference diningDB;
-    public DiningReservationViewModel() {
-        diningDB = DiningDBModel.getInstance(MainActivity.getUserId());
+    public DiningReservationViewModel(String userId) {
+        diningDB = DiningDBModel.getInstance(userId);
     }
 
     public void addReservation(DiningReservation reservationModel) {

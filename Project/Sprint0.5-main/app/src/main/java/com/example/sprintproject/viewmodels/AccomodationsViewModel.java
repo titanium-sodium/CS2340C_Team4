@@ -9,8 +9,8 @@ import java.util.UUID;
 
 public class AccomodationsViewModel {
     private DatabaseReference accomodationsDB;
-    public AccomodationsViewModel() {
-        accomodationsDB = AccomodationsDBModel.getInstance(MainActivity.getUserId());
+    public AccomodationsViewModel(String userId) {
+        accomodationsDB = AccomodationsDBModel.getInstance(userId);
     }
 
     public void addAccommodations(AccomodationsModel accomodations) {

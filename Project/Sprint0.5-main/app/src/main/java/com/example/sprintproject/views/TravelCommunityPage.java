@@ -24,9 +24,13 @@ public class TravelCommunityPage extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private String userId;
 
     public TravelCommunityPage() {
         // Required empty public constructor
+    }
+    public TravelCommunityPage(String userId) {
+        this.userId = userId;
     }
 
     /**
