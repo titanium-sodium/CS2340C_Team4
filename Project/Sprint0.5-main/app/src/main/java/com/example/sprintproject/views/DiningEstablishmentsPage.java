@@ -54,10 +54,10 @@ public class DiningEstablishmentsPage extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.dining_reservations_screen, container, false);
-        FilterViewModel filterButton = new FilterViewModel(true);
+        FilterViewModel filterButton = new FilterViewModel(true, "Dining");
         //Button
         view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
-        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter()));
+        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
         return view;
     }
 

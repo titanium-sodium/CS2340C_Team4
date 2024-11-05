@@ -6,12 +6,12 @@ public class AccomodationsDBModel {
     private static AccomodationsDBModel realTimeDBInstance = null;
     private static DatabaseReference dbRef;
 
-    private AccomodationsDBModel() {
-        dbRef = DBModel.getInstance().child("Accomodations");
+    private AccomodationsDBModel(String userId) {
+        dbRef = DBModel.getInstance().child("users").child(userId).child("Accomodations");
     }
-    public static synchronized DatabaseReference getInstance() {
+    public static synchronized DatabaseReference getInstance(String userId) {
         if (realTimeDBInstance == null) {
-            realTimeDBInstance = new AccomodationsDBModel();
+            realTimeDBInstance = new AccomodationsDBModel(userId);
             return dbRef;
         }
         return dbRef;

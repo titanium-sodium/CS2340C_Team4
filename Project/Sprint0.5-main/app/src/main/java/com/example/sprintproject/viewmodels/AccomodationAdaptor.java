@@ -12,15 +12,15 @@ import android.widget.TextView;
 
 import com.example.sprintproject.R;
 
-import com.example.sprintproject.model.LodgingModel;
+import com.example.sprintproject.model.AccomodationsModel;
 
 
 
 public class AccomodationAdaptor extends RecyclerView.Adapter<AccomodationAdaptor.ViewHolder> {
 
-    private List<LodgingModel> lodgingList;
+    private List<AccomodationsModel> lodgingList;
 
-    public AccomodationAdaptor (List<LodgingModel> accReservations) {
+    public AccomodationAdaptor (List<AccomodationsModel> accReservations) {
         this.lodgingList = accReservations;
     }
 
@@ -33,8 +33,7 @@ public class AccomodationAdaptor extends RecyclerView.Adapter<AccomodationAdapto
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        LodgingModel lodgingModel = lodgingList.get(position);
-        holder.hotelText.setText(lodgingModel.getHotelName());
+        AccomodationsModel lodgingModel = lodgingList.get(position);
         holder.ciTimeText.setText("Check-in: " + lodgingModel.getCheckInDate());
         holder.coTimeText.setText("Check-out: " + lodgingModel.getCheckOutDate());
         holder.roomCountText.setText(lodgingModel.getNumberOfRooms());
@@ -51,14 +50,12 @@ public class AccomodationAdaptor extends RecyclerView.Adapter<AccomodationAdapto
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView locationText, hotelText,ciTimeText,coTimeText,
+        private TextView ciTimeText,coTimeText,
                 roomCountText, roomTypeText, websiteText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            locationText = itemView.findViewById(R.id.locationText);
-            hotelText = itemView.findViewById(R.id.hotelText);
             ciTimeText = itemView.findViewById(R.id.ciText);
             coTimeText = itemView.findViewById(R.id.coText);
             roomCountText = itemView.findViewById(R.id.roomCountText);
