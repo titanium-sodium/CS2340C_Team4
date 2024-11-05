@@ -3,25 +3,22 @@ package com.example.sprintproject.model;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class LodgingModel {
+public class AccomodationsModel {
     private String id;
-    private long checkInDate;
-    private long checkOutDate;
-    private int numberOfRooms;
+    private String checkInDate;
+    private String checkOutDate;
+    private String numberOfRooms;
     private String roomType;
     private String location;
-    private String hotelName;
     private String website;
-    private ArrayList<String> notes;
-    private ArrayList<String> contributors;
     private int duration;
 
-    public LodgingModel(long checkInDate, long checkOutDate, int numberOfRooms, String roomType, String location)
+    public AccomodationsModel(String checkInDate, String checkOutDate, String numberOfRooms, String roomType, String location)
             throws IllegalArgumentException {
         if (location.length() == 0) {
             throw new IllegalArgumentException("Invalid location");
         }
-        if (checkInDate <= 0 || checkOutDate <= 0) {
+        if (Integer.parseInt(checkInDate) <= 0 || Integer.parseInt(checkOutDate) <= 0) {
             throw new IllegalArgumentException("Invalid date");
         }
         this.checkInDate = checkInDate;
@@ -29,13 +26,10 @@ public class LodgingModel {
         this.numberOfRooms = numberOfRooms;
         this.roomType = roomType;
         this.location = location;
-        this.notes = new ArrayList<>();
-        this.contributors = new ArrayList<>();
-        this.hotelName = hotelName;
         calculateDuration();
     }
 
-    public LodgingModel() {
+    public AccomodationsModel() {
     }
 
     public String getId() {
@@ -47,28 +41,28 @@ public class LodgingModel {
     }
 
     public long getCheckInDate() {
-        return checkInDate;
+        return Long.parseLong(checkInDate);
     }
 
-    public void setCheckInDate(long checkInDate) {
+    public void setCheckInDate(String checkInDate) {
         this.checkInDate = checkInDate;
         calculateDuration();
     }
 
     public long getCheckOutDate() {
-        return checkOutDate;
+        return Long.parseLong(checkOutDate);
     }
 
-    public void setCheckOutDate(long checkOutDate) {
+    public void setCheckOutDate(String checkOutDate) {
         this.checkOutDate = checkOutDate;
         calculateDuration();
     }
 
     public int getNumberOfRooms() {
-        return numberOfRooms;
+        return Integer.parseInt(numberOfRooms);
     }
 
-    public void setNumberOfRooms(int numberOfRooms) {
+    public void setNumberOfRooms(String numberOfRooms) {
         this.numberOfRooms = numberOfRooms;
     }
 
@@ -80,9 +74,6 @@ public class LodgingModel {
         this.roomType = roomType;
     }
 
-    public void setHotelName(String name) {
-        this.hotelName = name;
-    }
 
     public void setWebsite(String URL) {
         this.website = URL;
@@ -101,43 +92,13 @@ public class LodgingModel {
     }
 
     private void calculateDuration() {
-        duration = (int) TimeUnit.MILLISECONDS.toDays(checkOutDate - checkInDate);
+        duration = (int) TimeUnit.MILLISECONDS.toDays(Long.parseLong(checkOutDate) - Long.parseLong(checkInDate));
         if (duration < 0) {
             duration = 0;
         }
     }
 
-    public ArrayList<String> getNotes() {
-        return notes;
-    }
-
-    public void addNote(String note) {
-        this.notes.add(note);
-    }
-
-    public ArrayList<String> getContributors() {
-        return contributors;
-    }
-
-    public String getHotelName() {
-        return hotelName;
-    }
-
     public String getWebsite() {
         return website;
-    }
-
-
-    public void setContributors(ArrayList<String> contributors) {
-        this.contributors = contributors;
-    }
-
-    public void addContributor(String contributorId) {
-        if (contributors == null) {
-            contributors = new ArrayList<>();
-        }
-        if (!contributors.contains(contributorId)) {
-            contributors.add(contributorId);
-        }
     }
 }

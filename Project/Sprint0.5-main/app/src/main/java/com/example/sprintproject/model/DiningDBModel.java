@@ -6,12 +6,12 @@ public class DiningDBModel {
     private static DiningDBModel realTimeDBInstance = null;
     private static DatabaseReference dbRef;
 
-    private DiningDBModel() {
-        dbRef = DBModel.getInstance().child("dining");
+    private DiningDBModel(String userId) {
+        dbRef = DBModel.getInstance().child("users").child(userId).child("dining");
     }
-    public static synchronized DatabaseReference getInstance() {
+    public static synchronized DatabaseReference getInstance(String userId) {
         if (realTimeDBInstance == null) {
-            realTimeDBInstance = new DiningDBModel();
+            realTimeDBInstance = new DiningDBModel(userId);
             return dbRef;
         }
         return dbRef;
