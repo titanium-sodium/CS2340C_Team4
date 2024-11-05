@@ -25,9 +25,12 @@ public class DiningEstablishmentsPage extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private DiningReservationViewModel diningReservationViewModel;
+    private String userId;
     public DiningEstablishmentsPage() {
-        diningReservationViewModel = new DiningReservationViewModel();
         // Required empty public constructor
+    }
+    public DiningEstablishmentsPage(String userId) {
+        diningReservationViewModel = new DiningReservationViewModel(userId);
     }
 
     /**

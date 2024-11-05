@@ -24,12 +24,14 @@ import com.example.sprintproject.viewmodels.FilterViewModel;
 public class AccommodationsPage extends Fragment {
 
     private AccomodationsViewModel accomodationsViewModel;
-    public AccommodationsPage() {
-        accomodationsViewModel = new AccomodationsViewModel();
+    private static String userId;
+    public AccommodationsPage(String userId) {
+        accomodationsViewModel = new AccomodationsViewModel(userId);
+        this.userId = userId;
     }
 
     public static AccommodationsPage newInstance() {
-        AccommodationsPage fragment = new AccommodationsPage();
+        AccommodationsPage fragment = new AccommodationsPage(userId);
         return fragment;
     }
 

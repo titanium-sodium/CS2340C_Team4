@@ -61,6 +61,10 @@ public class LogisticsPage extends Fragment {
     private String userId;
     private static final String TAG = "LogisticsPage";
 
+    public LogisticsPage(String userId) {
+        this.userId = userId;
+    }
+
     private void initializeRecyclerViews(View view) {
         // Debug logging to help identify the issue
         Log.d(TAG, "Initializing RecyclerViews");

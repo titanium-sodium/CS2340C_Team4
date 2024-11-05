@@ -50,6 +50,10 @@ public class DestinationsPage extends Fragment {
     private List<String> destinations = new ArrayList<>();
     private List<Integer> daysPlanned = new ArrayList<>();
 
+    public DestinationsPage(String userId) {
+        this.userId = userId;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

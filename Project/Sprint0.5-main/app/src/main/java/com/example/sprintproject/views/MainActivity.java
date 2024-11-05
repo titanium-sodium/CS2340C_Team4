@@ -17,11 +17,11 @@ public class MainActivity extends AppCompatActivity {
 
     /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
         this still encompasses it in essence. */
-    private DestinationsPage destinationsPage = new DestinationsPage();
-    private DiningEstablishmentsPage diningEstablishmentsPage = new DiningEstablishmentsPage();
-    protected static LogisticsPage logisticsPage = new LogisticsPage();
-    private AccommodationsPage accommodationsPage = new AccommodationsPage();
-    private TravelCommunityPage travelCommunityPage = new TravelCommunityPage();
+    private DestinationsPage destinationsPage;
+    private DiningEstablishmentsPage diningEstablishmentsPage;
+    protected static LogisticsPage logisticsPage;
+    private AccommodationsPage accommodationsPage;
+    private TravelCommunityPage travelCommunityPage;
 
     public static String getUserId() {
         return userId; }
@@ -33,6 +33,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         userId = getIntent().getStringExtra("userId");
+        destinationsPage = new DestinationsPage(userId);
+        diningEstablishmentsPage = new DiningEstablishmentsPage(userId);
+        logisticsPage = new LogisticsPage(userId);
+        accommodationsPage = new AccommodationsPage(userId);
+        travelCommunityPage = new TravelCommunityPage(userId);
+
 
         Bundle args = new Bundle();
         args.putString("userId", userId);
