@@ -24,7 +24,8 @@ public class DiningAdaptor extends RecyclerView.Adapter<DiningAdaptor.ViewHolder
     @NonNull
     @Override
     public DiningAdaptor.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dining_res, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.item_dining_res, parent, false);
         return new ViewHolder(view);
     }
 

@@ -20,14 +20,15 @@ public class AccomodationAdaptor extends RecyclerView.Adapter<AccomodationAdapto
 
     private List<AccomodationsModel> lodgingList;
 
-    public AccomodationAdaptor (List<AccomodationsModel> accReservations) {
+    public AccomodationAdaptor(List<AccomodationsModel> accReservations) {
         this.lodgingList = accReservations;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_accomodation_res, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.item_accomodation_res, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,8 +51,11 @@ public class AccomodationAdaptor extends RecyclerView.Adapter<AccomodationAdapto
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView ciTimeText,coTimeText,
-                roomCountText, roomTypeText, websiteText;
+        private TextView ciTimeText;
+        private TextView coTimeText;
+        private TextView roomCountText;
+        private TextView roomTypeText;
+        private TextView websiteText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

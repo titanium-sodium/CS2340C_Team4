@@ -1,6 +1,5 @@
 package com.example.sprintproject.model;
 
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class AccomodationsModel {
@@ -13,9 +12,10 @@ public class AccomodationsModel {
     private String website;
     private int duration;
 
-    public AccomodationsModel(String checkInDate, String checkOutDate, String numberOfRooms, String roomType, String location)
+    public AccomodationsModel(String checkInDate, String checkOutDate,
+                              String numberOfRooms, String roomType, String location)
             throws IllegalArgumentException {
-        if (location.length() == 0) {
+        if (location.isEmpty()) {
             throw new IllegalArgumentException("Invalid location");
         }
         if (Integer.parseInt(checkInDate) <= 0 || Integer.parseInt(checkOutDate) <= 0) {
@@ -75,8 +75,8 @@ public class AccomodationsModel {
     }
 
 
-    public void setWebsite(String URL) {
-        this.website = URL;
+    public void setWebsite(String url) {
+        this.website = url;
     }
 
     public String getLocation() {
@@ -92,7 +92,8 @@ public class AccomodationsModel {
     }
 
     private void calculateDuration() {
-        duration = (int) TimeUnit.MILLISECONDS.toDays(Long.parseLong(checkOutDate) - Long.parseLong(checkInDate));
+        duration = (int) TimeUnit.MILLISECONDS.
+                toDays(Long.parseLong(checkOutDate) - Long.parseLong(checkInDate));
         if (duration < 0) {
             duration = 0;
         }

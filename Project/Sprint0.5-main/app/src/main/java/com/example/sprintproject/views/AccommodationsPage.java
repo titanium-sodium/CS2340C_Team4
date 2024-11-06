@@ -49,7 +49,8 @@ public class AccommodationsPage extends Fragment {
         FilterViewModel filterButton = new FilterViewModel(true, "Accommodations");
         //Button
         view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccomodationsForm());
-        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
+        view.findViewById(R.id.filterButton).setOnClickListener(v ->
+                filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
         return view;
     }
 
@@ -72,7 +73,8 @@ public class AccommodationsPage extends Fragment {
                     String roomType = roomTypeInput.getText().toString();
                     if (!checkIn.isEmpty() && !checkOut.isEmpty() && !address.isEmpty()
                             && !numberRooms.isEmpty() && !roomType.isEmpty()) {
-                        accomodationsViewModel.addAccommodations(new AccomodationsModel(checkIn, checkOut, numberRooms, roomType, address));
+                        accomodationsViewModel.addAccommodations(new AccomodationsModel(checkIn,
+                                checkOut, numberRooms, roomType, address));
                     } else {
                         Toast.makeText(getContext(),
                                 "Please enter all fields", Toast.LENGTH_SHORT).show();

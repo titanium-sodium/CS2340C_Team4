@@ -40,7 +40,7 @@ public class InviteUserViewModel {
                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                     try {
                         UserModel user = userSnapshot.getValue(UserModel.class);
-                        Log.d("EMAIL", "useremail:" + user.getEmail()+"email:" + email );
+                        Log.d("EMAIL", "useremail:" + user.getEmail() + "email:" + email);
                         if (user.getEmail() != null && user.getEmail().equals(email)) {
                             String invitedUserId = user.getUserId();
 
@@ -53,8 +53,8 @@ public class InviteUserViewModel {
                                     .addOnSuccessListener(aVoid -> {
                                         // Add current user as contributor to invited user
                                         FirebaseAuth auth = FirebaseAuth.getInstance();
-                                        String currentUserEmail = auth.getCurrentUser() != null ?
-                                                auth.getCurrentUser().getEmail() : "";
+                                        String currentUserEmail = auth.getCurrentUser() != null
+                                                ? auth.getCurrentUser().getEmail() : "";
 
                                         db.child("users").child(invitedUserId)
                                                 .child("contributors")
@@ -67,7 +67,9 @@ public class InviteUserViewModel {
                                                     result.setValue(true);
                                                 })
                                                 .addOnFailureListener(e -> {
-                                                    Log.e(TAG, "Failed to add reverse contributor: " + e.getMessage());
+                                                    Log.e(TAG,
+                                                            "Failed to add reverse contributor: "
+                                                            + e.getMessage());
                                                     result.setValue(false);
                                                 });
                                     })

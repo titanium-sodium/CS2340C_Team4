@@ -20,7 +20,8 @@ public class DiningReservation {
         this.location = location;
         this.time = time;
     }
-    public DiningReservation(String userId, String website, String location, String time, long date, ArrayList<String> notes, ArrayList<String> contributors) {
+    public DiningReservation(String userId, String website, String location, String time,
+                             long date, ArrayList<String> notes, ArrayList<String> contributors) {
         this.userId = userId;
         this.website = website;
         this.location = location;

@@ -60,7 +60,8 @@ public class DiningEstablishmentsPage extends Fragment {
         FilterViewModel filterButton = new FilterViewModel(true, "Dining");
         //Button
         view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
-        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
+        view.findViewById(R.id.filterButton).setOnClickListener(v ->
+                filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
         return view;
     }
 
@@ -75,8 +76,8 @@ public class DiningEstablishmentsPage extends Fragment {
                 .setTitle("New Reservation")
                 .setPositiveButton("Add Reservation", (dialog, which) -> {
                     String website = websiteInput.getText().toString().trim();
-                    String time = timeInput.getText().toString().trim();;
-                    String location = locationInput.getText().toString().trim();;
+                    String time = timeInput.getText().toString().trim();
+                    String location = locationInput.getText().toString().trim();
                     if (!website.isEmpty() && !time.isEmpty() && !location.isEmpty()) {
                         diningReservationViewModel.addReservation(new DiningReservation(
                                 MainActivity.getUserId(), website, location, time
