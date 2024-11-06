@@ -55,7 +55,7 @@ public class DiningEstablishmentsPage extends Fragment {
         reservationsRecyclerView = view.findViewById(R.id.recyclerView_dining);
         reservationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize adapter
+        // Initialize adapter.
         reservationAdapter = new DiningAdapter(reservationsList);
         reservationsRecyclerView.setAdapter(reservationAdapter);
 
