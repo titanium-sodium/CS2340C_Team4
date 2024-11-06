@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +15,12 @@ import android.widget.Toast;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.AccommodationsModel;
+import com.example.sprintproject.model.DiningReservation;
 import com.example.sprintproject.viewmodels.AccommodationsViewModel;
 import com.example.sprintproject.viewmodels.FilterViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,10 +30,14 @@ import com.example.sprintproject.viewmodels.FilterViewModel;
 public class AccommodationsPage extends Fragment {
 
     private AccommodationsViewModel accommodationsViewModel;
+    private List<AccommodationsModel> accommodationsModels;
+    private RecyclerView accommodationRecyclerViewer;
+    private AccommodationAdapter accommodationAdapter;
     private static String userId;
     public AccommodationsPage(String userId) {
         accommodationsViewModel = new AccommodationsViewModel(userId);
         this.userId = userId;
+        accommodationsModels = new ArrayList<>();
     }
 
     public static AccommodationsPage newInstance() {
@@ -50,6 +60,12 @@ public class AccommodationsPage extends Fragment {
         //Button
         view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccommodationsForm());
         view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
+        accommodationRecyclerViewer = view.findViewById(R.id.accommodations_recycler);
+        accommodationRecyclerViewer.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        accommodationAdapter = new AccommodationAdapter(accommodationsModels);
+        accommodationRecyclerViewer.setAdapter(accommodationAdapter);
+        loadReservations();
         return view;
     }
 
@@ -72,7 +88,7 @@ public class AccommodationsPage extends Fragment {
                     String roomType = roomTypeInput.getText().toString();
                     if (!checkIn.isEmpty() && !checkOut.isEmpty() && !address.isEmpty()
                             && !numberRooms.isEmpty() && !roomType.isEmpty()) {
-                        accommodationsViewModel.addAccommodations(new AccommodationsModel(Long.parseLong(checkIn), Long.parseLong(checkOut), numberRooms, roomType, address));
+                        accommodationsViewModel.addAccommodations(new AccommodationsModel(checkIn, checkOut, Integer.parseInt(numberRooms), roomType, address));
                     } else {
                         Toast.makeText(getContext(),
                                 "Please enter all fields", Toast.LENGTH_SHORT).show();
@@ -80,5 +96,12 @@ public class AccommodationsPage extends Fragment {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+    private void loadReservations() {
+        accommodationsViewModel.getAccommodations().observe(getViewLifecycleOwner(), reservations -> {
+            accommodationsModels.clear();
+            accommodationsModels.addAll(reservations);
+            accommodationAdapter.notifyDataSetChanged();
+        });
     }
 }

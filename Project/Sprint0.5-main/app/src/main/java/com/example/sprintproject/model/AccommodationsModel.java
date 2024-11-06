@@ -4,24 +4,21 @@ import java.util.concurrent.TimeUnit;
 
 public class AccommodationsModel {
     private String id;
-    private Long checkInDate;
-    private Long checkOutDate;
-    private String numberOfRooms;
+    private String checkInDate;
+    private String checkOutDate;
+    private int numberOfRooms;
     private String roomType;
     private String location;
     private String website;
     private Long duration;
 
-    public AccommodationsModel(Long checkInDate, Long checkOutDate, String numberOfRooms, String roomType, String location)
+    public AccommodationsModel(String checkInDate, String checkOutDate, int numberOfRooms, String roomType, String location)
             throws IllegalArgumentException {
-        if (location == null || location.length() == 0) {
+        if (location == null || location.isEmpty()) {
             throw new IllegalArgumentException("Invalid location");
         }
         if (checkInDate == null || checkOutDate == null) {
             throw new IllegalArgumentException("Dates cannot be null");
-        }
-        if (checkInDate <= 0 || checkOutDate <= 0) {
-            throw new IllegalArgumentException("Invalid date");
         }
 
         this.checkInDate = checkInDate;
@@ -44,30 +41,17 @@ public class AccommodationsModel {
         this.id = id;
     }
 
-    public Long getCheckInDate() {
+    public String getCheckInDate() {
         return checkInDate;
     }
 
-    public void setCheckInDate(Long checkInDate) {
-        this.checkInDate = checkInDate;
-        calculateDuration();
-    }
 
-    public Long getCheckOutDate() {
+    public String getCheckOutDate() {
         return checkOutDate;
     }
 
-    public void setCheckOutDate(Long checkOutDate) {
-        this.checkOutDate = checkOutDate;
-        calculateDuration();
-    }
-
     public int getNumberOfRooms() {
-        return Integer.parseInt(numberOfRooms);
-    }
-
-    public void setNumberOfRooms(String numberOfRooms) {
-        this.numberOfRooms = numberOfRooms;
+        return numberOfRooms;
     }
 
     public String getRoomType() {
@@ -104,7 +88,8 @@ public class AccommodationsModel {
             return;
         }
 
-        duration = TimeUnit.MILLISECONDS.toDays(checkOutDate - checkInDate);
+        duration = TimeUnit.MILLISECONDS.toDays(Long.parseLong(checkOutDate)
+                - Long.parseLong(checkInDate));
         if (duration < 0) {
             duration = 0L;
         }

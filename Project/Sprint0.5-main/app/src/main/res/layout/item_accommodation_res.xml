@@ -48,8 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="5dp"
-                android:text="MM/DD, HH:MM" />
+                android:paddingLeft="5dp" />
 
             <TextView
                 android:id="@+id/coText"
@@ -64,8 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="5dp"
-                android:text="MM/DD, HH:MM" />
+                android:paddingLeft="5dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -88,8 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="5dp"
-                android:text="XX" />
+                android:paddingLeft="5dp" />
         </LinearLayout>
 
         <TextView
@@ -103,15 +100,6 @@
             android:text="Room Type"
             android:textStyle="bold"
             android:background="@drawable/rounded_corner_bg"/>
-
-        <TextView
-            android:id="@+id/websiteText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="2dp"
-
-            android:text="www.examplewebsite.com"
-            android:textStyle="italic"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

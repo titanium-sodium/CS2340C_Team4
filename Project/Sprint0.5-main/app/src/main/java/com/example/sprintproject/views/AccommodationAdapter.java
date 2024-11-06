@@ -1,5 +1,6 @@
 package com.example.sprintproject.views;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -27,31 +28,30 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
             AccommodationsModel accommodation = accommodations.get(position);
             Log.d("Accommodation log", accommodation.getLocation());
 
-            if (holder.locationText != null) {
-                holder.locationText.setText(accommodation.getLocation());
+            if (holder.hotelName != null) {
+                holder.hotelName.setText(accommodation.getLocation());
             } else {
-                Log.e("TAG", "locationText is null");
+                Log.e("TAG", "hotelName is null");
             }
 
-            if (holder.timeText != null) {
-                String dateRange = "Check-in: " + accommodation.getCheckInDate() +
-                        "\nCheck-out: " + accommodation.getCheckOutDate() +
-                        "\nDuration: " + accommodation.getDuration() + " days";
-                holder.timeText.setText(dateRange);
+            if (holder.checkIn != null && holder.checkOut != null) {
+                holder.checkIn.setText("Check-in: " + accommodation.getCheckInDate());
+                holder.checkOut.setText("Check-Out" + accommodation.getCheckOutDate());
             } else {
                 Log.e("TAG", "timeText is null");
             }
-
-            if (holder.websiteText != null && accommodation.getWebsite() != null) {
-                holder.websiteText.setText(accommodation.getWebsite());
+            if (holder.roomType != null && holder.numberRooms != null) {
+                holder.roomType.setText("Room Type:" + accommodation.getRoomType());
+                holder.numberRooms.setText(accommodation.getNumberOfRooms());
             } else {
-                Log.e("TAG", "websiteText is null or website not available");
+                Log.e("TAG", "Rooms null");
             }
         } catch (Exception e) {
             Log.e("TAG", "Error binding ViewHolder: " + e.getMessage());
@@ -65,15 +65,18 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView locationText;
-        private final TextView timeText;
-        private final TextView websiteText;
-
+        private final TextView hotelName;
+        private final TextView checkIn;
+        private final TextView checkOut;
+        private final TextView numberRooms;
+        private final TextView roomType;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            locationText = itemView.findViewById(R.id.location_text);
-            timeText = itemView.findViewById(R.id.time_text);
-            websiteText = itemView.findViewById(R.id.website_text);
+            hotelName = itemView.findViewById(R.id.hotelText);
+            checkIn = itemView.findViewById(R.id.ciTimeText);
+            checkOut = itemView.findViewById(R.id.coTimeText);
+            numberRooms = itemView.findViewById(R.id.roomCountText);
+            roomType = itemView.findViewById(R.id.roomTypeText);
         }
     }
 }
