@@ -1,5 +1,7 @@
 package com.example.sprintproject.viewmodels;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.example.sprintproject.model.AccommodationsModel;
@@ -11,15 +13,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AccommodationsViewModel {
     private DatabaseReference AccommodationsDB;
-    private MutableLiveData<List<AccommodationsModel>> reservationsLiveData;
+    private MutableLiveData<List<AccommodationsModel>> accomodationsLiveData;
 
     public AccommodationsViewModel(String userId) {
         AccommodationsDB = AccommodationsDBModel.getInstance(userId);
-        reservationsLiveData = new MutableLiveData<List<AccommodationsModel>>(new ArrayList<>());
+        accomodationsLiveData = new MutableLiveData<List<AccommodationsModel>>(new ArrayList<>());
         setupDatabaseListener();
     }
 
@@ -27,14 +30,14 @@ public class AccommodationsViewModel {
         AccommodationsDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<AccommodationsModel> reservations = new ArrayList<>();
+                List<AccommodationsModel> accomodations = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     AccommodationsModel reservation = snapshot.getValue(AccommodationsModel.class);
                     if (reservation != null) {
-                        reservations.add(reservation);
+                        accomodations.add(reservation);
                     }
                 }
-                reservationsLiveData.setValue(reservations);
+                accomodationsLiveData.setValue(accomodations);
             }
 
             @Override
@@ -45,9 +48,10 @@ public class AccommodationsViewModel {
         });
     }
 
-    public void addAccommodations(AccommodationsModel reservationModel) {
+    public void addAccommodations(AccommodationsModel accommodationsModel) {
         String reservationId = UUID.randomUUID().toString();
-        AccommodationsDB.child(reservationId).setValue(reservationModel)
+        Log.d ("MODEL",String.valueOf(accommodationsModel.getNumberOfRooms()));
+        AccommodationsDB.child(reservationId).setValue(accommodationsModel)
                 .addOnSuccessListener(aVoid -> {
                     // Reservation added successfully
                     // The ValueEventListener will automatically update the LiveData
@@ -59,6 +63,6 @@ public class AccommodationsViewModel {
     }
 
     public LiveData<List<AccommodationsModel>> getAccommodations() {
-        return reservationsLiveData;
+        return accomodationsLiveData;
     }
 }
