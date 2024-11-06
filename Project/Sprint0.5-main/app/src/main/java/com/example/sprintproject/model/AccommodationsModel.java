@@ -1,26 +1,29 @@
 package com.example.sprintproject.model;
 
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-public class AccomodationsModel {
+public class AccommodationsModel {
     private String id;
-    private String checkInDate;
-    private String checkOutDate;
+    private Long checkInDate;
+    private Long checkOutDate;
     private String numberOfRooms;
     private String roomType;
     private String location;
     private String website;
-    private int duration;
+    private Long duration;
 
-    public AccomodationsModel(String checkInDate, String checkOutDate, String numberOfRooms, String roomType, String location)
+    public AccommodationsModel(Long checkInDate, Long checkOutDate, String numberOfRooms, String roomType, String location)
             throws IllegalArgumentException {
-        if (location.length() == 0) {
+        if (location == null || location.length() == 0) {
             throw new IllegalArgumentException("Invalid location");
         }
-        if (Integer.parseInt(checkInDate) <= 0 || Integer.parseInt(checkOutDate) <= 0) {
+        if (checkInDate == null || checkOutDate == null) {
+            throw new IllegalArgumentException("Dates cannot be null");
+        }
+        if (checkInDate <= 0 || checkOutDate <= 0) {
             throw new IllegalArgumentException("Invalid date");
         }
+
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.numberOfRooms = numberOfRooms;
@@ -29,7 +32,8 @@ public class AccomodationsModel {
         calculateDuration();
     }
 
-    public AccomodationsModel() {
+    public AccommodationsModel() {
+        // Default constructor needed for Firebase
     }
 
     public String getId() {
@@ -40,20 +44,20 @@ public class AccomodationsModel {
         this.id = id;
     }
 
-    public long getCheckInDate() {
-        return Long.parseLong(checkInDate);
+    public Long getCheckInDate() {
+        return checkInDate;
     }
 
-    public void setCheckInDate(String checkInDate) {
+    public void setCheckInDate(Long checkInDate) {
         this.checkInDate = checkInDate;
         calculateDuration();
     }
 
-    public long getCheckOutDate() {
-        return Long.parseLong(checkOutDate);
+    public Long getCheckOutDate() {
+        return checkOutDate;
     }
 
-    public void setCheckOutDate(String checkOutDate) {
+    public void setCheckOutDate(Long checkOutDate) {
         this.checkOutDate = checkOutDate;
         calculateDuration();
     }
@@ -74,6 +78,9 @@ public class AccomodationsModel {
         this.roomType = roomType;
     }
 
+    public String getWebsite() {
+        return website;
+    }
 
     public void setWebsite(String URL) {
         this.website = URL;
@@ -87,18 +94,19 @@ public class AccomodationsModel {
         this.location = location;
     }
 
-    public int getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
     private void calculateDuration() {
-        duration = (int) TimeUnit.MILLISECONDS.toDays(Long.parseLong(checkOutDate) - Long.parseLong(checkInDate));
-        if (duration < 0) {
-            duration = 0;
+        if (checkInDate == null || checkOutDate == null) {
+            duration = 0L;
+            return;
         }
-    }
 
-    public String getWebsite() {
-        return website;
+        duration = TimeUnit.MILLISECONDS.toDays(checkOutDate - checkInDate);
+        if (duration < 0) {
+            duration = 0L;
+        }
     }
 }

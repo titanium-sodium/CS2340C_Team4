@@ -1,79 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="15dp"
-        tools:ignore="MissingConstraints">
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/locationText"
+            android:id="@+id/location_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Address"
-            android:textSize="16sp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="3dp"
-            tools:ignore="MissingConstraints">
-
-            <TextView
-                android:id="@+id/restaurantText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Restaurant Name"
-                android:textStyle="bold"
-                android:textSize="20sp"/>
-
-            <TextView
-                android:id="@+id/timeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:text="HH:MM am/pm"
-                android:textSize="15sp"/>
-        </LinearLayout>
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/websiteText"
+            android:id="@+id/time_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="3dp"
-            android:text="www.examplewebsite.com"
-            android:textStyle="italic" />
+            android:layout_marginTop="8dp"/>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/website_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="3dp"
-            tools:ignore="MissingConstraints">
-
-            <ImageView
-                android:id="@+id/starIcon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                app:srcCompat="@drawable/ic_reviews"
-                app:tint="#FFD700" />
-
-            <TextView
-                android:id="@+id/reviewScoreText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="X.Y/Z"
-                android:paddingLeft="5dp"/>
-        </LinearLayout>
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/holo_blue_dark"/>
 
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

@@ -12,8 +12,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sprintproject.R;
-import com.example.sprintproject.model.AccomodationsModel;
-import com.example.sprintproject.viewmodels.AccomodationsViewModel;
+import com.example.sprintproject.model.AccommodationsModel;
+import com.example.sprintproject.viewmodels.AccommodationsViewModel;
 import com.example.sprintproject.viewmodels.FilterViewModel;
 
 /**
@@ -23,10 +23,10 @@ import com.example.sprintproject.viewmodels.FilterViewModel;
  */
 public class AccommodationsPage extends Fragment {
 
-    private AccomodationsViewModel accomodationsViewModel;
+    private AccommodationsViewModel accommodationsViewModel;
     private static String userId;
     public AccommodationsPage(String userId) {
-        accomodationsViewModel = new AccomodationsViewModel(userId);
+        accommodationsViewModel = new AccommodationsViewModel(userId);
         this.userId = userId;
     }
 
@@ -45,17 +45,17 @@ public class AccommodationsPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.accomodation_screen, container, false);
+        View view = inflater.inflate(R.layout.accommodation_screen, container, false);
         FilterViewModel filterButton = new FilterViewModel(true, "Accommodations");
         //Button
-        view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccomodationsForm());
+        view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccommodationsForm());
         view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
         return view;
     }
 
-    private void openAccomodationsForm() {
+    private void openAccommodationsForm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        View dialogView = getLayoutInflater().inflate(R.layout.accomodation_res_dialog, null);
+        View dialogView = getLayoutInflater().inflate(R.layout.accommodation_res_dialog, null);
         EditText checkInInput = dialogView.findViewById(R.id.checkInEditText);
         EditText checkOutInput = dialogView.findViewById(R.id.checkOutInput);
         EditText addressInput = dialogView.findViewById(R.id.addressEditText);
@@ -63,8 +63,8 @@ public class AccommodationsPage extends Fragment {
         EditText roomTypeInput = dialogView.findViewById(R.id.roomTypeDropdown);
 
         builder.setView(dialogView)
-                .setTitle("New Accomodation")
-                .setPositiveButton("Add Accomodation", (dialog, which) -> {
+                .setTitle("New Accommodation")
+                .setPositiveButton("Add Accommodation", (dialog, which) -> {
                     String checkIn  = checkInInput.getText().toString();
                     String checkOut = checkOutInput.getText().toString();
                     String address = addressInput.getText().toString();
@@ -72,7 +72,7 @@ public class AccommodationsPage extends Fragment {
                     String roomType = roomTypeInput.getText().toString();
                     if (!checkIn.isEmpty() && !checkOut.isEmpty() && !address.isEmpty()
                             && !numberRooms.isEmpty() && !roomType.isEmpty()) {
-                        accomodationsViewModel.addAccommodations(new AccomodationsModel(checkIn, checkOut, numberRooms, roomType, address));
+                        accommodationsViewModel.addAccommodations(new AccommodationsModel(Long.parseLong(checkIn), Long.parseLong(checkOut), numberRooms, roomType, address));
                     } else {
                         Toast.makeText(getContext(),
                                 "Please enter all fields", Toast.LENGTH_SHORT).show();

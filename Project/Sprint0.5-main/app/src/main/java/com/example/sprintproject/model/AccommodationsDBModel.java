@@ -2,16 +2,16 @@ package com.example.sprintproject.model;
 
 import com.google.firebase.database.DatabaseReference;
 
-public class AccomodationsDBModel {
-    private static AccomodationsDBModel realTimeDBInstance = null;
+public class AccommodationsDBModel {
+    private static AccommodationsDBModel realTimeDBInstance = null;
     private static DatabaseReference dbRef;
 
-    private AccomodationsDBModel(String userId) {
-        dbRef = DBModel.getInstance().child("users").child(userId).child("Accomodations");
+    private AccommodationsDBModel(String userId) {
+        dbRef = DBModel.getInstance().child("users").child(userId).child("Accommodations");
     }
     public static synchronized DatabaseReference getInstance(String userId) {
         if (realTimeDBInstance == null) {
-            realTimeDBInstance = new AccomodationsDBModel(userId);
+            realTimeDBInstance = new AccommodationsDBModel(userId);
             return dbRef;
         }
         return dbRef;
