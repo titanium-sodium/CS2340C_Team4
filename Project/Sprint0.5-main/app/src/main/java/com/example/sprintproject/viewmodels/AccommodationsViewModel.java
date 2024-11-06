@@ -2,8 +2,8 @@ package com.example.sprintproject.viewmodels;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.sprintproject.model.DiningDBModel;
-import com.example.sprintproject.model.DiningReservation;
+import com.example.sprintproject.model.AccommodationsModel;
+import com.example.sprintproject.model.AccommodationsDBModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,23 +13,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DiningReservationViewModel {
-    private DatabaseReference diningDB;
-    private MutableLiveData<List<DiningReservation>> reservationsLiveData;
+public class AccommodationsViewModel {
+    private DatabaseReference AccommodationsDB;
+    private MutableLiveData<List<AccommodationsModel>> reservationsLiveData;
 
-    public DiningReservationViewModel(String userId) {
-        diningDB = DiningDBModel.getInstance(userId);
-        reservationsLiveData = new MutableLiveData<>(new ArrayList<>());
+    public AccommodationsViewModel(String userId) {
+        AccommodationsDB = AccommodationsDBModel.getInstance(userId);
+        reservationsLiveData = new MutableLiveData<List<AccommodationsModel>>(new ArrayList<>());
         setupDatabaseListener();
     }
 
     private void setupDatabaseListener() {
-        diningDB.addValueEventListener(new ValueEventListener() {
+        AccommodationsDB.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<DiningReservation> reservations = new ArrayList<>();
+                List<AccommodationsModel> reservations = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    DiningReservation reservation = snapshot.getValue(DiningReservation.class);
+                    AccommodationsModel reservation = snapshot.getValue(AccommodationsModel.class);
                     if (reservation != null) {
                         reservations.add(reservation);
                     }
@@ -45,9 +45,9 @@ public class DiningReservationViewModel {
         });
     }
 
-    public void addReservation(DiningReservation reservationModel) {
+    public void addAccommodations(AccommodationsModel reservationModel) {
         String reservationId = UUID.randomUUID().toString();
-        diningDB.child(reservationId).setValue(reservationModel)
+        AccommodationsDB.child(reservationId).setValue(reservationModel)
                 .addOnSuccessListener(aVoid -> {
                     // Reservation added successfully
                     // The ValueEventListener will automatically update the LiveData
@@ -58,7 +58,7 @@ public class DiningReservationViewModel {
                 });
     }
 
-    public LiveData<List<DiningReservation>> getReservations() {
+    public LiveData<List<AccommodationsModel>> getAccommodations() {
         return reservationsLiveData;
     }
 }
