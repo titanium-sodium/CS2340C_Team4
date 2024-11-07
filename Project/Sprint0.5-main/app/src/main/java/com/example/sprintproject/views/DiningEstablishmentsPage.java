@@ -60,7 +60,7 @@ public class DiningEstablishmentsPage extends Fragment {
         reservationsRecyclerView.setAdapter(reservationAdapter);
 
         // Set up filter button
-        FilterViewModel filterButton = new FilterViewModel(true, "Dining");
+        FilterViewModel filterButton = new FilterViewModel(true, "Dining", diningReservationViewModel);
 
         // Set up buttons
         view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());

@@ -56,7 +56,7 @@ public class AccommodationsPage extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.accommodation_screen, container, false);
-        FilterViewModel filterButton = new FilterViewModel(true, "Accommodations");
+        FilterViewModel filterButton = new FilterViewModel(true, "Accommodations", accommodationsViewModel);
         //Button
         view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccommodationsForm());
         view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));

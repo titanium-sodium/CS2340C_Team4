@@ -9,6 +9,7 @@ import com.example.sprintproject.model.AccommodationsDBModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -19,30 +20,53 @@ import java.util.UUID;
 public class AccommodationsViewModel {
     private DatabaseReference AccommodationsDB;
     private MutableLiveData<List<AccommodationsModel>> accomodationsLiveData;
+    private boolean isAscending = true;
+    private String currentSortField = "checkInDate"; // default sort field
 
     public AccommodationsViewModel(String userId) {
         AccommodationsDB = AccommodationsDBModel.getInstance(userId);
-        accomodationsLiveData = new MutableLiveData<List<AccommodationsModel>>(new ArrayList<>());
+        accomodationsLiveData = new MutableLiveData<>(new ArrayList<>());
         setupDatabaseListener();
     }
 
+    public void setSortOrder(boolean ascending, String sortField) {
+        isAscending = ascending;
+        currentSortField = sortField;
+        setupDatabaseListener(); // Reload with new sort order
+    }
+
     private void setupDatabaseListener() {
-        AccommodationsDB.addValueEventListener(new ValueEventListener() {
+        // Create query based on sort order
+        Query query = isAscending ?
+                AccommodationsDB.orderByChild(currentSortField) :
+                AccommodationsDB.orderByChild(currentSortField).limitToLast(1000); // Reverse order trick
+
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<AccommodationsModel> accomodations = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    AccommodationsModel reservation = snapshot.getValue(AccommodationsModel.class);
-                    if (reservation != null) {
-                        accomodations.add(reservation);
+                List<AccommodationsModel> accommodations = new ArrayList<>();
+
+                // If descending order, we need to add items at the beginning of the list
+                if (!isAscending) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
+                        if (accommodation != null) {
+                            accommodations.add(0, accommodation); // Add at beginning for descending
+                        }
+                    }
+                } else {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
+                        if (accommodation != null) {
+                            accommodations.add(accommodation); // Add at end for ascending
+                        }
                     }
                 }
-                accomodationsLiveData.setValue(accomodations);
+                accomodationsLiveData.setValue(accommodations);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Handle potential errors here
                 System.out.println("Database Error: " + databaseError.getMessage());
             }
         });
