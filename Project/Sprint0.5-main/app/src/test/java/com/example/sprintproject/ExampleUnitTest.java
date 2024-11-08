@@ -4,9 +4,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import com.example.sprintproject.model.AccommodationsFilterModel;
 import com.example.sprintproject.model.AuthModel;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DestinationsRepository;
+import com.example.sprintproject.model.DiningFilterModel;
+import com.example.sprintproject.model.DiningReservation;
 import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
@@ -156,4 +159,37 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
+    //------------------------------------AddDiningReservation-------------------------------------//
+    @Test
+    public void testAddDiningReservation() {
+
+        DiningReservation diningReservation = new DiningReservation("SwawS", "www.meem.com",
+                "SaaS", "4:20");
+
+        assertEquals("SwawS", diningReservation.getUserId());
+        assertEquals("www.meem.com", diningReservation.getWebsite());
+        assertEquals("SaaS", diningReservation.getLocation());
+        assertEquals("4:20", diningReservation.getTime());
+
+    }
+
+    //---------------------------------------ChangeFilter------------------------------------------//
+
+    @Test
+    public void testChangeFilterCorrectType() {
+
+        AccommodationsFilterModel accommodationsFilterModel = new AccommodationsFilterModel();
+        assertFalse(accommodationsFilterModel.changeFilter("Accommodations"));
+
+    }
+
+    @Test
+    public void testChangeFilterTypeMismatch() {
+
+        DiningFilterModel diningFilterModel = new DiningFilterModel();
+        assertTrue(diningFilterModel.changeFilter("Accommodations"));
+
+    }
+
 }

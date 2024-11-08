@@ -3,7 +3,7 @@ package com.example.sprintproject.model;
 public class AccommodationsFilterModel implements FiltersModel {
     private boolean filter;
 
-    public void AccommodationsFilterModel() {
+    public AccommodationsFilterModel() {
         this.filter = true;
     }
 
