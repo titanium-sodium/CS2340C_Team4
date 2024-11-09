@@ -12,7 +12,8 @@ public class AccommodationsModel {
     private String website;
     private Long duration;
 
-    public AccommodationsModel(String checkInDate, String checkOutDate, int numberOfRooms, String roomType, String location)
+    public AccommodationsModel(String checkInDate, String checkOutDate,
+                               int numberOfRooms, String roomType, String location)
             throws IllegalArgumentException {
         if (location == null || location.isEmpty()) {
             throw new IllegalArgumentException("Invalid location");
@@ -60,14 +61,6 @@ public class AccommodationsModel {
 
     public void setRoomType(String roomType) {
         this.roomType = roomType;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public void setWebsite(String URL) {
-        this.website = URL;
     }
 
     public String getLocation() {

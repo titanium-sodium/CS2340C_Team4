@@ -14,7 +14,8 @@ public class DiningReservation {
     public DiningReservation() {
         //Empty constructor
     }
-    public DiningReservation(String userId, String website, String location, String time) throws IllegalArgumentException {
+    public DiningReservation(String userId, String website, String location, String time)
+            throws IllegalArgumentException {
         if (time.isEmpty()) {
             throw new IllegalArgumentException("Reservation must include a time.");
         }
@@ -26,7 +27,8 @@ public class DiningReservation {
         this.location = location;
         this.time = time;
     }
-    public DiningReservation(String userId, String website, String location, String time, long date, ArrayList<String> notes, ArrayList<String> contributors) {
+    public DiningReservation(String userId, String website, String location, String time,
+                             long date, ArrayList<String> notes, ArrayList<String> contributors) {
         if (time.isEmpty()) {
             throw new IllegalArgumentException("Reservation must include a time.");
         }
