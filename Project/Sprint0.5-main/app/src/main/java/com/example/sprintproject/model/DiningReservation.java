@@ -14,13 +14,25 @@ public class DiningReservation {
     public DiningReservation() {
         //Empty constructor
     }
-    public DiningReservation(String userId, String website, String location, String time) {
+    public DiningReservation(String userId, String website, String location, String time) throws IllegalArgumentException {
+        if (time.isEmpty()) {
+            throw new IllegalArgumentException("Reservation must include a time.");
+        }
+        if (location.isEmpty()) {
+            throw new IllegalArgumentException("Reservation must include a location.");
+        }
         this.userId = userId;
         this.website = website;
         this.location = location;
         this.time = time;
     }
     public DiningReservation(String userId, String website, String location, String time, long date, ArrayList<String> notes, ArrayList<String> contributors) {
+        if (time.isEmpty()) {
+            throw new IllegalArgumentException("Reservation must include a time.");
+        }
+        if (location.isEmpty()) {
+            throw new IllegalArgumentException("Reservation must include a location.");
+        }
         this.userId = userId;
         this.website = website;
         this.location = location;
