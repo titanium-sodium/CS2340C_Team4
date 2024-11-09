@@ -20,6 +20,7 @@ import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -160,6 +161,8 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
+    //------------------------------------SPRINT 3-------------------------------------//
+
     //------------------------------------AddDiningReservation-------------------------------------//
     @Test
     public void testAddDiningReservation() {
@@ -190,6 +193,51 @@ public class ExampleUnitTest {
         DiningFilterModel diningFilterModel = new DiningFilterModel();
         assertTrue(diningFilterModel.changeFilter("Accommodations"));
 
+    }
+
+    //---------------------------------------DiningReservation------------------------------------------//
+
+    @Test
+    public void testEmptyLocation() {
+        try {
+            DiningReservation res = new DiningReservation("123", "coolmath.com", "","5");
+            fail("Reservation must include a location.");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Reservation must include a location.", e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void testEmptyTime() {
+        try {
+            DiningReservation res = new DiningReservation("123", "coolmath.com", "Papa John's","");
+            fail("Reservation must include a time.");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Reservation must include a time.", e.getMessage());
+        }
+
+    }
+
+    @Test
+    public void testValidDiningReservation() {
+        DiningReservation res = new DiningReservation("123", "coolmath.com", "Papa John's","5");
+        assertEquals("123", res.getUserId());
+        assertEquals("coolmath.com", res.getWebsite());
+        assertEquals("Papa John's", res.getLocation());
+        assertEquals("5", res.getTime());
+    }
+
+    @Test
+    public void testAllFieldsDiningReservation() {
+        ArrayList<String> notes = new ArrayList<>();
+        notes.add("Vegan Friendly");
+        ArrayList<String> contributors = new ArrayList<>();
+        contributors.add("joni");
+        DiningReservation res = new DiningReservation("123", "coolmath.com", "Papa John's","5", 110824, notes, contributors);
+        assertEquals(110824, res.getDate());
+        assertEquals(notes, res.getNotes());
+        assertEquals(contributors, res.getContributors());
     }
 
 }
