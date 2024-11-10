@@ -1,7 +1,6 @@
 package com.example.sprintproject.views;
 
 import android.app.AlertDialog;
-import android.graphics.Color;
 import android.os.Bundle;
 
 
@@ -26,21 +25,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sprintproject.R;
 
 import com.example.sprintproject.model.NotesModel;
-import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 
 import com.example.sprintproject.viewmodels.ChartViewModel;
 import com.example.sprintproject.viewmodels.InviteUserViewModel;
-import com.example.sprintproject.views.NotesAdapter;
 
 
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 
 

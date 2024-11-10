@@ -40,7 +40,8 @@ public class DBViewModel extends ViewModel {
         String mainActivityUserId = MainActivity.getUserId();
         if (mainActivityUserId != null) {
             setCurrentUserId(mainActivityUserId);
-            Log.d(TAG, "Initialized DBViewModel with userId from MainActivity: " + mainActivityUserId);
+            Log.d(TAG, "Initialized DBViewModel with userId from MainActivity: "
+                    + mainActivityUserId);
         } else {
             Log.d(TAG, "No userId available from MainActivity during DBViewModel initialization");
         }
@@ -112,7 +113,8 @@ public class DBViewModel extends ViewModel {
 
                             if (snapshot.exists()) {
                                 if (snapshot.hasChild("allottedDays")) {
-                                    Object allottedValue = snapshot.child("allottedDays").getValue();
+                                    Object allottedValue = snapshot.child("allottedDays").
+                                            getValue();
                                     if (allottedValue != null) {
                                         if (allottedValue instanceof Long) {
                                             allottedDays = ((Long) allottedValue).intValue();
@@ -138,7 +140,8 @@ public class DBViewModel extends ViewModel {
                                 }
                             } else {
                                 TravelStats newStats = new TravelStats();
-                                db.child("users").child(currentUserId).child("travelStats").setValue(newStats);
+                                db.child("users").child(currentUserId).child("travelStats").
+                                        setValue(newStats);
                             }
 
                             TravelStats stats = new TravelStats();
@@ -181,7 +184,8 @@ public class DBViewModel extends ViewModel {
                         List<UserModel> contributors = new ArrayList<>();
                         for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
                             String contributorId = contributorSnapshot.getKey();
-                            String contributorEmail = contributorSnapshot.child("email").getValue(String.class);
+                            String contributorEmail = contributorSnapshot.child("email").
+                                    getValue(String.class);
 
                             if (contributorId != null && contributorEmail != null) {
                                 UserModel contributor = new UserModel();
@@ -298,7 +302,8 @@ public class DBViewModel extends ViewModel {
                                         .child("notes")
                                         .setValue(notes)
                                         .addOnFailureListener(e -> Log.e(TAG,
-                                                "Error sharing notes with contributor " + contributorId
+                                                "Error sharing notes with contributor "
+                                                        + contributorId
                                                         + ": " + e.getMessage()));
                             }
                         }

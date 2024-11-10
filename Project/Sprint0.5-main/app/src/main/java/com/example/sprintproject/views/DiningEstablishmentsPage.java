@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DiningReservation;
-import com.example.sprintproject.views.DiningAdapter;
 import com.example.sprintproject.viewmodels.DiningReservationViewModel;
 import com.example.sprintproject.viewmodels.FilterViewModel;
 
@@ -60,11 +59,13 @@ public class DiningEstablishmentsPage extends Fragment {
         reservationsRecyclerView.setAdapter(reservationAdapter);
 
         // Set up filter button
-        FilterViewModel filterButton = new FilterViewModel(true, "Dining", diningReservationViewModel);
+        FilterViewModel filterButton = new FilterViewModel(true, "Dining",
+                diningReservationViewModel);
 
         // Set up buttons
         view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
-        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
+        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.
+                changeFilter(filterButton.getFilter(), filterButton.getType()));
 
         // Load existing reservations
         loadReservations();
@@ -73,11 +74,12 @@ public class DiningEstablishmentsPage extends Fragment {
     }
 
     private void loadReservations() {
-        diningReservationViewModel.getReservations().observe(getViewLifecycleOwner(), reservations -> {
-            reservationsList.clear();
-            reservationsList.addAll(reservations);
-            reservationAdapter.notifyDataSetChanged();
-        });
+        diningReservationViewModel.getReservations().observe(getViewLifecycleOwner(),
+                reservations -> {
+                reservationsList.clear();
+                reservationsList.addAll(reservations);
+                reservationAdapter.notifyDataSetChanged();
+            });
     }
 
     private void openReservationForm() {
@@ -99,9 +101,11 @@ public class DiningEstablishmentsPage extends Fragment {
                                 MainActivity.getUserId(), website, location, time
                         );
                         diningReservationViewModel.addReservation(newReservation);
-                        Toast.makeText(getContext(), "Reservation added successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Reservation added successfully",
+                                Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), "Please enter all fields", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Please enter all fields",
+                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)

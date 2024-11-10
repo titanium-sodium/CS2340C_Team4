@@ -4,8 +4,9 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.sprintproject.model.AccommodationsModel;
+
 import com.example.sprintproject.model.AccommodationsDBModel;
+import com.example.sprintproject.model.AccommodationsModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -14,17 +15,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class AccommodationsViewModel {
-    private DatabaseReference AccommodationsDB;
+    private DatabaseReference accommodationsDB;
     private MutableLiveData<List<AccommodationsModel>> accomodationsLiveData;
     private boolean isAscending = true;
     private String currentSortField = "checkInDate"; // default sort field
 
     public AccommodationsViewModel(String userId) {
-        AccommodationsDB = AccommodationsDBModel.getInstance(userId);
+        accommodationsDB = AccommodationsDBModel.getInstance(userId);
         accomodationsLiveData = new MutableLiveData<>(new ArrayList<>());
         setupDatabaseListener();
     }
@@ -37,9 +37,10 @@ public class AccommodationsViewModel {
 
     private void setupDatabaseListener() {
         // Create query based on sort order
-        Query query = isAscending ?
-                AccommodationsDB.orderByChild(currentSortField) :
-                AccommodationsDB.orderByChild(currentSortField).limitToLast(1000); // Reverse order trick
+        Query query = isAscending
+                ?
+                accommodationsDB.orderByChild(currentSortField)
+                : accommodationsDB.orderByChild(currentSortField).limitToLast(1000);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -49,14 +50,16 @@ public class AccommodationsViewModel {
                 // If descending order, we need to add items at the beginning of the list
                 if (!isAscending) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
+                        AccommodationsModel accommodation = snapshot.
+                                getValue(AccommodationsModel.class);
                         if (accommodation != null) {
                             accommodations.add(0, accommodation); // Add at beginning for descending
                         }
                     }
                 } else {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
+                        AccommodationsModel accommodation = snapshot.
+                                getValue(AccommodationsModel.class);
                         if (accommodation != null) {
                             accommodations.add(accommodation); // Add at end for ascending
                         }
@@ -74,8 +77,8 @@ public class AccommodationsViewModel {
 
     public void addAccommodations(AccommodationsModel accommodationsModel) {
         String reservationId = UUID.randomUUID().toString();
-        Log.d ("MODEL",String.valueOf(accommodationsModel.getNumberOfRooms()));
-        AccommodationsDB.child(reservationId).setValue(accommodationsModel)
+        Log.d("MODEL", String.valueOf(accommodationsModel.getNumberOfRooms()));
+        accommodationsDB.child(reservationId).setValue(accommodationsModel)
                 .addOnSuccessListener(aVoid -> {
                     // Reservation added successfully
                     // The ValueEventListener will automatically update the LiveData

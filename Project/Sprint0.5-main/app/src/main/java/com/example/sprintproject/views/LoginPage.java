@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.example.sprintproject.R;
 import com.example.sprintproject.viewmodels.AuthViewModel;
 import com.example.sprintproject.viewmodels.DBViewModel;
-import com.example.sprintproject.model.UserModel;
 import com.example.sprintproject.viewmodels.UserViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,11 +25,6 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-
-
-import java.util.HashMap;
-import java.util.Objects;
-
 
 public class LoginPage extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -78,21 +72,28 @@ public class LoginPage extends AppCompatActivity {
                                             db.child("users").addChildEventListener(
                                                     new ChildEventListener() {
                                                     @Override
-                                                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                                    public void onChildAdded(
+                                                            @NonNull DataSnapshot snapshot,
+                                                            @Nullable String previousChildName) {
 
                                                         try {
                                                             String userId = snapshot.getKey();
-                                                            String userEmail = snapshot.child("email").getValue(String.class);
+                                                            String userEmail = snapshot.child(
+                                                                    "email").getValue(String.class);
 
-                                                            if (userEmail != null && userEmail.equals(email)) {
-                                                                Log.d("SUCCESS", "User found: " + userId);
-                                                                Intent intent = new Intent(LoginPage.this, MainActivity.class);
+                                                            if (userEmail != null
+                                                                    && userEmail.equals(email)) {
+                                                                Intent intent = new
+                                                                        Intent(LoginPage.this,
+                                                                        MainActivity.class);
                                                                 intent.putExtra("userId", userId);
                                                                 startActivity(intent);
                                                                 finish();
                                                             }
                                                         } catch (Exception e) {
-                                                            Log.e("Firebase", "Error retrieving user data", e);
+                                                            Log.e("Firebase",
+                                                                    "Error retrieving user data",
+                                                                    e);
                                                             Toast.makeText(LoginPage.this,
                                                                     "Error retrieving user data",
                                                                     Toast.LENGTH_SHORT).show();

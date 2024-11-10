@@ -34,9 +34,9 @@ public class DiningReservationViewModel {
 
     private void setupDatabaseListener() {
         // Create query based on sort order
-        Query query = isAscending ?
-                diningDB.orderByChild(currentSortField) :
-                diningDB.orderByChild(currentSortField).limitToLast(1000); // Reverse order trick
+        Query query = isAscending
+                ? diningDB.orderByChild(currentSortField)
+                : diningDB.orderByChild(currentSortField).limitToLast(1000); // Reverse order trick
 
         query.addValueEventListener(new ValueEventListener() {
             @Override

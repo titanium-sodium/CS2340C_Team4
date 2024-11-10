@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sprintproject.R;
-import com.example.sprintproject.model.UserModel;
 import com.example.sprintproject.viewmodels.AuthViewModel;
 import com.example.sprintproject.viewmodels.UserViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
