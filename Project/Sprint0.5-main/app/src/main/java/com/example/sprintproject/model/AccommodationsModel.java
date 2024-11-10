@@ -18,8 +18,8 @@ public class AccommodationsModel {
         if (location == null || location.isEmpty()) {
             throw new IllegalArgumentException("Invalid location");
         }
-        if (checkInDate == null || checkOutDate == null) {
-            throw new IllegalArgumentException("Dates cannot be null");
+        if (checkInDate == null || checkInDate.isEmpty() || checkOutDate == null || checkOutDate.isEmpty()) {
+            throw new IllegalArgumentException("Dates cannot be null or empty");
         }
 
         this.checkInDate = checkInDate;

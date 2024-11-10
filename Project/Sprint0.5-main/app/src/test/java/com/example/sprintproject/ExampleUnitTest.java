@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.example.sprintproject.model.AccommodationsFilterModel;
+import com.example.sprintproject.model.AccommodationsModel;
 import com.example.sprintproject.model.AuthModel;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DestinationsRepository;
@@ -240,4 +241,61 @@ public class ExampleUnitTest {
         assertEquals(contributors, res.getContributors());
     }
 
+    //---------------------------------------addAccommodations------------------------------------------//
+
+    @Test
+    public void testAddAccommodation() {
+        AccommodationsModel accommodationsModel = new AccommodationsModel("345", "678",
+                2, "Double", "Atlanta");
+        accommodationsModel.setWebsite("www.website.com");
+
+        assertEquals("345", accommodationsModel.getCheckInDate());
+        assertEquals("678", accommodationsModel.getCheckOutDate());
+        assertEquals(2, accommodationsModel.getNumberOfRooms());
+        assertEquals("Double", accommodationsModel.getRoomType());
+        assertEquals("Atlanta", accommodationsModel.getLocation());
+        assertEquals("www.website.com", accommodationsModel.getWebsite());
+    }
+
+    //---------------------------------------AccommodationsModel------------------------------------------//
+
+    @Test
+    public void testEmptyLocationAccommodation() {
+        try {
+            AccommodationsModel accommodationsModel = new AccommodationsModel("123", "456", 1, "Single", "");
+            fail("Accommodation must include a location.");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid location", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testEmptyCheckInDate() {
+        try {
+            AccommodationsModel accommodationsModel = new AccommodationsModel("", "0000", 2, "Double", "Somewhere");
+            fail("Accommodation must include a check-in date.");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Dates cannot be null or empty", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testEmptyCheckOutDate() {
+        try {
+            AccommodationsModel res = new AccommodationsModel("9999", "", 3, "Suite", "Somewhere");
+            fail("Accommodation must include a check-out date.");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Dates cannot be null or empty", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testValidAccommodation() {
+        AccommodationsModel accommodationsModel = new AccommodationsModel("123", "456", 1, "Single", "Somewhere");
+        assertEquals("123", accommodationsModel.getCheckInDate());
+        assertEquals("456", accommodationsModel.getCheckOutDate());
+        assertEquals(1, accommodationsModel.getNumberOfRooms());
+        assertEquals("Single", accommodationsModel.getRoomType());
+        assertEquals("Somewhere", accommodationsModel.getLocation());
+    }
 }
