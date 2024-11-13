@@ -18,7 +18,8 @@ public class AccommodationsModel {
         if (location == null || location.isEmpty()) {
             throw new IllegalArgumentException("Invalid location");
         }
-        if (checkInDate == null || checkInDate.isEmpty() || checkOutDate == null || checkOutDate.isEmpty()) {
+        if (checkInDate == null || checkInDate.isEmpty() || checkOutDate == null
+                || checkOutDate.isEmpty()) {
             throw new IllegalArgumentException("Dates cannot be null or empty");
         }
 
@@ -66,6 +67,14 @@ public class AccommodationsModel {
     public String getLocation() {
         return location;
     }
+    public String getWebsite() {
+        return website;
+    }
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+
 
     public void setLocation(String location) {
         this.location = location;

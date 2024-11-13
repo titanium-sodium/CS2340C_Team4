@@ -247,14 +247,14 @@ public class ExampleUnitTest {
     public void testAddAccommodation() {
         AccommodationsModel accommodationsModel = new AccommodationsModel("345", "678",
                 2, "Double", "Atlanta");
-        accommodationsModel.setWebsite("www.website.com");
+        accommodationsModel.setWebsite("website.com");
 
         assertEquals("345", accommodationsModel.getCheckInDate());
         assertEquals("678", accommodationsModel.getCheckOutDate());
         assertEquals(2, accommodationsModel.getNumberOfRooms());
         assertEquals("Double", accommodationsModel.getRoomType());
         assertEquals("Atlanta", accommodationsModel.getLocation());
-        assertEquals("www.website.com", accommodationsModel.getWebsite());
+        assertEquals("website.com", accommodationsModel.getWebsite());
     }
 
     //---------------------------------------AccommodationsModel------------------------------------------//
