@@ -30,7 +30,6 @@
         <activity android:name=".views.LoginPage" />
         <activity android:name=".views.DestinationsPage" />
         <activity android:name=".views.DiningEstablishmentsPage" />
-        <activity android:name=".views.TransportationPage" />
         <activity android:name=".views.AccommodationsPage" />
         <activity android:name=".views.LogisticsPage" />
         <activity android:name=".views.TravelCommunityPage" />
