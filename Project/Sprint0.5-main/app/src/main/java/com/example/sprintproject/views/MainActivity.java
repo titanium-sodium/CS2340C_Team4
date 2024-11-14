@@ -1,14 +1,22 @@
 package com.example.sprintproject.views;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.databinding.ActivityMainBinding;
+import com.example.sprintproject.model.DBModel;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         accommodationsPage = new AccommodationsPage(userId);
         travelCommunityPage = new TravelCommunityPage(userId);
 
-
+        checkTripsEmpty(userId);
         Bundle args = new Bundle();
         args.putString("userId", userId);
         logisticsPage.setArguments(args);
@@ -83,6 +91,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    //Checks if the trips array in the user is empty
+    private void checkTripsEmpty(String  userId) {
+
+        DBModel.getInstance().child("users").child(userId).child("trips").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getChildrenCount() > 0) {
+                    //TODO get the tripID
+                } else {
+                    //TODO make an empty trip
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //Do nothing
+            }
+        });
+    }
 
     //A method for changing from one screen on the navbar to another.
     private void changeFragment(Fragment fragment) {
@@ -109,7 +136,4 @@ public class MainActivity extends AppCompatActivity {
     public TravelCommunityPage getTravelCommunityPage() {
         return travelCommunityPage;
     }
-
-
-
 }

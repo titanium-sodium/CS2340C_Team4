@@ -3,6 +3,7 @@ package com.example.sprintproject.views;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,36 +14,26 @@ import android.widget.Toast;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DiningReservation;
-import com.example.sprintproject.viewmodels.DiningReservationViewModel;
-import com.example.sprintproject.viewmodels.FilterViewModel;
+import com.example.sprintproject.viewmodels.DiningViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DiningEstablishmentsPage extends Fragment {
-    private DiningReservationViewModel diningReservationViewModel;
+    private DiningViewModel diningViewModel;
     private RecyclerView reservationsRecyclerView;
     private DiningAdapter reservationAdapter;
-    private List<DiningReservation> reservationsList;
-    private String userId;
+    private String tripId;
 
-    public DiningEstablishmentsPage() {
-        // Required empty public constructor
-    }
-
-    public DiningEstablishmentsPage(String userId) {
-        this.userId = userId;
-        diningReservationViewModel = new DiningReservationViewModel(userId);
-        reservationsList = new ArrayList<>();
-    }
-
-    public static DiningEstablishmentsPage newInstance(String param1, String param2) {
-        return new DiningEstablishmentsPage();
+    public DiningEstablishmentsPage(String tripId) {
+        this.tripId = tripId;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        diningViewModel = new ViewModelProvider(this).get(DiningViewModel.class);
+        String userId = MainActivity.getUserId();
+        diningViewModel.setCurrentIds(userId, tripId);
     }
 
     @Override
@@ -50,41 +41,34 @@ public class DiningEstablishmentsPage extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dining_reservations_screen, container, false);
 
-        // Initialize RecyclerView
-        reservationsRecyclerView = view.findViewById(R.id.recyclerView_dining);
-        reservationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        // Initialize adapter.
-        reservationAdapter = new DiningAdapter(reservationsList);
-        reservationsRecyclerView.setAdapter(reservationAdapter);
-
-        // Set up filter button
-        FilterViewModel filterButton = new FilterViewModel(true, "Dining",
-                diningReservationViewModel);
-
-        // Set up buttons
-        view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
-        view.findViewById(R.id.filterButton).setOnClickListener(v -> filterButton.
-                changeFilter(filterButton.getFilter(), filterButton.getType()));
-
-        // Load existing reservations
-        loadReservations();
+        setupRecyclerView(view);
+        setupButtons(view);
+        observeReservations();
 
         return view;
     }
 
-    private void loadReservations() {
-        diningReservationViewModel.getReservations().observe(getViewLifecycleOwner(),
-                reservations -> {
-                reservationsList.clear();
-                reservationsList.addAll(reservations);
-                reservationAdapter.notifyDataSetChanged();
-            });
+    private void setupRecyclerView(View view) {
+        reservationsRecyclerView = view.findViewById(R.id.recyclerView_dining);
+        reservationsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        reservationAdapter = new DiningAdapter();
+        reservationsRecyclerView.setAdapter(reservationAdapter);
+    }
+
+    private void setupButtons(View view) {
+        view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
+    }
+
+    private void observeReservations() {
+        diningViewModel.getReservations().observe(getViewLifecycleOwner(), reservations -> {
+            reservationAdapter.updateReservations(reservations);
+        });
     }
 
     private void openReservationForm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.dining_res_dialog, null);
+
         EditText locationInput = dialogView.findViewById(R.id.locationEditText);
         EditText timeInput = dialogView.findViewById(R.id.timeEditText);
         EditText websiteInput = dialogView.findViewById(R.id.websiteText);
@@ -98,13 +82,17 @@ public class DiningEstablishmentsPage extends Fragment {
 
                     if (!website.isEmpty() && !time.isEmpty() && !location.isEmpty()) {
                         DiningReservation newReservation = new DiningReservation(
-                                MainActivity.getUserId(), website, location, time
+                                diningViewModel.getCurrentUserId(),
+                                diningViewModel.getCurrentTripId(),
+                                website,
+                                location,
+                                time
                         );
-                        diningReservationViewModel.addReservation(newReservation);
+                        diningViewModel.addReservation(newReservation);
                         Toast.makeText(getContext(), "Reservation added successfully",
                                 Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), "Please enter all fields",
+                        Toast.makeText(getContext(), "Please fill in all fields",
                                 Toast.LENGTH_SHORT).show();
                     }
                 })
