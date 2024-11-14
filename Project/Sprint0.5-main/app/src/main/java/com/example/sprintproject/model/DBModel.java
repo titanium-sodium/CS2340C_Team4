@@ -8,14 +8,28 @@ public class DBModel {
     private static DatabaseReference dbRef;
 
     private DBModel() {
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        if (dbRef == null) {  // Additional null check for safety
+            dbRef = FirebaseDatabase.getInstance().getReference();
+        }
     }
+
     public static synchronized DatabaseReference getInstance() {
         if (realTimeDBInstance == null) {
             realTimeDBInstance = new DBModel();
-            return dbRef;
         }
         return dbRef;
     }
 
+    // Helper methods for common paths
+    public static DatabaseReference getUsersReference() {
+        return getInstance().child("users");
+    }
+
+    public static DatabaseReference getTripsReference() {
+        return getInstance().child("trips");
+    }
+
+    public static DatabaseReference getTravelCommunityReference() {
+        return getInstance().child("travelCommunity");
+    }
 }

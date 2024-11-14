@@ -33,21 +33,29 @@ public class AccommodationsPage extends Fragment {
     private RecyclerView accommodationRecyclerViewer;
     private AccommodationAdapter accommodationAdapter;
     private static String userId;
-    public AccommodationsPage(String userId) {
-        accommodationsViewModel = new AccommodationsViewModel(userId);
+    private static String tripId;
+
+    public AccommodationsPage(String userId, String tripId) {
         this.userId = userId;
+        this.tripId = tripId;
+        accommodationsViewModel = new AccommodationsViewModel(userId, tripId);
         accommodationsModels = new ArrayList<>();
     }
 
-    public static AccommodationsPage newInstance() {
-        AccommodationsPage fragment = new AccommodationsPage(userId);
-        return fragment;
+    public static AccommodationsPage newInstance(String userId, String tripId) {
+        return new AccommodationsPage(userId, tripId);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    public void updateTripId(String newTripId) {
+        tripId = newTripId;
+        if (accommodationsViewModel != null) {
+            accommodationsViewModel.setTripId(newTripId);
+        }
     }
 
     @Override
@@ -55,24 +63,40 @@ public class AccommodationsPage extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.accommodation_screen, container, false);
+
+        // Initialize filter button
         FilterViewModel filterButton = new FilterViewModel(true, "Accommodations",
                 accommodationsViewModel);
-        //Button
+
+        // Initialize buttons
         view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccommodationsForm());
         view.findViewById(R.id.filterButton).setOnClickListener(v ->
                 filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
+
+        // Initialize RecyclerView
         accommodationRecyclerViewer = view.findViewById(R.id.accommodations_recycler);
         accommodationRecyclerViewer.setLayoutManager(new LinearLayoutManager(getContext()));
 
         accommodationAdapter = new AccommodationAdapter(accommodationsModels);
         accommodationRecyclerViewer.setAdapter(accommodationAdapter);
+
+        // Load initial data
         loadReservations();
+
         return view;
     }
 
     private void openAccommodationsForm() {
+        if (tripId == null || tripId.isEmpty()) {
+            Toast.makeText(getContext(),
+                    "Please select a trip first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.accommodation_res_dialog, null);
+
+        // Get form fields
         EditText checkInInput = dialogView.findViewById(R.id.checkInEditText);
         EditText checkOutInput = dialogView.findViewById(R.id.checkOutInput);
         EditText addressInput = dialogView.findViewById(R.id.addressEditText);
@@ -82,29 +106,47 @@ public class AccommodationsPage extends Fragment {
         builder.setView(dialogView)
                 .setTitle("New Accommodation")
                 .setPositiveButton("Add Accommodation", (dialog, which) -> {
-                    String checkIn  = checkInInput.getText().toString();
-                    String checkOut = checkOutInput.getText().toString();
-                    String address = addressInput.getText().toString();
-                    String numberRooms = numberRoomsInput.getText().toString();
-                    String roomType = roomTypeInput.getText().toString();
+                    // Get form values
+                    String checkIn = checkInInput.getText().toString().trim();
+                    String checkOut = checkOutInput.getText().toString().trim();
+                    String address = addressInput.getText().toString().trim();
+                    String numberRooms = numberRoomsInput.getText().toString().trim();
+                    String roomType = roomTypeInput.getText().toString().trim();
+
+                    // Validate inputs
                     if (!checkIn.isEmpty() && !checkOut.isEmpty() && !address.isEmpty()
                             && !numberRooms.isEmpty() && !roomType.isEmpty()) {
-                        accommodationsViewModel.addAccommodations(new AccommodationsModel(checkIn,
-                                checkOut, Integer.parseInt(numberRooms), roomType, address));
+                        try {
+                            AccommodationsModel newAccommodation = new AccommodationsModel(
+                                    checkIn,
+                                    checkOut,
+                                    Integer.parseInt(numberRooms),
+                                    roomType,
+                                    address
+                            );
+                            accommodationsViewModel.addAccommodations(newAccommodation);
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(),
+                                    "Please enter a valid number of rooms",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(getContext(),
-                                "Please enter all fields", Toast.LENGTH_SHORT).show();
+                                "Please fill in all fields", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
     private void loadReservations() {
-        accommodationsViewModel.getAccommodations().observe(getViewLifecycleOwner(),
-                reservations -> {
-                accommodationsModels.clear();
-                accommodationsModels.addAll(reservations);
-                accommodationAdapter.notifyDataSetChanged();
-            });
+        if (accommodationsViewModel != null) {
+            accommodationsViewModel.getAccommodations().observe(getViewLifecycleOwner(),
+                    reservations -> {
+                        accommodationsModels.clear();
+                        accommodationsModels.addAll(reservations);
+                        accommodationAdapter.notifyDataSetChanged();
+                    });
+        }
     }
 }

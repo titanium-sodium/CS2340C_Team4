@@ -1,19 +1,29 @@
 package com.example.sprintproject.model;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class DiningDBModel {
-    private static DiningDBModel realTimeDBInstance = null;
+    private static DiningDBModel instance = null;
     private static DatabaseReference dbRef;
 
-    private DiningDBModel(String userId) {
-        dbRef = DBModel.getInstance().child("users").child(userId).child("dining");
+    private DiningDBModel() {
+        dbRef = DBModel.getInstance().child("dining");
     }
-    public static synchronized DatabaseReference getInstance(String userId) {
-        if (realTimeDBInstance == null) {
-            realTimeDBInstance = new DiningDBModel(userId);
-            return dbRef;
+
+    public static synchronized DatabaseReference getInstance() {
+        if (instance == null) {
+            instance = new DiningDBModel();
         }
         return dbRef;
+    }
+
+    // Helper methods similar to DBModel
+    public static DatabaseReference getDiningForTrip(String tripId) {
+        return getInstance().child(tripId);
+    }
+
+    public static DatabaseReference getDiningReference() {
+        return getInstance();
     }
 }
