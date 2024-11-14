@@ -19,14 +19,23 @@ import java.util.UUID;
 
 public class AccommodationsViewModel {
     private DatabaseReference accommodationsDB;
-    private MutableLiveData<List<AccommodationsModel>> accomodationsLiveData;
+    private MutableLiveData<List<AccommodationsModel>> accommodationsLiveData;
     private boolean isAscending = true;
     private String currentSortField = "checkInDate"; // default sort field
+    private String currentTripId;
 
-    public AccommodationsViewModel(String userId) {
-        accommodationsDB = AccommodationsDBModel.getInstance(userId);
-        accomodationsLiveData = new MutableLiveData<>(new ArrayList<>());
+    public AccommodationsViewModel(String userId, String tripId) {
+        this.currentTripId = tripId;
+        accommodationsDB = AccommodationsDBModel.getInstance(tripId);
+        accommodationsLiveData = new MutableLiveData<>(new ArrayList<>());
         setupDatabaseListener();
+    }
+
+    public void setTripId(String tripId) {
+        this.currentTripId = tripId;
+        // Update the database reference for the new trip
+        accommodationsDB = AccommodationsDBModel.getInstance(tripId);
+        setupDatabaseListener(); // Reload data for new trip
     }
 
     public void setSortOrder(boolean ascending, String sortField) {
@@ -38,8 +47,7 @@ public class AccommodationsViewModel {
     private void setupDatabaseListener() {
         // Create query based on sort order
         Query query = isAscending
-                ?
-                accommodationsDB.orderByChild(currentSortField)
+                ? accommodationsDB.orderByChild(currentSortField)
                 : accommodationsDB.orderByChild(currentSortField).limitToLast(1000);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -50,46 +58,46 @@ public class AccommodationsViewModel {
                 // If descending order, we need to add items at the beginning of the list
                 if (!isAscending) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        AccommodationsModel accommodation = snapshot.
-                                getValue(AccommodationsModel.class);
+                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
                         if (accommodation != null) {
+                            accommodation.setId(snapshot.getKey()); // Save the Firebase key as ID
                             accommodations.add(0, accommodation); // Add at beginning for descending
                         }
                     }
                 } else {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        AccommodationsModel accommodation = snapshot.
-                                getValue(AccommodationsModel.class);
+                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
                         if (accommodation != null) {
+                            accommodation.setId(snapshot.getKey()); // Save the Firebase key as ID
                             accommodations.add(accommodation); // Add at end for ascending
                         }
                     }
                 }
-                accomodationsLiveData.setValue(accommodations);
+                accommodationsLiveData.setValue(accommodations);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("Database Error: " + databaseError.getMessage());
+                Log.e("AccommodationsViewModel", "Database Error: " + databaseError.getMessage());
             }
         });
     }
 
     public void addAccommodations(AccommodationsModel accommodationsModel) {
-        String reservationId = UUID.randomUUID().toString();
-        Log.d("MODEL", String.valueOf(accommodationsModel.getNumberOfRooms()));
-        accommodationsDB.child(reservationId).setValue(accommodationsModel)
+        String accommodationId = UUID.randomUUID().toString();
+        Log.d("AccommodationsViewModel", "Adding accommodation with rooms: " +
+                accommodationsModel.getNumberOfRooms());
+
+        accommodationsDB.child(accommodationId).setValue(accommodationsModel)
                 .addOnSuccessListener(aVoid -> {
-                    // Reservation added successfully
-                    // The ValueEventListener will automatically update the LiveData
+                    Log.d("AccommodationsViewModel", "Accommodation added successfully");
                 })
                 .addOnFailureListener(e -> {
-                    // Handle the error here
-                    System.out.println("Error adding reservation: " + e.getMessage());
+                    Log.e("AccommodationsViewModel", "Error adding accommodation: " + e.getMessage());
                 });
     }
 
     public LiveData<List<AccommodationsModel>> getAccommodations() {
-        return accomodationsLiveData;
+        return accommodationsLiveData;
     }
 }

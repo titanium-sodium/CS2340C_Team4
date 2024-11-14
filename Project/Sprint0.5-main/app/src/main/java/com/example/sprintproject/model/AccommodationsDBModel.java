@@ -6,13 +6,13 @@ public class AccommodationsDBModel {
     private static AccommodationsDBModel realTimeDBInstance = null;
     private static DatabaseReference dbRef;
 
-    private AccommodationsDBModel(String userId) {
-        dbRef = DBModel.getInstance().child("users").child(userId).child("Accommodations");
+    private AccommodationsDBModel(String tripId) {
+        dbRef = DBModel.getInstance().child("trips").child(tripId).child("accommodations");
     }
-    public static synchronized DatabaseReference getInstance(String userId) {
-        if (realTimeDBInstance == null) {
-            realTimeDBInstance = new AccommodationsDBModel(userId);
-            return dbRef;
+
+    public static synchronized DatabaseReference getInstance(String tripId) {
+        if (realTimeDBInstance == null || !dbRef.getRef().toString().contains(tripId)) {
+            realTimeDBInstance = new AccommodationsDBModel(tripId);
         }
         return dbRef;
     }
