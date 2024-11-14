@@ -1,14 +1,20 @@
 package com.example.sprintproject.views;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.sprintproject.R;
+import com.example.sprintproject.model.AccommodationsModel;
+import com.example.sprintproject.viewmodels.FilterViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,12 +24,6 @@ import com.example.sprintproject.R;
 public class TravelCommunityPage extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-
-    private String mParam1;
-    private String mParam2;
     private String userId;
 
     public TravelCommunityPage() {
@@ -33,20 +33,10 @@ public class TravelCommunityPage extends Fragment {
         this.userId = userId;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TravelCommunityPage.
-     */
 
     public static TravelCommunityPage newInstance(String param1, String param2) {
         TravelCommunityPage fragment = new TravelCommunityPage();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,16 +44,43 @@ public class TravelCommunityPage extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.travel_community_screen, container, false);
+        View view = inflater.inflate(R.layout.travel_community_screen, container, false);
+        view.findViewById(R.id.addPost).setOnClickListener(v -> openAddPostForm());
+        return view;
+    }
+
+    private void openAddPostForm() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = getLayoutInflater().inflate(R.layout.travel_post_dialog, null);
+        EditText startInput = dialogView.findViewById(R.id.startEditText);
+        EditText endInput = dialogView.findViewById(R.id.endEditText);
+        EditText destinationInput = dialogView.findViewById(R.id.destinationEditText);
+        EditText accommodationsInput = dialogView.findViewById(R.id.accomodationsEditText);
+        EditText reservationInput = dialogView.findViewById(R.id.diningReservationEditText);
+        EditText noteInput = dialogView.findViewById(R.id.notesEditText);
+
+        builder.setView(dialogView)
+                .setTitle("New Travel Post")
+                .setPositiveButton("Add Accommodation", (dialog, which) -> {
+                    String start  = startInput.getText().toString();
+                    String end = endInput.getText().toString();
+                    String destination = destinationInput.getText().toString();
+                    String accomodations = accommodationsInput.getText().toString();
+                    String reservation = reservationInput.getText().toString();
+                    String notes = noteInput.getText().toString();
+                    if (true) {
+                        //TODO need to implement
+                    } else {
+                        Toast.makeText(getContext(),
+                                "Please enter all fields", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }
