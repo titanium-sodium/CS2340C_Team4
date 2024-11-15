@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.sprintproject.R;
+import com.example.sprintproject.model.DBModel;
+import com.example.sprintproject.model.TripDBModel;
 import com.example.sprintproject.viewmodels.AuthViewModel;
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.example.sprintproject.viewmodels.UserViewModel;
@@ -25,6 +27,10 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Objects;
+import java.util.UUID;
 
 public class LoginPage extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -83,12 +89,7 @@ public class LoginPage extends AppCompatActivity {
 
                                                             if (userEmail != null
                                                                     && userEmail.equals(email)) {
-                                                                Intent intent = new
-                                                                        Intent(LoginPage.this,
-                                                                        MainActivity.class);
-                                                                intent.putExtra("userId", userId);
-                                                                startActivity(intent);
-                                                                finish();
+                                                                checkTripsEmpty(userId);
                                                             }
                                                         } catch (Exception e) {
                                                             Log.e("Firebase",
@@ -149,4 +150,41 @@ public class LoginPage extends AppCompatActivity {
             }
         });
     }
+
+    private void checkTripsEmpty(String  userId) {
+
+        DBModel.getInstance().child("users").child(userId).child("trips").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String tripId = "";
+                if (snapshot.getChildrenCount() > 0) {
+                    //TODO get the tripID
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        if (tripId.isEmpty()) {
+                            tripId = child.getKey();
+                            Log.d("TRIPID", tripId);
+                        }
+                    }
+                } else {
+                    //TODO make an empty trip
+                    String randomID = UUID.randomUUID().toString();
+                    tripId = randomID;
+                    Log.d("TRIPID", "HERE");
+                }
+                Intent intent = new
+                        Intent(LoginPage.this,
+                        MainActivity.class);
+                intent.putExtra("userId", userId);
+                intent.putExtra("tripId", tripId);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                //Do nothing
+            }
+        });
+    }
+
 }
