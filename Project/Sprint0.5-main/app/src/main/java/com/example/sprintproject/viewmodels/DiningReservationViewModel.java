@@ -21,7 +21,7 @@ public class DiningReservationViewModel {
     private String currentSortField = "date"; // default sort field
 
     public DiningReservationViewModel(String userId) {
-        diningDB = DiningDBModel.getInstance(userId);
+        diningDB = DiningDBModel.getInstance();
         reservationsLiveData = new MutableLiveData<>(new ArrayList<>());
         setupDatabaseListener();
     }

@@ -6,24 +6,15 @@ import static org.junit.Assert.*;
 
 import com.example.sprintproject.model.AccommodationsFilterModel;
 import com.example.sprintproject.model.AccommodationsModel;
-import com.example.sprintproject.model.AuthModel;
 import com.example.sprintproject.model.DestinationModel;
-import com.example.sprintproject.model.DestinationsRepository;
 import com.example.sprintproject.model.DiningFilterModel;
 import com.example.sprintproject.model.DiningReservation;
 import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
-import com.example.sprintproject.viewmodels.DestinationViewModel;
 import com.example.sprintproject.viewmodels.UserViewModel;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

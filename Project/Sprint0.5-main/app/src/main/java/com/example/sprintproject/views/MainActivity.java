@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private static String userId;
+    private static String tripId;
 
     /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
         this still encompasses it in essence. */
@@ -32,7 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private TravelCommunityPage travelCommunityPage;
 
     public static String getUserId() {
-        return userId; }
+        return userId;
+    }
+    public static String getTripId() {
+        return tripId;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +46,17 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         userId = getIntent().getStringExtra("userId");
+        tripId = getIntent().getStringExtra("tripId");
         destinationsPage = new DestinationsPage(userId);
         diningEstablishmentsPage = new DiningEstablishmentsPage(userId);
         logisticsPage = new LogisticsPage(userId);
-        accommodationsPage = new AccommodationsPage(userId);
+        accommodationsPage = new AccommodationsPage(userId, tripId);
         travelCommunityPage = new TravelCommunityPage(userId);
 
-        checkTripsEmpty(userId);
+
         Bundle args = new Bundle();
         args.putString("userId", userId);
+        args.putString("tripId", tripId);
         logisticsPage.setArguments(args);
 
 
@@ -91,26 +98,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    //Checks if the trips array in the user is empty
-    private void checkTripsEmpty(String  userId) {
-
-        DBModel.getInstance().child("users").child(userId).child("trips").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getChildrenCount() > 0) {
-                    //TODO get the tripID
-                } else {
-                    //TODO make an empty trip
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                //Do nothing
-            }
-        });
-    }
-
     //A method for changing from one screen on the navbar to another.
     private void changeFragment(Fragment fragment) {
 
