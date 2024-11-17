@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="56dp"
+        android:layout_height="46dp"
+
+        android:background="@color/white"
+        android:scaleType="fitXY"
+        android:paddingBottom="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_backarrow" />
+
+    <TextView
+        android:id="@+id/accommodationsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="136dp"
+        android:padding="10dp"
+        android:text="Accommodations"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- To be populated by item_accommodation_res objects-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/accommodationsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/accommodationsText"
+        app:layout_constraintBottom_toTopOf="@id/diningResText"
+        app:layout_constraintVertical_bias="0.042" />
+
+    <TextView
+        android:id="@+id/diningResText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Dining Reservations"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/accommodationsRecycler" />
+
+    <!--It was clarified on Ed Discussion that the "Transportation Taken" part of things
+    should be handled through an EditText.-->
+    <EditText
+        android:id="@+id/transportEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter your transportation type here."
+        android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@id/accommodationsText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.792" />
+
+    <!-- To be populated by item_dining_res objects-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/diningResRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/diningResText"
+        app:layout_constraintVertical_bias="0.353" />
+
+    <TextView
+        android:id="@+id/transportText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Transportation"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/transportEditText"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
