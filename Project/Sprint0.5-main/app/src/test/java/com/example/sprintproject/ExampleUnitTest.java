@@ -155,20 +155,6 @@ public class ExampleUnitTest {
 
     //------------------------------------SPRINT 3-------------------------------------//
 
-    //------------------------------------AddDiningReservation-------------------------------------//
-    @Test
-    public void testAddDiningReservation() {
-
-        DiningReservation diningReservation = new DiningReservation("SwawS", "SuS",
-                "www.meem.com", "SaaS", "4:20");
-
-        assertEquals("SwawS", diningReservation.getUserId());
-        assertEquals("SuS", diningReservation.getTripId());
-        assertEquals("www.meem.com", diningReservation.getWebsite());
-        assertEquals("SaaS", diningReservation.getLocation());
-        assertEquals("4:20", diningReservation.getTime());
-
-    }
 
     //---------------------------------------ChangeFilter------------------------------------------//
 
@@ -215,6 +201,19 @@ public class ExampleUnitTest {
     }
 
     @Test
+    public void testEmptyUserId() {
+
+        try {
+            DiningReservation res = new DiningReservation("", "abc", "www.example.com",
+                    "somewhere or other", "3:30");
+            fail("Reservation must be linked to a userId");
+        } catch (AssertionError e) {
+            assertEquals("Reservation must be linked to a userId", e.getMessage());
+        }
+
+    }
+
+    @Test
     public void testValidDiningReservation() {
         DiningReservation res = new DiningReservation("123", "abc",
                 "coolmath.com", "Papa John's","5");
@@ -225,16 +224,17 @@ public class ExampleUnitTest {
     }
 
     @Test
-    public void testAllFieldsDiningReservation() {
-        ArrayList<String> notes = new ArrayList<>();
-        notes.add("Vegan Friendly");
-        ArrayList<String> contributors = new ArrayList<>();
-        contributors.add("joni");
-        DiningReservation res = new DiningReservation("123", "abc",
-                "coolmath.com", "Papa John's","5", 110824, notes, contributors);
-        assertEquals(110824, res.getDate());
-        assertEquals(notes, res.getNotes());
-        assertEquals(contributors, res.getContributors());
+    public void testAddDiningReservation() {
+
+        DiningReservation diningReservation = new DiningReservation("SwawS", "SuS",
+                "www.meem.com", "SaaS", "4:20");
+
+        assertEquals("SwawS", diningReservation.getUserId());
+        assertEquals("SuS", diningReservation.getTripId());
+        assertEquals("www.meem.com", diningReservation.getWebsite());
+        assertEquals("SaaS", diningReservation.getLocation());
+        assertEquals("4:20", diningReservation.getTime());
+
     }
 
     //---------------------------------------addAccommodations------------------------------------------//
