@@ -3,6 +3,7 @@ package com.example.sprintproject.model;
 public class TravelStats {
     private int allottedDays;
     private int plannedDays;
+    private String destination;
 
     // Default constructor required for Firebase
     public TravelStats() {
@@ -34,4 +35,13 @@ public class TravelStats {
     public void setPlannedDays(int plannedDays)  {
         this.plannedDays = plannedDays;
     }
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
 }
