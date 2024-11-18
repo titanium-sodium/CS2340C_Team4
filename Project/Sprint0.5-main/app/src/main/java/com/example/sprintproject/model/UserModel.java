@@ -7,33 +7,41 @@ public class UserModel {
     private String userId;
     private ArrayList<DestinationModel> destinations;
     private TravelStats travelStats;
-    private ArrayList<String> tripIds; // Store references to trips
+    private ArrayList<String> tripIds;
 
     public UserModel(String userId, String email) throws IllegalArgumentException {
-        if (userId == null || userId.length() == 0) {
-            throw new IllegalArgumentException("userId cannot be empty");
-        }
-        if (email == null || email.length() == 0) {
-            throw new IllegalArgumentException("email cannot be empty");
-        }
+        validateUserData(userId, email);
         this.email = email;
         this.userId = userId;
         this.destinations = new ArrayList<>();
         this.tripIds = new ArrayList<>();
-        this.travelStats = new TravelStats(0, 0);
+        this.travelStats = new TravelStats();
     }
 
     // Required empty constructor for Firebase
     public UserModel() {
         this.destinations = new ArrayList<>();
         this.tripIds = new ArrayList<>();
+        this.travelStats = new TravelStats();
+    }
+
+    private void validateUserData(String userId, String email) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("userId cannot be empty");
+        }
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("email cannot be empty");
+        }
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email) throws IllegalArgumentException {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("email cannot be empty");
+        }
         this.email = email;
     }
 
@@ -41,7 +49,10 @@ public class UserModel {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(String userId) throws IllegalArgumentException {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("userId cannot be empty");
+        }
         this.userId = userId;
     }
 
@@ -49,11 +60,17 @@ public class UserModel {
         return destinations;
     }
 
-    public void addDestination(DestinationModel destination) {
+    public void addDestination(DestinationModel destination) throws IllegalArgumentException {
+        if (destination == null) {
+            throw new IllegalArgumentException("destination cannot be null");
+        }
         destinations.add(destination);
     }
 
-    public void removeDestination(DestinationModel destination) {
+    public void removeDestination(DestinationModel destination) throws IllegalArgumentException {
+        if (destination == null) {
+            throw new IllegalArgumentException("destination cannot be null");
+        }
         destinations.remove(destination);
     }
 
@@ -61,18 +78,27 @@ public class UserModel {
         return tripIds;
     }
 
-    public void setTripIds(ArrayList<String> tripIds) {
+    public void setTripIds(ArrayList<String> tripIds) throws IllegalArgumentException {
+        if (tripIds == null) {
+            throw new IllegalArgumentException("tripIds cannot be null");
+        }
         this.tripIds = tripIds;
     }
 
-    public void addTripId(String tripId) {
+    public void addTripId(String tripId) throws IllegalArgumentException {
+        if (tripId == null || tripId.isEmpty()) {
+            throw new IllegalArgumentException("tripId cannot be empty");
+        }
         if (tripIds == null) {
             tripIds = new ArrayList<>();
         }
         tripIds.add(tripId);
     }
 
-    public void removeTripId(String tripId) {
+    public void removeTripId(String tripId) throws IllegalArgumentException {
+        if (tripId == null || tripId.isEmpty()) {
+            throw new IllegalArgumentException("tripId cannot be empty");
+        }
         if (tripIds != null) {
             tripIds.remove(tripId);
         }
@@ -82,7 +108,10 @@ public class UserModel {
         return travelStats;
     }
 
-    public void setTravelStats(TravelStats travelStats) {
+    public void setTravelStats(TravelStats travelStats) throws IllegalArgumentException {
+        if (travelStats == null) {
+            throw new IllegalArgumentException("travelStats cannot be null");
+        }
         this.travelStats = travelStats;
     }
 }

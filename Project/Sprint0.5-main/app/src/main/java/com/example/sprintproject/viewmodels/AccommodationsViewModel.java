@@ -1,10 +1,8 @@
 package com.example.sprintproject.viewmodels;
 
 import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.sprintproject.model.AccommodationsDBModel;
 import com.example.sprintproject.model.AccommodationsModel;
 import com.google.firebase.database.DataSnapshot;
@@ -12,8 +10,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +41,33 @@ public class AccommodationsViewModel {
         isAscending = ascending;
         currentSortField = sortField;
         setupDatabaseListener(); // Reload with new sort order
+    }
+
+    // New method for local sorting
+    public void sortAccommodations(boolean ascending) {
+        List<AccommodationsModel> currentList = accommodationsLiveData.getValue();
+        if (currentList != null) {
+            Collections.sort(currentList, getComparator(ascending));
+            accommodationsLiveData.setValue(currentList);
+        }
+    }
+
+    // Helper method to get the appropriate comparator
+    private Comparator<AccommodationsModel> getComparator(boolean ascending) {
+        Comparator<AccommodationsModel> comparator = (a1, a2) -> {
+            switch (currentSortField) {
+                case "checkInDate":
+                    return a1.getCheckInDate().compareTo(a2.getCheckInDate());
+                case "checkOutDate":
+                    return a1.getCheckOutDate().compareTo(a2.getCheckOutDate());
+                case "numberOfRooms":
+                    return Integer.compare(a1.getNumberOfRooms(), a2.getNumberOfRooms());
+                default:
+                    return a1.getCheckInDate().compareTo(a2.getCheckInDate());
+            }
+        };
+
+        return ascending ? comparator : comparator.reversed();
     }
 
     private void setupDatabaseListener() {

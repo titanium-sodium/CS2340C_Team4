@@ -5,7 +5,6 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
-
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,33 +27,28 @@ import java.util.Locale;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DestinationModel;
-
 import com.example.sprintproject.model.TravelStats;
-import com.example.sprintproject.viewmodels.DBViewModel;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
 import com.example.sprintproject.viewmodels.DestinationViewModel;
 import com.example.sprintproject.viewmodels.TravelStatsViewModel;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 
 public class DestinationsPage extends Fragment {
+    private static final String TAG = "DestinationsPage";
     private DestinationViewModel destinationViewModel;
     private TravelStatsViewModel travelStatsViewModel;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     private TextView allottedDaysText;
     private TextView plannedDaysText;
     private String userId;
+    private String currentTripId;
     private DestinationAdapter destinationAdapter;
-    private List<String> destinations = new ArrayList<>();
-    private List<Integer> daysPlanned = new ArrayList<>();
+    private List<DestinationModel> destinations = new ArrayList<>();
 
     public DestinationsPage(String userId) {
         this.userId = userId;
     }
 
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userId = MainActivity.getUserId();
@@ -64,6 +58,7 @@ public class DestinationsPage extends Fragment {
         }
         destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
         travelStatsViewModel = new ViewModelProvider(this).get(TravelStatsViewModel.class);
+        loadOrCreateDefaultTrip();
     }
 
     @Override
@@ -75,15 +70,11 @@ public class DestinationsPage extends Fragment {
         }
 
         View view = inflater.inflate(R.layout.destination_screen, container, false);
-
-        // Initialize TextViews for stats display
         allottedDaysText = view.findViewById(R.id.allottedDaysText);
 
-        // Initialize buttons
         Button travelLogButton = view.findViewById(R.id.travelLogButton);
         Button calculateTimeButton = view.findViewById(R.id.calculateButton);
 
-        // Set click listeners
         if (travelLogButton != null) {
             travelLogButton.setOnClickListener(v -> openTravelLogForm());
         }
@@ -92,107 +83,85 @@ public class DestinationsPage extends Fragment {
             calculateTimeButton.setOnClickListener(v -> openCalculateTimeForm());
         }
 
-        // Set up RecyclerView
         RecyclerView recyclerView = view.findViewById(R.id.travelLogsRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        if (recyclerView != null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            destinationAdapter = new DestinationAdapter(destinations);
+            recyclerView.setAdapter(destinationAdapter);
+        }
 
-        // Initialize adapter with empty lists
-        destinationAdapter = new DestinationAdapter(destinations, daysPlanned);
-        recyclerView.setAdapter(destinationAdapter);
-
-        // Load data from Firebase
-        loadDestinationsData();
         loadTravelStats();
-
         return view;
     }
 
+    private void loadOrCreateDefaultTrip() {
+        DatabaseReference userTripsRef = FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(userId)
+                .child("trips");
+
+        userTripsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists() || !snapshot.hasChildren()) {
+                    DatabaseReference newTripRef = FirebaseDatabase.getInstance().getReference()
+                            .child("trips")
+                            .push();
+                    String newTripId = newTripRef.getKey();
+
+                    newTripRef.child("userID").setValue(userId);
+                    userTripsRef.child(newTripId).setValue(true);
+                    currentTripId = newTripId;
+                } else {
+                    currentTripId = snapshot.getChildren().iterator().next().getKey();
+                }
+                loadDestinationsData();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error loading trips: " + error.getMessage());
+            }
+        });
+    }
+
     private void loadDestinationsData() {
-        DatabaseReference db = new DBViewModel().getDB();
-        db.child("users").child(userId).child("destinations")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        destinations.clear();
-                        daysPlanned.clear();
-
-                        int totalPlannedDays = 0;
-
-                        for (DataSnapshot destinationSnapshot : snapshot.getChildren()) {
-                            if (!destinationSnapshot.getKey().equals("notes")) {
-                                DestinationModel destination = destinationSnapshot
-                                        .getValue(DestinationModel.class);
-                                if (destination != null) {
-                                    destinations.add(destination.getLocation());
-                                    long durationInMillis = destination.getEndDate()
-                                            - destination.getStartDate();
-                                    int durationInDays = (int) (durationInMillis
-                                            / (1000 * 60 * 60 * 24)) + 1;
-                                    daysPlanned.add(durationInDays);
-                                    totalPlannedDays += durationInDays;
-                                }
-                            }
-                        }
-
-                        // Update the plannedDays in travelStats
-                        db.child("users").child(userId).child("travelStats")
-                                .child("plannedDays")
-                                .setValue(totalPlannedDays);
-
-                        // Update the adapter
-                        if (destinationAdapter != null) {
-                            destinationAdapter.notifyDataSetChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("DestinationsPage", "Error loading destinations: "
-                                + error.getMessage());
-                    }
-                });
-    }
-
-    private void loadTravelStats() {
-        if (userId != null && !userId.isEmpty()) {
-            travelStatsViewModel.loadTravelStats(userId);
-            observeTravelStats();
-        }
-    }
-
-    private void observeTravelStats() {
-        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(),
-                this::updateStatsDisplay);
-    }
-
-    private void updateStatsDisplay(TravelStats stats) {
-        if (stats == null) {
+        if (currentTripId == null) {
+            Log.e(TAG, "No trip ID available");
             return;
         }
 
-        if (allottedDaysText != null) {
-            allottedDaysText.setText(String.format("Allotted Days: %d", stats.getAllottedDays()));
-        }
-        if (plannedDaysText != null) {
-            plannedDaysText.setText(String.format("Planned Days: %d", stats.getPlannedDays()));
-        }
-    }
+        DestinationModel.loadTripDestinations(currentTripId, new DestinationModel.DestinationLoadCallback() {
+            @Override
+            public void onDestinationsLoaded(ArrayList<DestinationModel> destinationsList) {
+                destinations.clear();
+                destinations.addAll(destinationsList);
 
-    private void navigateToLogin() {
-        if (getActivity() != null) {
-            Toast.makeText(getActivity(), "Please log in to access this page",
-                    Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(getActivity(), LoginPage.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            getActivity().finish();
-        }
+                int totalPlannedDays = 0;
+                for (DestinationModel destination : destinationsList) {
+                    totalPlannedDays += destination.getDuration();
+                }
+
+                travelStatsViewModel.updatePlannedDays(userId, totalPlannedDays);
+
+                if (destinationAdapter != null) {
+                    destinationAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Error loading destinations: " + errorMessage);
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Error loading destinations: " + errorMessage,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void openTravelLogForm() {
-        if (getContext() == null) {
-            return;
-        }
+        if (getContext() == null) return;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.travel_log_form, null);
@@ -201,7 +170,6 @@ public class DestinationsPage extends Fragment {
         EditText startTimeInput = dialogView.findViewById(R.id.startTime);
         EditText endTimeInput = dialogView.findViewById(R.id.endTime);
 
-        // Set up date pickers
         setupDatePicker(startTimeInput, "Select Start Date");
         setupDatePicker(endTimeInput, "Select End Date");
 
@@ -217,16 +185,15 @@ public class DestinationsPage extends Fragment {
                             Date startDate = sdf.parse(startTimeStr);
                             Date endDate = sdf.parse(endTimeStr);
 
-                            if (startDate != null && endDate != null) {
-                                DatabaseReference db = new DBViewModel().getDB();
+                            if (startDate != null && endDate != null && currentTripId != null) {
                                 DestinationModel destination = new DestinationModel(
                                         startDate.getTime(),
                                         endDate.getTime(),
                                         location
                                 );
-                                db.child("users").child(userId).child("destinations")
-                                        .child(location + startDate.getTime())
-                                        .setValue(destination);
+                                destination.saveToTrip(currentTripId);
+                                Toast.makeText(getContext(), "Travel log added successfully",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         } catch (ParseException e) {
                             Toast.makeText(getContext(), "Invalid date format",
@@ -383,6 +350,132 @@ public class DestinationsPage extends Fragment {
             );
             datePickerDialog.setTitle(title);
             datePickerDialog.show();
+        });
+    }
+
+    private void navigateToLogin() {
+        if (getActivity() != null) {
+            Toast.makeText(getActivity(), "Please log in to access this page",
+                    Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getActivity(), LoginPage.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            getActivity().finish();
+        }
+    }
+    private void loadTravelStats() {
+        if (userId != null && !userId.isEmpty()) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
+                    .child("users")
+                    .child(userId)
+                    .child("travelStats");
+
+            userRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        TravelStats stats = snapshot.getValue(TravelStats.class);
+                        if (stats != null) {
+                            updateStatsDisplay(stats);
+                        }
+                    } else {
+                        // Initialize default travel stats if none exist
+                        TravelStats defaultStats = new TravelStats();
+                        defaultStats.setAllottedDays(0);
+                        defaultStats.setPlannedDays(0);
+                        defaultStats.setPlannedPercentage(0);
+                        defaultStats.setRemainingDays(0);
+                        userRef.setValue(defaultStats);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "Error loading travel stats: " + error.getMessage());
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(),
+                                "Error loading travel stats: " + error.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+    }
+
+    private void updateStatsDisplay(TravelStats stats) {
+        if (stats == null || getContext() == null) {
+            return;
+        }
+
+        if (allottedDaysText != null) {
+            allottedDaysText.setText(String.format(Locale.getDefault(),
+                    "Allotted Days: %d", stats.getAllottedDays()));
+        }
+
+        if (plannedDaysText != null) {
+            plannedDaysText.setText(String.format(Locale.getDefault(),
+                    "Planned Days: %d", stats.getPlannedDays()));
+        }
+    }
+
+    public void updateTravelStats(int plannedDays) {
+        if (userId == null || userId.isEmpty()) {
+            return;
+        }
+
+        DatabaseReference statsRef = FirebaseDatabase.getInstance().getReference()
+                .child("users")
+                .child(userId)
+                .child("travelStats");
+
+        statsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                TravelStats currentStats;
+                if (snapshot.exists()) {
+                    currentStats = snapshot.getValue(TravelStats.class);
+                } else {
+                    currentStats = new TravelStats();
+                }
+
+                if (currentStats != null) {
+                    currentStats.setPlannedDays(plannedDays);
+
+                    // Calculate percentage and remaining days
+                    if (currentStats.getAllottedDays() > 0) {
+                        int percentage = (plannedDays * 100) / currentStats.getAllottedDays();
+                        currentStats.setPlannedPercentage(percentage);
+                        currentStats.setRemainingDays(
+                                currentStats.getAllottedDays() - plannedDays);
+                    }
+
+                    statsRef.setValue(currentStats)
+                            .addOnSuccessListener(aVoid -> {
+                                if (getContext() != null) {
+                                    Toast.makeText(getContext(),
+                                            "Travel stats updated",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                if (getContext() != null) {
+                                    Toast.makeText(getContext(),
+                                            "Failed to update travel stats: " + e.getMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error updating travel stats: " + error.getMessage());
+                if (getContext() != null) {
+                    Toast.makeText(getContext(),
+                            "Error updating travel stats: " + error.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 }

@@ -26,7 +26,11 @@ public class TravelStatsViewModel extends ViewModel {
                     public void onDataChange(DataSnapshot snapshot) {
                         TravelStats stats = snapshot.getValue(TravelStats.class);
                         if (stats == null) {
-                            stats = new TravelStats(); // Use default values
+                            stats = new TravelStats();
+                            stats.setAllottedDays(0);
+                            stats.setPlannedDays(0);
+                            stats.setPlannedPercentage(0);
+                            stats.setRemainingDays(0);
                         }
                         travelStats.setValue(stats);
                     }
@@ -40,31 +44,63 @@ public class TravelStatsViewModel extends ViewModel {
 
     public Task<Void> updateAllottedDays(String userId, int allottedDays) {
         DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
-        return userRef.child("allottedDays").setValue(allottedDays)
-                .addOnSuccessListener(aVoid -> {
-                    // Update the LiveData
-                    TravelStats currentStats = travelStats.getValue();
-                    if (currentStats != null) {
-                        travelStats.setValue(new TravelStats(allottedDays,
-                                currentStats.getPlannedDays()));
-                    } else {
-                        travelStats.setValue(new TravelStats(allottedDays, 0));
-                    }
-                });
+
+        final TravelStats updatedStats = new TravelStats();
+        TravelStats current = travelStats.getValue();
+        int plannedDays = current != null ? current.getPlannedDays() : 0;
+
+        // Update all related fields
+        updatedStats.setAllottedDays(allottedDays);
+        updatedStats.setPlannedDays(plannedDays);
+
+        // Calculate percentage and remaining days
+        int percentage = allottedDays > 0 ? (plannedDays * 100) / allottedDays : 0;
+        updatedStats.setPlannedPercentage(percentage);
+        updatedStats.setRemainingDays(allottedDays - plannedDays);
+
+        // Update entire stats object in Firebase
+        return userRef.setValue(updatedStats)
+                .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
+    }
+
+    public Task<Void> updatePlannedDays(String userId, int plannedDays) {
+        DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
+
+        final TravelStats updatedStats = new TravelStats();
+        TravelStats current = travelStats.getValue();
+        int allottedDays = current != null ? current.getAllottedDays() : 0;
+
+        // Update all related fields
+        updatedStats.setAllottedDays(allottedDays);
+        updatedStats.setPlannedDays(plannedDays);
+
+        // Calculate percentage and remaining days
+        int percentage = allottedDays > 0 ? (plannedDays * 100) / allottedDays : 0;
+        updatedStats.setPlannedPercentage(percentage);
+        updatedStats.setRemainingDays(allottedDays - plannedDays);
+
+        // Update entire stats object in Firebase
+        return userRef.setValue(updatedStats)
+                .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
     }
 
     public Task<Void> addPlannedDays(String userId, int additionalDays) {
-        TravelStats currentStats = travelStats.getValue();
-        if (currentStats != null) {
-            int newPlannedDays = currentStats.getPlannedDays() + additionalDays;
-            DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
-            return userRef.child("plannedDays").setValue(newPlannedDays)
-                    .addOnSuccessListener(aVoid -> {
-                        travelStats.setValue(new TravelStats(currentStats.getAllottedDays(),
-                                newPlannedDays));
-                    });
-        }
-        return database.child("users").child(userId).child("travelStats")
-                .child("plannedDays").setValue(additionalDays);
+        TravelStats current = travelStats.getValue();
+        final TravelStats updatedStats = new TravelStats();
+
+        int currentPlannedDays = current != null ? current.getPlannedDays() : 0;
+        int allottedDays = current != null ? current.getAllottedDays() : 0;
+        int newPlannedDays = currentPlannedDays + additionalDays;
+
+        // Update all fields
+        updatedStats.setAllottedDays(allottedDays);
+        updatedStats.setPlannedDays(newPlannedDays);
+        int percentage = allottedDays > 0 ? (newPlannedDays * 100) / allottedDays : 0;
+        updatedStats.setPlannedPercentage(percentage);
+        updatedStats.setRemainingDays(allottedDays - newPlannedDays);
+
+        DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
+        return userRef.setValue(updatedStats)
+                .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
     }
 }

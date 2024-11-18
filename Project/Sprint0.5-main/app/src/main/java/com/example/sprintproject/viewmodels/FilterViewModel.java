@@ -7,7 +7,7 @@ import com.example.sprintproject.model.AccommodationsFilterModel;
 public class FilterViewModel {
     private boolean filter;
     private String type;
-    private DiningReservationViewModel diningViewModel;
+    private DiningViewModel diningViewModel;
     private AccommodationsViewModel accommodationsViewModel;
     private FiltersModel filterModel;
 
@@ -17,7 +17,7 @@ public class FilterViewModel {
 
         // Initialize the appropriate filter model and viewModel based on type
         if (type.equals("Dining")) {
-            this.diningViewModel = (DiningReservationViewModel) viewModel;
+            this.diningViewModel = (DiningViewModel) viewModel;
             this.filterModel = new DiningFilterModel();
         } else if (type.equals("Accommodations")) {
             this.accommodationsViewModel = (AccommodationsViewModel) viewModel;
@@ -30,13 +30,21 @@ public class FilterViewModel {
             // Get the new filter state from the model
             this.filter = filterModel.changeFilter(filterType);
 
-            // Apply sorting using the model's sort field
+            // Apply sorting based on the type
             if (type.equals("Dining") && diningViewModel != null) {
-                diningViewModel.setSortOrder(this.filter, filterModel.getSortField());
+                applySort(diningViewModel);
             } else if (type.equals("Accommodations") && accommodationsViewModel != null) {
-                accommodationsViewModel.setSortOrder(this.filter, filterModel.getSortField());
+                applySort(accommodationsViewModel);
             }
         }
+    }
+
+    private void applySort(DiningViewModel viewModel) {
+        viewModel.sortReservations(this.filter);
+    }
+
+    private void applySort(AccommodationsViewModel viewModel) {
+        viewModel.sortAccommodations(this.filter);
     }
 
     public boolean getFilter() {
