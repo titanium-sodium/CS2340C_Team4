@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.sprintproject.model.TravelStats;
+import com.example.sprintproject.model.TripDBModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,8 +43,8 @@ public class TravelStatsViewModel extends ViewModel {
                 });
     }
 
-    public Task<Void> updateAllottedDays(String userId, int allottedDays) {
-        DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
+    public Task<Void> updateAllottedDays(String tripId, int allottedDays) {
+        DatabaseReference userRef = TripDBModel.getTripReference(tripId).child("travelStats");
 
         final TravelStats updatedStats = new TravelStats();
         TravelStats current = travelStats.getValue();
@@ -63,8 +64,8 @@ public class TravelStatsViewModel extends ViewModel {
                 .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
     }
 
-    public Task<Void> updatePlannedDays(String userId, int plannedDays) {
-        DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
+    public Task<Void> updatePlannedDays(String tripId, int plannedDays) {
+        DatabaseReference userRef = TripDBModel.getTripReference(tripId).child("travelStats");
 
         final TravelStats updatedStats = new TravelStats();
         TravelStats current = travelStats.getValue();
