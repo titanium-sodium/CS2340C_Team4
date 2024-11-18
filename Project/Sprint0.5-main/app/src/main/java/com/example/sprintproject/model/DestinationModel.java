@@ -1,21 +1,36 @@
 package com.example.sprintproject.model;
 
+import androidx.annotation.NonNull;
+import android.util.Log;
+import com.google.firebase.database.*;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class DestinationModel {
+    private static final String TAG = "DestinationModel";
+    private static DatabaseReference database;
+
+    // Model properties
     private String id;
-    private long startDate;  // Changed to long
-    private long endDate;    // Changed to long
+    private String tripId;
+    private long startDate;
+    private long endDate;
     private String location;
-    private ArrayList<String> notes;
-    private ArrayList<String> contributors;
     private int duration;
 
+    // Database node names
+    private static final String TRIPS_NODE = "trips";
+    private static final String DESTINATIONS_NODE = "destinations";
+
+    public interface DestinationLoadCallback {
+        void onDestinationsLoaded(ArrayList<DestinationModel> destinations);
+        void onError(String errorMessage);
+    }
+
+    // Constructor for new destinations
     public DestinationModel(long startDate, long endDate, String location)
             throws IllegalArgumentException {
-        // Updated constructor
-        if (location.length() == 0) {
+        if (location == null || location.trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid location");
         }
         if (startDate <= 0 || endDate <= 0) {
@@ -24,13 +39,89 @@ public class DestinationModel {
         this.startDate = startDate;
         this.endDate = endDate;
         this.location = location;
-        this.contributors = new ArrayList<>();
-        this.notes = new ArrayList<>();
         calculateDuration();
     }
-    public DestinationModel() {
+
+    // Empty constructor for Firebase
+    public DestinationModel() { }
+
+    // Database operations
+    private static DatabaseReference getDatabase() {
+        if (database == null) {
+            database = FirebaseDatabase.getInstance().getReference();
+        }
+        return database;
     }
 
+    // Save destination to a specific trip
+    public void saveToTrip(String tripId) {
+        if (tripId == null || tripId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Invalid trip ID");
+        }
+
+        this.tripId = tripId;
+
+        // Create new destination under the trip's destinations node
+        DatabaseReference destinationRef = getDatabase()
+                .child(TRIPS_NODE)
+                .child(tripId)
+                .child(DESTINATIONS_NODE)
+                .push();
+
+        String destinationId = destinationRef.getKey();
+        this.id = destinationId;
+
+        // Save only the specified fields
+        destinationRef.child("location").setValue(location);
+        destinationRef.child("startDate").setValue(startDate);
+        destinationRef.child("endDate").setValue(endDate);
+        destinationRef.child("duration").setValue(duration);
+    }
+
+    // Load destinations for a specific trip
+    public static void loadTripDestinations(String tripId, final DestinationLoadCallback callback) {
+        getDatabase()
+                .child(TRIPS_NODE)
+                .child(tripId)
+                .child(DESTINATIONS_NODE)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        ArrayList<DestinationModel> destinations = new ArrayList<>();
+                        for (DataSnapshot destinationSnapshot : snapshot.getChildren()) {
+                            try {
+                                if (isValidDestinationData(destinationSnapshot)) {
+                                    DestinationModel destination = new DestinationModel();
+                                    destination.setId(destinationSnapshot.getKey());
+                                    destination.setTripId(tripId);
+                                    destination.setLocation(destinationSnapshot.child("location").getValue(String.class));
+                                    destination.setStartDate(destinationSnapshot.child("startDate").getValue(Long.class));
+                                    destination.setEndDate(destinationSnapshot.child("endDate").getValue(Long.class));
+                                    destination.calculateDuration();
+                                    destinations.add(destination);
+                                }
+                            } catch (Exception e) {
+                                Log.e(TAG, "Error converting destination: " + e.getMessage());
+                            }
+                        }
+                        callback.onDestinationsLoaded(destinations);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        callback.onError(error.getMessage());
+                    }
+                });
+    }
+
+    // Validate destination data before conversion
+    private static boolean isValidDestinationData(DataSnapshot snapshot) {
+        return snapshot.hasChild("location") &&
+                snapshot.hasChild("startDate") &&
+                snapshot.hasChild("endDate");
+    }
+
+    // Getters and setters
     public String getId() {
         return id;
     }
@@ -39,20 +130,28 @@ public class DestinationModel {
         this.id = id;
     }
 
-    public long getStartDate() {  // Updated return type
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+    }
+
+    public long getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(long startDate) {  // Updated parameter type
+    public void setStartDate(long startDate) {
         this.startDate = startDate;
         calculateDuration();
     }
 
-    public long getEndDate() {  // Updated return type
+    public long getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(long endDate) {  // Updated parameter type
+    public void setEndDate(long endDate) {
         this.endDate = endDate;
         calculateDuration();
     }
@@ -62,7 +161,7 @@ public class DestinationModel {
     }
 
     public void calculateDuration() {
-        duration = (int) TimeUnit.MILLISECONDS.toDays(endDate - startDate);
+        duration = (int) TimeUnit.MILLISECONDS.toDays(endDate - startDate) + 1;
         if (duration < 0) {
             duration = 0;
         }
@@ -74,30 +173,5 @@ public class DestinationModel {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public ArrayList<String> getNote() {
-        return notes;
-    }
-
-    public void addNote(String note) {
-        this.notes.add(note);
-    }
-
-    public ArrayList<String> getContributors() {
-        return contributors;
-    }
-
-    public void setContributors(ArrayList<String> contributors) {
-        this.contributors = contributors;
-    }
-
-    public void addContributor(String contributorId) {
-        if (contributors == null) {
-            contributors = new ArrayList<>();
-        }
-        if (!contributors.contains(contributorId)) {
-            contributors.add(contributorId);
-        }
     }
 }

@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.example.sprintproject.model.DBModel;
 
 import java.util.UUID;
 
@@ -29,16 +30,15 @@ public class CreateAccountPage extends AppCompatActivity {
     private EditText emailInput;
     private EditText passwordInput;
     private UserViewModel userViewModel = new UserViewModel();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_accounts_page);
+
         //auth view model instantiation
         AuthViewModel viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         mAuth = viewModel.getAuth();
-
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
@@ -80,19 +80,30 @@ public class CreateAccountPage extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-
                             FirebaseUser user = mAuth.getCurrentUser();
-                            String userId = UUID.randomUUID().toString();
+                            String userId = user.getUid(); // Use Firebase UID instead of random UUID
 
                             userViewModel.setUserEmail(email);
                             userViewModel.setUserUID(userId);
 
                             //creates an instance of user model and writes it to the DB
                             userViewModel.writeNewUser(userViewModel.getUserModel());
+
+                            // Create initial trip
+                            String tripId = UUID.randomUUID().toString();
+                            DBModel.getUsersReference().child(userId).child("trips").child(tripId).setValue(true);
+                            DBModel.getTripReference().child(tripId).child("userID").setValue(userId);
+
                             Toast.makeText(CreateAccountPage.this,
                                     "Account created successfully",
                                     Toast.LENGTH_SHORT).show();
-                            navigateToLogin();
+
+                            // Navigate directly to MainActivity instead of LoginPage
+                            Intent intent = new Intent(CreateAccountPage.this, MainActivity.class);
+                            intent.putExtra("userId", userId);
+                            intent.putExtra("tripId", tripId);
+                            startActivity(intent);
+                            finish();
                         } else {
                             Toast.makeText(CreateAccountPage.this,
                                     "Account creation failed: " + task.getException().getMessage(),
@@ -104,8 +115,6 @@ public class CreateAccountPage extends AppCompatActivity {
 
     private void navigateToLogin() {
         Intent intent = new Intent(CreateAccountPage.this, LoginPage.class);
-        //adding the userId to the bundle for app to use elsewhere.
-        intent.putExtra("userId", userViewModel.getUserUID());
         startActivity(intent);
         finish();
     }

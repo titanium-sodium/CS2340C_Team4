@@ -1,32 +1,25 @@
 package com.example.sprintproject.viewmodels;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.sprintproject.R;
-
+import com.example.sprintproject.model.DestinationModel;
 import java.util.List;
 
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
+    private List<DestinationModel> destinations;
 
-
-    private List<String> destinations;
-    private List<Integer> daysPlanned;
-
-    public DestinationAdapter(List<String> destinations, List<Integer> daysPlanned) {
+    public DestinationAdapter(List<DestinationModel> destinations) {
         this.destinations = destinations;
-        this.daysPlanned = daysPlanned;
     }
-
 
     @NonNull
     @Override
-    public DestinationAdapter.ViewHolder onCreateViewHolder(
-            @NonNull ViewGroup parent, int viewType) {
-        //We inflate the layout here
+    public DestinationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_destination, parent, false);
         return new ViewHolder(view);
@@ -34,14 +27,13 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull DestinationAdapter.ViewHolder holder, int position) {
-        //where we assign values to each of the rows aka binds the data
-        holder.destinationText.setText(destinations.get(position));
-        holder.daysPlannedText.setText(daysPlanned.get(position) + " days planned");
+        DestinationModel destination = destinations.get(position);
+        holder.destinationText.setText(destination.getLocation());
+        holder.daysPlannedText.setText(destination.getDuration() + " days planned");
     }
 
     @Override
     public int getItemCount() {
-        //recycler view wants us to know the number of items that we want to display
         return destinations.size();
     }
 
@@ -50,17 +42,9 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         private TextView daysPlannedText;
 
         public ViewHolder(@NonNull View itemView) {
-            //takes the variables destinationText and daysPlannedText and passes the data onto text
             super(itemView);
             destinationText = itemView.findViewById(R.id.destinationText);
             daysPlannedText = itemView.findViewById(R.id.daysText);
-        }
-        public TextView getDestinationText() {
-            return destinationText;
-        }
-
-        public TextView getDaysPlannedText() {
-            return daysPlannedText;
         }
     }
 }

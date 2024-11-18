@@ -1,31 +1,33 @@
 package com.example.sprintproject.views;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.databinding.ActivityMainBinding;
-import com.example.sprintproject.model.DBModel;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Arrays;
+import com.example.sprintproject.views.AccommodationsPage;
+import com.example.sprintproject.views.DestinationsPage;
+import com.example.sprintproject.views.DiningEstablishmentsPage;
+import com.example.sprintproject.views.LogisticsPage;
+import com.example.sprintproject.views.TravelCommunityPage;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private static String userId;
-    private static String tripId;
+    private static String tripId;  // This will now persist until changed
+    private FirebaseAuth mAuth;
+    private Button btnMyTrips;
+    private Button btnLogout;
 
-    /* Instantiates the screen classes; might later switch to a Singleton Model, but for now
-        this still encompasses it in essence. */
     private DestinationsPage destinationsPage;
     private DiningEstablishmentsPage diningEstablishmentsPage;
     protected static LogisticsPage logisticsPage;
@@ -35,79 +37,140 @@ public class MainActivity extends AppCompatActivity {
     public static String getUserId() {
         return userId;
     }
+
     public static String getTripId() {
         return tripId;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        userId = getIntent().getStringExtra("userId");
-        tripId = getIntent().getStringExtra("tripId");
+
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
+        // Get or update tripId and userId
+        String newTripId = getIntent().getStringExtra("tripId");
+        String newUserId = getIntent().getStringExtra("userId");
+
+        // Only update if we got new values
+        if (newTripId != null) {
+            tripId = newTripId;
+        }
+        if (newUserId != null) {
+            userId = newUserId;
+        }
+
+        // Setup toolbar and navigation buttons
+        setupToolbar();
+
+        // Initialize all pages with current tripId
+        initializePages();
+
+        // Set up logistics page arguments
+        setupLogisticsArguments();
+
+        // Set initial screen to logistics
+        changeFragment(logisticsPage);
+        binding.navBar.getMenu().findItem(R.id.logisitics).setChecked(true);
+
+        // Setup bottom navigation
+        setupBottomNavigation();
+    }
+
+    private void setupToolbar() {
+        btnMyTrips = findViewById(R.id.btnMyTrips);
+        btnLogout = findViewById(R.id.btnLogout);
+
+        btnMyTrips.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Navigate to trips list activity
+                Intent intent = new Intent(MainActivity.this, TripsListActivity.class);
+                intent.putExtra("userId", userId);
+                // Don't clear tripId here - it will be updated if user selects a new trip
+                startActivity(intent);
+            }
+        });
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Sign out from Firebase
+                mAuth.signOut();
+                // Clear tripId on logout
+                tripId = null;
+
+                // Navigate to login screen
+                Intent intent = new Intent(MainActivity.this, LoginPage.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        });
+    }
+
+    private void initializePages() {
+        // All pages now use the same tripId
         destinationsPage = new DestinationsPage(userId);
         diningEstablishmentsPage = new DiningEstablishmentsPage(userId);
         logisticsPage = new LogisticsPage(userId);
         accommodationsPage = new AccommodationsPage(userId, tripId);
         travelCommunityPage = new TravelCommunityPage(userId);
 
+        // Set tripId for any pages that need it
+        destinationsPage.setArguments(createBundleWithIds());
+        diningEstablishmentsPage.setArguments(createBundleWithIds());
+        logisticsPage.setArguments(createBundleWithIds());
+        // AccommodationsPage already gets tripId in constructor
+        travelCommunityPage.setArguments(createBundleWithIds());
+    }
 
+    private Bundle createBundleWithIds() {
+        Bundle args = new Bundle();
+        args.putString("userId", userId);
+        args.putString("tripId", tripId);
+        return args;
+    }
+
+
+    private void setupLogisticsArguments() {
         Bundle args = new Bundle();
         args.putString("userId", userId);
         args.putString("tripId", tripId);
         logisticsPage.setArguments(args);
+    }
 
-
-
-        //Sets the initial screen (landing page) on the navbar to the logistics page.
-        changeFragment(logisticsPage);
-        binding.navBar.getMenu().findItem(R.id.logisitics).setChecked(true);
-
-        /* Depending on the item selected in the navbar, switches to the corresponding screen;
-        by switching to previously established instances, this should hopefully maintain the state
-        when switching back and forth between screens. */
+    private void setupBottomNavigation() {
         binding.navBar.setOnItemSelectedListener(item -> {
-
             int itemId = item.getItemId();
 
             if (itemId == R.id.destinations) {
-
                 changeFragment(destinationsPage);
-
             } else if (itemId == R.id.dining) {
-
                 changeFragment(diningEstablishmentsPage);
-
             } else if (itemId == R.id.logisitics) {
-
                 changeFragment(logisticsPage);
-
             } else if (itemId == R.id.accommodations) {
-
                 changeFragment(accommodationsPage);
-
             } else if (itemId == R.id.communities) {
-
                 changeFragment(travelCommunityPage);
-
             }
 
             return true;
         });
-
     }
-    //A method for changing from one screen on the navbar to another.
-    private void changeFragment(Fragment fragment) {
 
+    private void changeFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit();
     }
 
+    // Getter methods
     public DestinationsPage getDestinationsPage() {
         return destinationsPage;
     }

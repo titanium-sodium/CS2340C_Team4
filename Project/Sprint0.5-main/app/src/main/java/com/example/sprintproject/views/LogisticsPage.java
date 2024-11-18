@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.os.Bundle;
 
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprintproject.R;
 
+import com.example.sprintproject.model.DBModel;
 import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.UserModel;
 
@@ -34,6 +36,9 @@ import com.example.sprintproject.viewmodels.InviteUserViewModel;
 import com.example.sprintproject.viewmodels.DBViewModel;
 import com.github.mikephil.charting.charts.PieChart;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 
 import java.util.ArrayList;
@@ -49,8 +54,8 @@ public class LogisticsPage extends Fragment {
     private DBViewModel dbViewModel;
     private ChartViewModel chartViewModel = new ChartViewModel();
     private InviteUserViewModel inviteUserViewModel = new InviteUserViewModel();
-    private FirebaseAuth mAuth;
     private String userId;
+    private String tripId;
     private static final String TAG = "LogisticsPage";
 
     public LogisticsPage(String userId) {
@@ -93,38 +98,33 @@ public class LogisticsPage extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Make sure we're inflating the correct layout
         View view = inflater.inflate(R.layout.logistics_screen, container, false);
 
-        // Initialize everything after view inflation
-        mAuth = FirebaseAuth.getInstance();
-        initializeUserId();
+        initializeIds();
         initializeViewModel();
-        initializeRecyclerViews(view); // This should now work correctly
+        initializeRecyclerViews(view);
         setupButtons(view);
         loadData();
 
         return view;
     }
 
-    private void initializeUserId() {
+    private void initializeIds() {
         userId = MainActivity.getUserId();
-        if (userId == null && mAuth.getCurrentUser() != null) {
-            userId = mAuth.getCurrentUser().getUid();
-            Log.d(TAG, "Retrieved userId from FirebaseAuth: " + userId);
-        }
+        tripId = MainActivity.getTripId();
 
-        if (userId == null) {
-            Log.e(TAG, "Unable to get userId from any source");
-            Toast.makeText(getContext(), "Error: User not authenticated", Toast.LENGTH_LONG).show();
+        if (userId == null || tripId == null) {
+            Log.e(TAG, "Missing required IDs");
+            Toast.makeText(getContext(), "Error: Missing required data", Toast.LENGTH_LONG).show();
         }
     }
 
     private void initializeViewModel() {
         dbViewModel = new ViewModelProvider(requireActivity()).get(DBViewModel.class);
-        if (userId != null) {
+        if (userId != null && tripId != null) {
             dbViewModel.setCurrentUserId(userId);
-            Log.d(TAG, "Set userId in DBViewModel: " + userId);
+            dbViewModel.setCurrentTripId(tripId);
+            Log.d(TAG, "Initialized ViewModel with userId: " + userId + " and tripId: " + tripId);
         }
     }
 
@@ -215,37 +215,112 @@ public class LogisticsPage extends Fragment {
     }
 
     private void inviteUser(String email) {
-        inviteUserViewModel.inviteUser(email).observe(getViewLifecycleOwner(), success -> {
-            if (success) {
-                Toast.makeText(getContext(),
-                        "Invitation sent successfully!", Toast.LENGTH_SHORT).show();
-                loadContributors();
-            } else {
-                Toast.makeText(getContext(),
-                        "Failed to send invitation. User not found.", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // First find user by email
+        DBModel.getUsersReference().orderByChild("email").equalTo(email)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Get the user ID
+                            String invitedUserId = snapshot.getChildren().iterator().next().getKey();
+
+                            // Add trip to invited user's trips
+                            DBModel.getUsersReference()
+                                    .child(invitedUserId)
+                                    .child("trips")
+                                    .child(tripId)
+                                    .setValue(true);
+
+                            // Add user to trip's contributors
+                            DBModel.getTripReference()
+                                    .child(tripId)
+                                    .child("contributors")
+                                    .child(invitedUserId)
+                                    .setValue(true);
+
+                            Toast.makeText(getContext(),
+                                    "User invited successfully!",
+                                    Toast.LENGTH_SHORT).show();
+
+                            loadContributors();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    "User not found",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error inviting user", error.toException());
+                    }
+                });
     }
 
     private void loadContributors() {
-        dbViewModel.getContributors().observe(getViewLifecycleOwner(), users -> {
-            contributors.clear();
-            if (users != null) {
-                contributors.addAll(users);
-            }
-            userAdapter.notifyDataSetChanged();
-        });
+        // Get contributors from the specific trip
+        DBModel.getTripReference().child(tripId).child("contributors")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<UserModel> users = new ArrayList<>();
+                        for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                            String contributorId = userSnapshot.getKey();
+                            // Get user details from users collection
+                            DBModel.getUsersReference().child(contributorId)
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot userDetails) {
+                                            UserModel user = userDetails.getValue(UserModel.class);
+                                            if (user != null) {
+                                                users.add(user);
+                                                userAdapter.notifyDataSetChanged();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.e(TAG, "Error loading user details", error.toException());
+                                        }
+                                    });
+                        }
+                        contributors.clear();
+                        contributors.addAll(users);
+                        userAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error loading contributors", error.toException());
+                    }
+                });
     }
 
     private void loadNotes() {
-        dbViewModel.getNotes().observe(getViewLifecycleOwner(), notesList -> {
-            notes.clear();
-            if (notesList != null) {
-                notes.addAll(notesList);
-            }
-            notesAdapter.notifyDataSetChanged();
-        });
+        // Get notes from the specific trip
+        DBModel.getTripReference().child(tripId).child("notes")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<NotesModel> notesList = new ArrayList<>();
+                        for (DataSnapshot noteSnapshot : snapshot.getChildren()) {
+                            NotesModel note = noteSnapshot.getValue(NotesModel.class);
+                            if (note != null) {
+                                notesList.add(note);
+                            }
+                        }
+                        notes.clear();
+                        notes.addAll(notesList);
+                        notesAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error loading notes", error.toException());
+                    }
+                });
     }
+
     private void loadChartData(PieChart pieChart) {
         dbViewModel.getTravelStats().observe(getViewLifecycleOwner(), stats -> {
             if (stats != null) {

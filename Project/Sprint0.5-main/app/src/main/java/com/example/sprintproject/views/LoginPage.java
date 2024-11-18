@@ -15,10 +15,7 @@ import android.widget.Toast;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DBModel;
-import com.example.sprintproject.model.TripDBModel;
 import com.example.sprintproject.viewmodels.AuthViewModel;
-import com.example.sprintproject.viewmodels.DBViewModel;
-import com.example.sprintproject.viewmodels.UserViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -38,15 +35,14 @@ public class LoginPage extends AppCompatActivity {
     private EditText passwordInput;
     private Button loginButton;
     private Button createAccountButton;
+    private static LoginPage instance;
 
-    //variables for sending userID to other activities
-    private final UserViewModel userViewModel = new UserViewModel();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         setContentView(R.layout.login_page);
-
-
 
         AuthViewModel viewModel = new ViewModelProvider(this).get(AuthViewModel.class);
         auth = viewModel.getAuth();
@@ -65,75 +61,42 @@ public class LoginPage extends AppCompatActivity {
                     auth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(LoginPage.this,
                                     new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
-                                            //Toast
-                                            Toast.makeText(LoginPage.this,
-                                                    "Authentication successful.",
-                                                    Toast.LENGTH_SHORT).show();
-                                            //Finding the user.
-                                            DatabaseReference db = new DBViewModel().getDB();
-                                            //async wait operation
-                                            db.child("users").addChildEventListener(
-                                                    new ChildEventListener() {
-                                                    @Override
-                                                    public void onChildAdded(
-                                                            @NonNull DataSnapshot snapshot,
-                                                            @Nullable String previousChildName) {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(LoginPage.this,
+                                                        "Authentication successful.",
+                                                        Toast.LENGTH_SHORT).show();
 
-                                                        try {
-                                                            String userId = snapshot.getKey();
-                                                            String userEmail = snapshot.child(
-                                                                    "email").getValue(String.class);
-
-                                                            if (userEmail != null
-                                                                    && userEmail.equals(email)) {
-                                                                checkTripsEmpty(userId);
+                                                // Get user reference directly from email
+                                                DatabaseReference usersRef = DBModel.getUsersReference();
+                                                usersRef.orderByChild("email").equalTo(email)
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                if (snapshot.exists()) {
+                                                                    // Get the first (and should be only) user with this email
+                                                                    DataSnapshot userSnapshot = snapshot.getChildren().iterator().next();
+                                                                    String userId = userSnapshot.getKey();
+                                                                    checkUserTrips(userId);
+                                                                }
                                                             }
-                                                        } catch (Exception e) {
-                                                            Log.e("Firebase",
-                                                                    "Error retrieving user data",
-                                                                    e);
-                                                            Toast.makeText(LoginPage.this,
-                                                                    "Error retrieving user data",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                    @Override
-                                                public void onChildChanged(
-                                                        @NonNull DataSnapshot snapshot,
-                                                        @Nullable String previousChildName) {
-                                                    //Do nothing
-                                                    }
 
-                                                    @Override
-                                                public void onChildRemoved(
-                                                        @NonNull DataSnapshot snapshot) {
-                                                    //Do nothing
-                                                    }
-
-                                                    @Override
-                                                public void onChildMoved(
-                                                        @NonNull DataSnapshot snapshot,
-                                                        @Nullable String previousChildName) {
-                                                    //Do nothing
-                                                    }
-
-                                                    @Override
-                                                public void onCancelled(
-                                                        @NonNull DatabaseError error) {
-                                                    //Do nothing
-                                                    }
-
-                                                });
-                                        } else {
-                                            Toast.makeText(LoginPage.this,
-                                                    "Authentication failed.",
-                                                    Toast.LENGTH_SHORT).show();
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                                Log.e("Firebase", "Error finding user", error.toException());
+                                                                Toast.makeText(LoginPage.this,
+                                                                        "Error retrieving user data",
+                                                                        Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        });
+                                            } else {
+                                                Toast.makeText(LoginPage.this,
+                                                        "Authentication failed.",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
                                         }
-                                    }
-                                });
+                                    });
                 } else {
                     Toast.makeText(LoginPage.this,
                             "Please enter email and password",
@@ -151,29 +114,28 @@ public class LoginPage extends AppCompatActivity {
         });
     }
 
-    private void checkTripsEmpty(String  userId) {
+    private void checkUserTrips(String userId) {
+        // Check both user's trips and the main trips collection
+        DatabaseReference userTripsRef = DBModel.getUsersReference()
+                .child(userId)
+                .child("trips");
 
-        DBModel.getInstance().child("users").child(userId).child("trips").addListenerForSingleValueEvent(new ValueEventListener() {
+        userTripsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String tripId = "";
                 if (snapshot.getChildrenCount() > 0) {
-                    //TODO get the tripID
-                    for (DataSnapshot child : snapshot.getChildren()) {
-                        if (tripId.isEmpty()) {
-                            tripId = child.getKey();
-                            Log.d("TRIPID", tripId);
-                        }
-                    }
+                    // Get the first trip ID from user's trips
+                    tripId = snapshot.getChildren().iterator().next().getKey();
                 } else {
-                    //TODO make an empty trip
-                    String randomID = UUID.randomUUID().toString();
-                    tripId = randomID;
-                    Log.d("TRIPID", "HERE");
+                    // Create new trip ID and add to both user's trips and main trips collection
+                    tripId = UUID.randomUUID().toString();
+                    userTripsRef.child(tripId).setValue(true);
+                    DBModel.getTripReference().child(tripId).child("userID").setValue(userId);
                 }
-                Intent intent = new
-                        Intent(LoginPage.this,
-                        MainActivity.class);
+
+                // Launch main activity with user and trip IDs
+                Intent intent = new Intent(LoginPage.this, MainActivity.class);
                 intent.putExtra("userId", userId);
                 intent.putExtra("tripId", tripId);
                 startActivity(intent);
@@ -182,9 +144,23 @@ public class LoginPage extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                //Do nothing
+                Log.e("Firebase", "Error checking trips", error.toException());
+                Toast.makeText(LoginPage.this,
+                        "Error checking trips",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
-
+    public static void finishLoginActivity() {
+        if (instance != null) {
+            instance.finish();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (instance == this) {
+            instance = null;
+        }
+    }
 }

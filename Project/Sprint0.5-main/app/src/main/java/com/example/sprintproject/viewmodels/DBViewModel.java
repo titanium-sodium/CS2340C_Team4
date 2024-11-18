@@ -30,6 +30,7 @@ public class DBViewModel extends ViewModel {
     private final MutableLiveData<List<NotesModel>> notesLiveData;
     private static final String TAG = "DBViewModel";
     private String currentUserId;
+    private String currentTripId;
 
     public DBViewModel() {
         db = DBModel.getInstance();
@@ -245,49 +246,6 @@ public class DBViewModel extends ViewModel {
                 });
     }
 
-    public void addNote(String note) {
-        if (currentUserId == null || note.isEmpty()) {
-            return;
-        }
-
-        NotesModel newNote = new NotesModel(note);
-
-        // First get existing notes
-        db.child("users").child(currentUserId).child("notes")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<NotesModel> notesList = new ArrayList<>();
-
-                        // Add existing notes
-                        for (DataSnapshot noteSnap : snapshot.getChildren()) {
-                            NotesModel existingNote = noteSnap.getValue(NotesModel.class);
-                            if (existingNote != null) {
-                                notesList.add(existingNote);
-                            }
-                        }
-
-                        // Add new note
-                        notesList.add(newNote);
-
-                        // Save entire list
-                        db.child("users").child(currentUserId).child("notes")
-                                .setValue(notesList).addOnSuccessListener(aVoid -> {
-                                    loadNotes();
-                                    // Share the updated notes with all contributors
-                                    shareNotesWithContributors(notesList);
-                                })
-                                .addOnFailureListener(e -> Log.e(TAG, "Error adding note: "
-                                        + e.getMessage()));
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Error reading existing notes: " + error.getMessage());
-                    }
-                });
-    }
-
     private void shareNotesWithContributors(List<NotesModel> notes) {
         // Get current contributors
         db.child("users").child(currentUserId).child("contributors")
@@ -313,6 +271,193 @@ public class DBViewModel extends ViewModel {
                     public void onCancelled(@NonNull DatabaseError error) {
                         Log.e(TAG, "Error getting contributors for note sharing: "
                                 + error.getMessage());
+                    }
+                });
+    }
+
+    public void setCurrentTripId(String tripId) {
+        if (tripId == null) {
+            Log.e(TAG, "Attempted to set null tripId");
+            return;
+        }
+
+        if (tripId.equals(this.currentTripId)) {
+            Log.d(TAG, "TripId unchanged, skipping reload");
+            return;
+        }
+
+        Log.d(TAG, "Setting currentTripId: " + tripId);
+        this.currentTripId = tripId;
+
+        // Reload all trip-specific data
+        loadTripData();
+    }
+
+    public String getCurrentTripId() {
+        return currentTripId;
+    }
+
+    private void ensureTripIdSet() {
+        if (currentTripId == null) {
+            String mainActivityTripId = MainActivity.getTripId();
+            if (mainActivityTripId != null) {
+                setCurrentTripId(mainActivityTripId);
+            } else {
+                Log.e(TAG, "No tripId available");
+            }
+        }
+    }
+
+    private void loadTripData() {
+        if (currentTripId == null || currentUserId == null) {
+            Log.e(TAG, "Cannot load trip data: missing requirements");
+            return;
+        }
+
+        // Load trip-specific data
+        loadTripContributors();
+        loadTripNotes();
+        loadTripStats();
+    }
+
+    private void loadTripContributors() {
+        DBModel.getTripReference().child(currentTripId).child("contributors")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<UserModel> contributors = new ArrayList<>();
+                        for (DataSnapshot contributorSnapshot : snapshot.getChildren()) {
+                            String contributorId = contributorSnapshot.getKey();
+                            if (contributorId != null) {
+                                // Get user details from users collection
+                                DBModel.getUsersReference().child(contributorId)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot userDetails) {
+                                                UserModel contributor = userDetails.getValue(UserModel.class);
+                                                if (contributor != null) {
+                                                    contributors.add(contributor);
+                                                    contributorsLiveData.setValue(contributors);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Log.e(TAG, "Error loading contributor details", error.toException());
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error loading trip contributors", error.toException());
+                        contributorsLiveData.setValue(new ArrayList<>());
+                    }
+                });
+    }
+
+    private void loadTripStats() {
+        DBModel.getTripReference().child(currentTripId).child("travelStats")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        try {
+                            TravelStats stats = snapshot.getValue(TravelStats.class);
+                            if (stats == null) {
+                                stats = new TravelStats();
+                            }
+                            travelStatsLiveData.setValue(stats);
+                        } catch (DatabaseException e) {
+                            Log.e(TAG, "Error parsing travel stats", e);
+                            travelStatsLiveData.setValue(new TravelStats());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error loading trip stats", error.toException());
+                        travelStatsLiveData.setValue(new TravelStats());
+                    }
+                });
+    }
+
+    /**
+     * Adds a note to the current trip
+     * @param note The note text to add
+     */
+    public void addNote(String note) {
+        if (currentUserId == null || currentTripId == null || note == null || note.trim().isEmpty()) {
+            Log.e(TAG, "Cannot add note: missing requirements");
+            return;
+        }
+
+        try {
+            NotesModel newNote = new NotesModel.Builder(note)
+                    .withUserId(currentUserId)
+                    .withTripId(currentTripId)
+                    .withUserEmail(AuthModel.getInstance().getCurrentUser().getEmail())
+                    .build();
+
+            DatabaseReference notesRef = DBModel.getTripReference()
+                    .child(currentTripId)
+                    .child("notes");
+
+            // Generate a new note ID
+            String noteId = notesRef.push().getKey();
+            if (noteId == null) {
+                Log.e(TAG, "Failed to generate note ID");
+                return;
+            }
+
+            // Add the note to the trip's notes collection
+            notesRef.child(noteId)
+                    .setValue(newNote)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d(TAG, "Note added successfully");
+                        loadTripNotes();  // Reload notes to refresh the UI
+                    })
+                    .addOnFailureListener(e -> Log.e(TAG, "Error adding note", e));
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error creating note", e);
+        }
+    }
+
+    private void loadTripNotes() {
+        if (currentTripId == null) {
+            Log.e(TAG, "Cannot load notes: tripId is null");
+            notesLiveData.setValue(new ArrayList<>());
+            return;
+        }
+
+        DBModel.getTripReference()
+                .child(currentTripId)
+                .child("notes")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<NotesModel> notes = new ArrayList<>();
+                        for (DataSnapshot noteSnapshot : snapshot.getChildren()) {
+                            try {
+                                NotesModel note = noteSnapshot.getValue(NotesModel.class);
+                                if (note != null) {
+                                    notes.add(note);
+                                }
+                            } catch (DatabaseException e) {
+                                Log.e(TAG, "Error parsing note", e);
+                            }
+                        }
+                        // Sort notes by timestamp (newest first)
+                        notes.sort((a, b) -> Long.compare(b.getTimestamp(), a.getTimestamp()));
+                        notesLiveData.setValue(notes);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error loading notes", error.toException());
+                        notesLiveData.setValue(new ArrayList<>());
                     }
                 });
     }

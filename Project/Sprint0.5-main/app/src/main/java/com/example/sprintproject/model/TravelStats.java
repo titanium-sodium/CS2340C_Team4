@@ -3,45 +3,44 @@ package com.example.sprintproject.model;
 public class TravelStats {
     private int allottedDays;
     private int plannedDays;
-    private String destination;
+    private int plannedPercentage;
+    private int remainingDays;
 
-    // Default constructor required for Firebase
     public TravelStats() {
-        this.allottedDays = 0;
-        this.plannedDays = 0;
+        // Required empty constructor for Firebase
     }
 
-    public TravelStats(int allottedDays, int plannedDays) throws IllegalArgumentException {
-        if (plannedDays > allottedDays) {
-            throw new IllegalArgumentException(
-                    "Cannot have more planned days than total trip days");
-        }
-        this.allottedDays = allottedDays;
-        this.plannedDays = plannedDays;
-    }
-
+    // Getters
     public int getAllottedDays() {
         return allottedDays;
-    }
-
-    public void setAllottedDays(int allottedDays) {
-        this.allottedDays = allottedDays;
     }
 
     public int getPlannedDays() {
         return plannedDays;
     }
 
-    public void setPlannedDays(int plannedDays)  {
+    public int getPlannedPercentage() {
+        return plannedPercentage;
+    }
+
+    public int getRemainingDays() {
+        return remainingDays;
+    }
+
+    // Setters
+    public void setAllottedDays(int allottedDays) {
+        this.allottedDays = allottedDays;
+    }
+
+    public void setPlannedDays(int plannedDays) {
         this.plannedDays = plannedDays;
     }
 
-    public String getDestination() {
-        return destination;
+    public void setPlannedPercentage(int plannedPercentage) {
+        this.plannedPercentage = plannedPercentage;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setRemainingDays(int remainingDays) {
+        this.remainingDays = remainingDays;
     }
-
 }

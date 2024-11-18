@@ -8,7 +8,7 @@ public class DBModel {
     private static DatabaseReference dbRef;
 
     private DBModel() {
-        if (dbRef == null) {  // Additional null check for safety
+        if (dbRef == null) {
             dbRef = FirebaseDatabase.getInstance().getReference();
         }
     }
@@ -20,16 +20,27 @@ public class DBModel {
         return dbRef;
     }
 
-    // Helper methods for common paths
     public static DatabaseReference getUsersReference() {
         return getInstance().child("users");
     }
 
-    public static DatabaseReference getTripsReference() {
+    public static DatabaseReference getTripReference() {
         return getInstance().child("trips");
     }
 
-    public static DatabaseReference getTravelCommunityReference() {
-        return getInstance().child("travelCommunity");
+    public static DatabaseReference getDestinationsReference() {
+        return getInstance().child("destinations");
+    }
+
+    public static DatabaseReference getTravelCommunityReference(String tripId) {
+        return getTripReference().child(tripId).child("travelCommunity");
+    }
+
+    public static DatabaseReference getCommunityPostsReference() {
+        return getInstance().child("communityPosts");
+    }
+
+    public static DatabaseReference getSharedTripsReference() {
+        return getInstance().child("sharedTrips");
     }
 }
