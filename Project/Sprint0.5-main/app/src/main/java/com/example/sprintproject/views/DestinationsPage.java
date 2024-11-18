@@ -28,6 +28,7 @@ import java.util.Locale;
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.TravelStats;
+import com.example.sprintproject.model.TripDBModel;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
 import com.example.sprintproject.viewmodels.DestinationViewModel;
 import com.example.sprintproject.viewmodels.TravelStatsViewModel;
@@ -115,6 +116,7 @@ public class DestinationsPage extends Fragment {
                 } else {
                     currentTripId = snapshot.getChildren().iterator().next().getKey();
                 }
+                Log.d("TRIPID", currentTripId);
                 loadDestinationsData();
             }
 
@@ -142,7 +144,7 @@ public class DestinationsPage extends Fragment {
                     totalPlannedDays += destination.getDuration();
                 }
 
-                travelStatsViewModel.updatePlannedDays(userId, totalPlannedDays);
+                travelStatsViewModel.updatePlannedDays(currentTripId, totalPlannedDays);
 
                 if (destinationAdapter != null) {
                     destinationAdapter.notifyDataSetChanged();
@@ -322,12 +324,13 @@ public class DestinationsPage extends Fragment {
 
         try {
             int allottedDays = Integer.parseInt(durationStr);
-            travelStatsViewModel.updateAllottedDays(userId, allottedDays);
+            travelStatsViewModel.updateAllottedDays(currentTripId, allottedDays);
             Toast.makeText(getContext(), "Vacation time saved", Toast.LENGTH_SHORT).show();
         } catch (NumberFormatException e) {
             Toast.makeText(getContext(), "Invalid duration format", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void setupDatePicker(EditText editText, String title) {
         if (editText == null || getContext() == null) {
@@ -365,10 +368,7 @@ public class DestinationsPage extends Fragment {
     }
     private void loadTravelStats() {
         if (userId != null && !userId.isEmpty()) {
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference()
-                    .child("users")
-                    .child(userId)
-                    .child("travelStats");
+            DatabaseReference userRef = TripDBModel.getTripReference(userId);
 
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override

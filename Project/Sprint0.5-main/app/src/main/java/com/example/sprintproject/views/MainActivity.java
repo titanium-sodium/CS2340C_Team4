@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializePages() {
         // All pages now use the same tripId
         destinationsPage = new DestinationsPage(userId);
-        diningEstablishmentsPage = new DiningEstablishmentsPage(userId);
+        diningEstablishmentsPage = new DiningEstablishmentsPage(tripId);
         logisticsPage = new LogisticsPage(userId);
         accommodationsPage = new AccommodationsPage(userId, tripId);
         travelCommunityPage = new TravelCommunityPage(userId);
