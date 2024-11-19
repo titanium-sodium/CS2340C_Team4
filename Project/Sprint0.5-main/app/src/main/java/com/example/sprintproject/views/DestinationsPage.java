@@ -28,7 +28,6 @@ import java.util.Locale;
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.TravelStats;
-import com.example.sprintproject.model.TripDBModel;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
 import com.example.sprintproject.viewmodels.DestinationViewModel;
 import com.example.sprintproject.viewmodels.TravelStatsViewModel;
@@ -36,7 +35,6 @@ import com.google.firebase.database.*;
 
 public class DestinationsPage extends Fragment {
     private static final String TAG = "DestinationsPage";
-    private DestinationViewModel destinationViewModel;
     private TravelStatsViewModel travelStatsViewModel;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     private TextView allottedDaysText;
@@ -57,7 +55,7 @@ public class DestinationsPage extends Fragment {
             navigateToLogin();
             return;
         }
-        destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
+        DestinationViewModel destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
         travelStatsViewModel = new ViewModelProvider(this).get(TravelStatsViewModel.class);
         loadOrCreateDefaultTrip();
     }
@@ -72,6 +70,7 @@ public class DestinationsPage extends Fragment {
 
         View view = inflater.inflate(R.layout.destination_screen, container, false);
         allottedDaysText = view.findViewById(R.id.allottedDaysText);
+        plannedDaysText = view.findViewById(R.id.plannedDaysText);
 
         Button travelLogButton = view.findViewById(R.id.travelLogButton);
         Button calculateTimeButton = view.findViewById(R.id.calculateButton);
@@ -91,7 +90,6 @@ public class DestinationsPage extends Fragment {
             recyclerView.setAdapter(destinationAdapter);
         }
 
-        loadTravelStats();
         return view;
     }
 
@@ -116,8 +114,8 @@ public class DestinationsPage extends Fragment {
                 } else {
                     currentTripId = snapshot.getChildren().iterator().next().getKey();
                 }
-                Log.d("TRIPID", currentTripId);
                 loadDestinationsData();
+                loadTravelStats();
             }
 
             @Override
@@ -366,40 +364,11 @@ public class DestinationsPage extends Fragment {
             getActivity().finish();
         }
     }
+
     private void loadTravelStats() {
-        if (userId != null && !userId.isEmpty()) {
-            DatabaseReference userRef = TripDBModel.getTripReference(userId);
-
-            userRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        TravelStats stats = snapshot.getValue(TravelStats.class);
-                        if (stats != null) {
-                            updateStatsDisplay(stats);
-                        }
-                    } else {
-                        // Initialize default travel stats if none exist
-                        TravelStats defaultStats = new TravelStats();
-                        defaultStats.setAllottedDays(0);
-                        defaultStats.setPlannedDays(0);
-                        defaultStats.setPlannedPercentage(0);
-                        defaultStats.setRemainingDays(0);
-                        userRef.setValue(defaultStats);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e(TAG, "Error loading travel stats: " + error.getMessage());
-                    if (getContext() != null) {
-                        Toast.makeText(getContext(),
-                                "Error loading travel stats: " + error.getMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
+        travelStatsViewModel.loadTravelStats();
+        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(),
+                this::updateStatsDisplay);
     }
 
     private void updateStatsDisplay(TravelStats stats) {
@@ -418,64 +387,4 @@ public class DestinationsPage extends Fragment {
         }
     }
 
-    public void updateTravelStats(int plannedDays) {
-        if (userId == null || userId.isEmpty()) {
-            return;
-        }
-
-        DatabaseReference statsRef = FirebaseDatabase.getInstance().getReference()
-                .child("users")
-                .child(userId)
-                .child("travelStats");
-
-        statsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                TravelStats currentStats;
-                if (snapshot.exists()) {
-                    currentStats = snapshot.getValue(TravelStats.class);
-                } else {
-                    currentStats = new TravelStats();
-                }
-
-                if (currentStats != null) {
-                    currentStats.setPlannedDays(plannedDays);
-
-                    // Calculate percentage and remaining days
-                    if (currentStats.getAllottedDays() > 0) {
-                        int percentage = (plannedDays * 100) / currentStats.getAllottedDays();
-                        currentStats.setPlannedPercentage(percentage);
-                        currentStats.setRemainingDays(
-                                currentStats.getAllottedDays() - plannedDays);
-                    }
-
-                    statsRef.setValue(currentStats)
-                            .addOnSuccessListener(aVoid -> {
-                                if (getContext() != null) {
-                                    Toast.makeText(getContext(),
-                                            "Travel stats updated",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                if (getContext() != null) {
-                                    Toast.makeText(getContext(),
-                                            "Failed to update travel stats: " + e.getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Error updating travel stats: " + error.getMessage());
-                if (getContext() != null) {
-                    Toast.makeText(getContext(),
-                            "Error updating travel stats: " + error.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 }

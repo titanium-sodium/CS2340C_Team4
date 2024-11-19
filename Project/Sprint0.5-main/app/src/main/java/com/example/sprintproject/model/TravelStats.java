@@ -10,6 +10,11 @@ public class TravelStats {
         // Required empty constructor for Firebase
     }
 
+    public TravelStats(int allottedDays, int plannedDays) {
+        this.allottedDays = allottedDays;
+        this.plannedDays = plannedDays;
+    }
+
     // Getters
     public int getAllottedDays() {
         return allottedDays;

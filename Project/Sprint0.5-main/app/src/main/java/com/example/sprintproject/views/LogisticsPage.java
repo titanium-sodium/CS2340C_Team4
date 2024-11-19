@@ -34,6 +34,7 @@ import com.example.sprintproject.viewmodels.InviteUserViewModel;
 
 
 import com.example.sprintproject.viewmodels.DBViewModel;
+import com.example.sprintproject.viewmodels.TravelStatsViewModel;
 import com.github.mikephil.charting.charts.PieChart;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LogisticsPage extends Fragment {
     private RecyclerView userList;
@@ -52,6 +54,7 @@ public class LogisticsPage extends Fragment {
     private List<UserModel> contributors;
     private List<NotesModel> notes;
     private DBViewModel dbViewModel;
+    private TravelStatsViewModel travelStatsViewModel;
     private ChartViewModel chartViewModel = new ChartViewModel();
     private InviteUserViewModel inviteUserViewModel = new InviteUserViewModel();
     private String userId;
@@ -100,6 +103,7 @@ public class LogisticsPage extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.logistics_screen, container, false);
 
+        travelStatsViewModel = new TravelStatsViewModel();
         initializeIds();
         initializeViewModel();
         initializeRecyclerViews(view);
@@ -322,7 +326,7 @@ public class LogisticsPage extends Fragment {
     }
 
     private void loadChartData(PieChart pieChart) {
-        dbViewModel.getTravelStats().observe(getViewLifecycleOwner(), stats -> {
+        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(), stats -> {
             if (stats != null) {
                 chartViewModel.updateChartWithStats(pieChart, stats);
             } else {
