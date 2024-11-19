@@ -36,7 +36,6 @@ import com.google.firebase.database.*;
 
 public class DestinationsPage extends Fragment {
     private static final String TAG = "DestinationsPage";
-    private DestinationViewModel destinationViewModel;
     private TravelStatsViewModel travelStatsViewModel;
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     private TextView allottedDaysText;
@@ -57,7 +56,7 @@ public class DestinationsPage extends Fragment {
             navigateToLogin();
             return;
         }
-        destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
+        DestinationViewModel destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
         travelStatsViewModel = new ViewModelProvider(this).get(TravelStatsViewModel.class);
         loadOrCreateDefaultTrip();
     }
