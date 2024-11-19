@@ -368,7 +368,8 @@ public class DestinationsPage extends Fragment {
     }
     private void loadTravelStats() {
         if (userId != null && !userId.isEmpty()) {
-            DatabaseReference userRef = TripDBModel.getTripReference(userId);
+            DatabaseReference userRef = TripDBModel.getTripReference(MainActivity.getTripId())
+                    .child("travelStats");
 
             userRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -418,64 +419,4 @@ public class DestinationsPage extends Fragment {
         }
     }
 
-    public void updateTravelStats(int plannedDays) {
-        if (userId == null || userId.isEmpty()) {
-            return;
-        }
-
-        DatabaseReference statsRef = FirebaseDatabase.getInstance().getReference()
-                .child("users")
-                .child(userId)
-                .child("travelStats");
-
-        statsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                TravelStats currentStats;
-                if (snapshot.exists()) {
-                    currentStats = snapshot.getValue(TravelStats.class);
-                } else {
-                    currentStats = new TravelStats();
-                }
-
-                if (currentStats != null) {
-                    currentStats.setPlannedDays(plannedDays);
-
-                    // Calculate percentage and remaining days
-                    if (currentStats.getAllottedDays() > 0) {
-                        int percentage = (plannedDays * 100) / currentStats.getAllottedDays();
-                        currentStats.setPlannedPercentage(percentage);
-                        currentStats.setRemainingDays(
-                                currentStats.getAllottedDays() - plannedDays);
-                    }
-
-                    statsRef.setValue(currentStats)
-                            .addOnSuccessListener(aVoid -> {
-                                if (getContext() != null) {
-                                    Toast.makeText(getContext(),
-                                            "Travel stats updated",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                if (getContext() != null) {
-                                    Toast.makeText(getContext(),
-                                            "Failed to update travel stats: " + e.getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Error updating travel stats: " + error.getMessage());
-                if (getContext() != null) {
-                    Toast.makeText(getContext(),
-                            "Error updating travel stats: " + error.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 }

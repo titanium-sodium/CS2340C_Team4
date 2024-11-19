@@ -11,7 +11,6 @@ import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.views.MainActivity;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
@@ -66,103 +65,11 @@ public class DBViewModel extends ViewModel {
         Log.d(TAG, "Setting currentUserId: " + userId);
         this.currentUserId = userId;
 
-        loadTravelStats();
+
         loadContributors();
         loadNotes();
     }
 
-    public String getCurrentUserId() {
-        return currentUserId;
-    }
-
-    private void ensureUserIdSet() {
-        if (currentUserId == null) {
-            String mainActivityUserId = MainActivity.getUserId();
-            if (mainActivityUserId != null) {
-                setCurrentUserId(mainActivityUserId);
-            } else {
-                FirebaseAuth auth = AuthModel.getInstance();
-                if (auth.getCurrentUser() != null) {
-                    setCurrentUserId(auth.getCurrentUser().getUid());
-                }
-            }
-        }
-    }
-
-    public LiveData<TravelStats> getTravelStats() {
-        ensureUserIdSet();
-        if (travelStatsLiveData.getValue() == null && currentUserId != null) {
-            loadTravelStats();
-        }
-        return travelStatsLiveData;
-    }
-
-    private void loadTravelStats() {
-        if (currentUserId == null || db == null) {
-            Log.e(TAG, "Cannot load travel stats: missing requirements");
-            travelStatsLiveData.setValue(new TravelStats());
-            return;
-        }
-
-        db.child("users").child(currentUserId).child("travelStats")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        try {
-                            int allottedDays = 0;
-                            int plannedDays = 0;
-
-                            if (snapshot.exists()) {
-                                if (snapshot.hasChild("allottedDays")) {
-                                    Object allottedValue = snapshot.child("allottedDays").
-                                            getValue();
-                                    if (allottedValue != null) {
-                                        if (allottedValue instanceof Long) {
-                                            allottedDays = ((Long) allottedValue).intValue();
-                                        } else if (allottedValue instanceof Integer) {
-                                            allottedDays = (Integer) allottedValue;
-                                        } else if (allottedValue instanceof String) {
-                                            allottedDays = Integer.parseInt((String) allottedValue);
-                                        }
-                                    }
-                                }
-
-                                if (snapshot.hasChild("plannedDays")) {
-                                    Object plannedValue = snapshot.child("plannedDays").getValue();
-                                    if (plannedValue != null) {
-                                        if (plannedValue instanceof Long) {
-                                            plannedDays = ((Long) plannedValue).intValue();
-                                        } else if (plannedValue instanceof Integer) {
-                                            plannedDays = (Integer) plannedValue;
-                                        } else if (plannedValue instanceof String) {
-                                            plannedDays = Integer.parseInt((String) plannedValue);
-                                        }
-                                    }
-                                }
-                            } else {
-                                TravelStats newStats = new TravelStats();
-                                db.child("users").child(currentUserId).child("travelStats").
-                                        setValue(newStats);
-                            }
-
-                            TravelStats stats = new TravelStats();
-                            stats.setAllottedDays(allottedDays);
-                            stats.setPlannedDays(plannedDays);
-                            travelStatsLiveData.setValue(stats);
-
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error calculating travel stats", e);
-                            travelStatsLiveData.setValue(new TravelStats());
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e(TAG, "Error loading travel stats: " + error.getMessage());
-                        travelStatsLiveData.setValue(new TravelStats());
-                    }
-                });
-    }
 
     public LiveData<List<UserModel>> getContributors() {
         if (contributorsLiveData.getValue() == null) {
