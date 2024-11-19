@@ -27,8 +27,8 @@ public class TravelStatsViewModel extends ViewModel {
         return travelStats;
     }
 
-    private void loadTravelStats() {
-        TripDBModel.getTripReference(MainActivity.getTripId())
+    public void loadTravelStats() {
+        TripDBModel.getTripReference(MainActivity.getTripId()).child("travelStats")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -63,16 +63,12 @@ public class TravelStatsViewModel extends ViewModel {
                                         }
                                     }
                                 }
-                            } else {
-                                TravelStats newStats = new TravelStats();
-                                TripDBModel.getTripReference(MainActivity.getTripId());
                             }
 
                             TravelStats stats = new TravelStats();
                             stats.setAllottedDays(allottedDays);
                             stats.setPlannedDays(plannedDays);
                             travelStats.setValue(stats);
-
                         } catch (Exception e) {
                             Log.e("TravelStatsVM ERROR", "Error calculating travel stats", e);
                             travelStats.setValue(new TravelStats());
@@ -87,7 +83,7 @@ public class TravelStatsViewModel extends ViewModel {
                 });
     }
 
-    public Task<Void> updateAllottedDays(String tripId, int allottedDays) {
+    public void updateAllottedDays(String tripId, int allottedDays) {
         DatabaseReference userRef = TripDBModel.getTripReference(tripId).child("travelStats");
 
         final TravelStats updatedStats = new TravelStats();
@@ -104,11 +100,11 @@ public class TravelStatsViewModel extends ViewModel {
         updatedStats.setRemainingDays(allottedDays - plannedDays);
 
         // Update entire stats object in Firebase
-        return userRef.setValue(updatedStats)
+        userRef.setValue(updatedStats)
                 .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
     }
 
-    public Task<Void> updatePlannedDays(String tripId, int plannedDays) {
+    public void updatePlannedDays(String tripId, int plannedDays) {
         DatabaseReference userRef = TripDBModel.getTripReference(tripId).child("travelStats");
 
         final TravelStats updatedStats = new TravelStats();
@@ -125,7 +121,7 @@ public class TravelStatsViewModel extends ViewModel {
         updatedStats.setRemainingDays(allottedDays - plannedDays);
 
         // Update entire stats object in Firebase
-        return userRef.setValue(updatedStats)
+        userRef.setValue(updatedStats)
                 .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
     }
 
