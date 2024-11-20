@@ -1,147 +1,132 @@
 package com.example.sprintproject.viewmodels;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.TripDBModel;
-import com.example.sprintproject.views.MainActivity;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 
 public class TravelStatsViewModel extends ViewModel {
     private final MutableLiveData<TravelStats> travelStats = new MutableLiveData<>();
-    private final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private String currentTripId;
+    private ValueEventListener statsListener;
 
     public LiveData<TravelStats> getTravelStats() {
-        if (travelStats.getValue() == null) {
-            loadTravelStats();
-        }
         return travelStats;
     }
 
-    public void loadTravelStats() {
-        TripDBModel.getTripReference(MainActivity.getTripId()).child("travelStats")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        try {
-                            int allottedDays = 0;
-                            int plannedDays = 0;
+    public void loadTravelStats(String tripId) {
+        if (tripId == null) return;
 
-                            if (snapshot.exists()) {
-                                if (snapshot.hasChild("allottedDays")) {
-                                    Object allottedValue = snapshot.child("allottedDays").
-                                            getValue();
-                                    if (allottedValue != null) {
-                                        if (allottedValue instanceof Long) {
-                                            allottedDays = ((Long) allottedValue).intValue();
-                                        } else if (allottedValue instanceof Integer) {
-                                            allottedDays = (Integer) allottedValue;
-                                        } else if (allottedValue instanceof String) {
-                                            allottedDays = Integer.parseInt((String) allottedValue);
-                                        }
-                                    }
-                                }
+        if (tripId.equals(currentTripId)) {
+            return;
+        }
 
-                                if (snapshot.hasChild("plannedDays")) {
-                                    Object plannedValue = snapshot.child("plannedDays").getValue();
-                                    if (plannedValue != null) {
-                                        if (plannedValue instanceof Long) {
-                                            plannedDays = ((Long) plannedValue).intValue();
-                                        } else if (plannedValue instanceof Integer) {
-                                            plannedDays = (Integer) plannedValue;
-                                        } else if (plannedValue instanceof String) {
-                                            plannedDays = Integer.parseInt((String) plannedValue);
-                                        }
-                                    }
-                                }
+        if (statsListener != null && currentTripId != null) {
+            TripDBModel.getTripReference(currentTripId)
+                    .child("travelStats")
+                    .removeEventListener(statsListener);
+        }
+
+        currentTripId = tripId;
+
+        statsListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    TravelStats stats = new TravelStats();
+                    if (snapshot.exists()) {
+                        stats = snapshot.getValue(TravelStats.class);
+                        if (stats == null) {
+                            stats = new TravelStats();
+                            if (snapshot.hasChild("allottedDays")) {
+                                stats.setAllottedDays(snapshot.child("allottedDays").getValue(Integer.class));
                             }
-
-                            TravelStats stats = new TravelStats();
-                            stats.setAllottedDays(allottedDays);
-                            stats.setPlannedDays(plannedDays);
-                            travelStats.setValue(stats);
-                        } catch (Exception e) {
-                            Log.e("TravelStatsVM ERROR", "Error calculating travel stats", e);
-                            travelStats.setValue(new TravelStats());
+                            if (snapshot.hasChild("plannedDays")) {
+                                stats.setPlannedDays(snapshot.child("plannedDays").getValue(Integer.class));
+                            }
                         }
                     }
+                    travelStats.setValue(stats);
+                } catch (Exception e) {
+                    travelStats.setValue(new TravelStats());
+                }
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("TravelStatsVM ERROR", "Error loading travel stats: " + error.getMessage());
-                        travelStats.setValue(new TravelStats());
-                    }
-                });
-    }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                travelStats.setValue(new TravelStats());
+            }
+        };
 
-    public void updateAllottedDays(String tripId, int allottedDays) {
-        DatabaseReference userRef = TripDBModel.getTripReference(tripId).child("travelStats");
-
-        final TravelStats updatedStats = new TravelStats();
-        TravelStats current = travelStats.getValue();
-        int plannedDays = current != null ? current.getPlannedDays() : 0;
-
-        // Update all related fields
-        updatedStats.setAllottedDays(allottedDays);
-        updatedStats.setPlannedDays(plannedDays);
-
-        // Calculate percentage and remaining days
-        int percentage = allottedDays > 0 ? (plannedDays * 100) / allottedDays : 0;
-        updatedStats.setPlannedPercentage(percentage);
-        updatedStats.setRemainingDays(allottedDays - plannedDays);
-
-        // Update entire stats object in Firebase
-        userRef.setValue(updatedStats)
-                .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
+        TripDBModel.getTripReference(tripId)
+                .child("travelStats")
+                .addValueEventListener(statsListener);
     }
 
     public void updatePlannedDays(String tripId, int plannedDays) {
-        DatabaseReference userRef = TripDBModel.getTripReference(tripId).child("travelStats");
+        if (tripId == null) return;
 
-        final TravelStats updatedStats = new TravelStats();
-        TravelStats current = travelStats.getValue();
-        int allottedDays = current != null ? current.getAllottedDays() : 0;
+        DatabaseReference statsRef = TripDBModel.getTripReference(tripId)
+                .child("travelStats");
 
-        // Update all related fields
-        updatedStats.setAllottedDays(allottedDays);
-        updatedStats.setPlannedDays(plannedDays);
+        statsRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                TravelStats stats = mutableData.getValue(TravelStats.class);
+                if (stats == null) {
+                    stats = new TravelStats();
+                }
+                stats.setPlannedDays(plannedDays);
+                mutableData.setValue(stats);
+                return Transaction.success(mutableData);
+            }
 
-        // Calculate percentage and remaining days
-        int percentage = allottedDays > 0 ? (plannedDays * 100) / allottedDays : 0;
-        updatedStats.setPlannedPercentage(percentage);
-        updatedStats.setRemainingDays(allottedDays - plannedDays);
-
-        // Update entire stats object in Firebase
-        userRef.setValue(updatedStats)
-                .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot currentData) {
+                if (committed && currentData.exists()) {
+                    travelStats.setValue(currentData.getValue(TravelStats.class));
+                }
+            }
+        });
     }
 
-    public Task<Void> addPlannedDays(String userId, int additionalDays) {
-        TravelStats current = travelStats.getValue();
-        final TravelStats updatedStats = new TravelStats();
+    public void updateAllottedDays(String tripId, int allottedDays) {
+        if (tripId == null) return;
 
-        int currentPlannedDays = current != null ? current.getPlannedDays() : 0;
-        int allottedDays = current != null ? current.getAllottedDays() : 0;
-        int newPlannedDays = currentPlannedDays + additionalDays;
+        DatabaseReference statsRef = TripDBModel.getTripReference(tripId)
+                .child("travelStats");
 
-        // Update all fields
-        updatedStats.setAllottedDays(allottedDays);
-        updatedStats.setPlannedDays(newPlannedDays);
-        int percentage = allottedDays > 0 ? (newPlannedDays * 100) / allottedDays : 0;
-        updatedStats.setPlannedPercentage(percentage);
-        updatedStats.setRemainingDays(allottedDays - newPlannedDays);
+        statsRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                TravelStats stats = mutableData.getValue(TravelStats.class);
+                if (stats == null) {
+                    stats = new TravelStats();
+                }
+                stats.setAllottedDays(allottedDays);
+                mutableData.setValue(stats);
+                return Transaction.success(mutableData);
+            }
 
-        DatabaseReference userRef = database.child("users").child(userId).child("travelStats");
-        return userRef.setValue(updatedStats)
-                .addOnSuccessListener(aVoid -> travelStats.setValue(updatedStats));
+            @Override
+            public void onComplete(DatabaseError error, boolean committed, DataSnapshot currentData) {
+                if (committed && currentData.exists()) {
+                    travelStats.setValue(currentData.getValue(TravelStats.class));
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (statsListener != null && currentTripId != null) {
+            TripDBModel.getTripReference(currentTripId)
+                    .child("travelStats")
+                    .removeEventListener(statsListener);
+        }
     }
 }
