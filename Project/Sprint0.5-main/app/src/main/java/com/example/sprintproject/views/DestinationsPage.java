@@ -125,6 +125,12 @@ public class DestinationsPage extends Fragment {
         });
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(), this::updateStatsDisplay);
+    }
+
     private void loadDestinationsData() {
         if (currentTripId == null) {
             Log.e(TAG, "No trip ID available");
@@ -366,9 +372,9 @@ public class DestinationsPage extends Fragment {
     }
 
     private void loadTravelStats() {
-        travelStatsViewModel.loadTravelStats();
-        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(),
-                this::updateStatsDisplay);
+        if (currentTripId != null) {
+            travelStatsViewModel.loadTravelStats(currentTripId);
+        }
     }
 
     private void updateStatsDisplay(TravelStats stats) {
