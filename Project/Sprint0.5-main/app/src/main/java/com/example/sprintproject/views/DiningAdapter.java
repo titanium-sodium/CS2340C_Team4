@@ -11,12 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.example.sprintproject.R;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class DiningAdapter extends ListAdapter<DiningReservation, DiningAdapter.ViewHolder> {
     private static final String TAG = "DiningAdapter";
+    private static final SimpleDateFormat DISPLAY_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
 
     private static final DiffUtil.ItemCallback<DiningReservation> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<DiningReservation>() {
@@ -31,7 +34,8 @@ public class DiningAdapter extends ListAdapter<DiningReservation, DiningAdapter.
                                                   @NonNull DiningReservation newItem) {
                     return oldItem.getLocation().equals(newItem.getLocation()) &&
                             oldItem.getTime().equals(newItem.getTime()) &&
-                            oldItem.getWebsite().equals(newItem.getWebsite());
+                            oldItem.getWebsite().equals(newItem.getWebsite()) &&
+                            oldItem.getReservationTimestamp() == newItem.getReservationTimestamp();
                 }
             };
 
@@ -80,22 +84,20 @@ public class DiningAdapter extends ListAdapter<DiningReservation, DiningAdapter.
                 return;
             }
 
-            if (locationText != null) {
-                locationText.setText(reservation.getLocation());
-            } else {
-                Log.e(TAG, "locationText is null");
-            }
+            try {
+                if (locationText != null) {
+                    locationText.setText(reservation.getLocation());
+                }
 
-            if (timeText != null) {
-                timeText.setText(reservation.getTime());
-            } else {
-                Log.e(TAG, "timeText is null");
-            }
+                if (timeText != null) {
+                    timeText.setText(DISPLAY_FORMAT.format(new Date(reservation.getReservationTimestamp())));
+                }
 
-            if (websiteText != null) {
-                websiteText.setText(reservation.getWebsite());
-            } else {
-                Log.e(TAG, "websiteText is null");
+                if (websiteText != null) {
+                    websiteText.setText(reservation.getWebsite());
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error binding reservation data", e);
             }
         }
     }
