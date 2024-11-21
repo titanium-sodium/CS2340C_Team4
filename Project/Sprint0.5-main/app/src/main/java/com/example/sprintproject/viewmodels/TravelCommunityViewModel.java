@@ -45,7 +45,7 @@ public class TravelCommunityViewModel extends ViewModel {
     public void loadCommunityPosts(String tripId) {
         isLoading.setValue(true);
 
-        TravelCommunityDBModel.getCommunityPosts(tripId)
+        TravelCommunityDBModel.getCommunityPosts()
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -74,7 +74,7 @@ public class TravelCommunityViewModel extends ViewModel {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         post.setUserId(userId);
 
-        return TravelCommunityDBModel.saveCommunityPost(tripId, post)
+        return TravelCommunityDBModel.saveCommunityPost(post)
                 .addOnSuccessListener(aVoid -> {
                     isLoading.setValue(false);
                 })
@@ -94,7 +94,7 @@ public class TravelCommunityViewModel extends ViewModel {
             return null;
         }
 
-        return TravelCommunityDBModel.getInstance(tripId)
+        return TravelCommunityDBModel.getInstance()
                 .child(post.getPostId())
                 .setValue(post)
                 .addOnSuccessListener(aVoid -> {
@@ -110,7 +110,7 @@ public class TravelCommunityViewModel extends ViewModel {
     public Task<Void> deleteCommunityPost(String tripId, String postId) {
         isLoading.setValue(true);
 
-        return TravelCommunityDBModel.getInstance(tripId)
+        return TravelCommunityDBModel.getInstance()
                 .child(postId)
                 .removeValue()
                 .addOnSuccessListener(aVoid -> {
@@ -126,7 +126,7 @@ public class TravelCommunityViewModel extends ViewModel {
     public void loadSinglePost(String tripId, String postId) {
         isLoading.setValue(true);
 
-        TravelCommunityDBModel.getInstance(tripId)
+        TravelCommunityDBModel.getInstance()
                 .child(postId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
