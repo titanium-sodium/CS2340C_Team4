@@ -1,5 +1,9 @@
 package com.example.sprintproject.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class AccommodationsModel {
@@ -11,6 +15,7 @@ public class AccommodationsModel {
     private String location;
     private String website;
     private Long duration;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
     public AccommodationsModel(String checkInDate, String checkOutDate,
                                int numberOfRooms, String roomType, String location)
@@ -47,7 +52,6 @@ public class AccommodationsModel {
         return checkInDate;
     }
 
-
     public String getCheckOutDate() {
         return checkOutDate;
     }
@@ -67,14 +71,14 @@ public class AccommodationsModel {
     public String getLocation() {
         return location;
     }
+
     public String getWebsite() {
         return website;
     }
+
     public void setWebsite(String website) {
         this.website = website;
     }
-
-
 
     public void setLocation(String location) {
         this.location = location;
@@ -85,15 +89,47 @@ public class AccommodationsModel {
     }
 
     private void calculateDuration() {
-        if (checkInDate == null || checkOutDate == null) {
+        try {
+            Date checkIn = sdf.parse(checkInDate);
+            Date checkOut = sdf.parse(checkOutDate);
+            if (checkIn != null && checkOut != null) {
+                duration = TimeUnit.MILLISECONDS.toDays(checkOut.getTime() - checkIn.getTime()) + 1;
+                if (duration < 0) {
+                    duration = 0L;
+                }
+            } else {
+                duration = 0L;
+            }
+        } catch (ParseException e) {
             duration = 0L;
-            return;
         }
+    }
 
-        duration = TimeUnit.MILLISECONDS.toDays(Long.parseLong(checkOutDate)
-                - Long.parseLong(checkInDate));
-        if (duration < 0) {
-            duration = 0L;
+    public static SimpleDateFormat getDateFormat() {
+        return sdf;
+    }
+
+    public boolean isReservationPassed() {
+        try {
+            Date checkOut = sdf.parse(checkOutDate);
+            Date currentDate = new Date();
+            return checkOut != null && checkOut.before(currentDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isCurrentReservation() {
+        try {
+            Date checkIn = sdf.parse(checkInDate);
+            Date checkOut = sdf.parse(checkOutDate);
+            Date currentDate = new Date();
+            return checkIn != null && checkOut != null &&
+                    !checkIn.after(currentDate) && !checkOut.before(currentDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

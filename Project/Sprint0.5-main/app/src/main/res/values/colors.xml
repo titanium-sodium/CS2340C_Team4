@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="past_reservation">#F5F5F5</color>
+    <color name="current_reservation">#E8F5E9</color>
+    <color name="upcoming_reservation">#E3F2FD</color>
 </resources>
