@@ -1,9 +1,12 @@
 package com.example.sprintproject.views;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.sprintproject.model.AccommodationsModel;
 import java.util.List;
@@ -11,10 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import com.example.sprintproject.R;
+import com.google.android.material.card.MaterialCardView;
 
 public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdapter.ViewHolder> {
-    // Rest of your adapter code remains the same
     private List<AccommodationsModel> accommodations;
+    private Context context;
 
     public AccommodationAdapter(List<AccommodationsModel> accommodations) {
         this.accommodations = accommodations;
@@ -22,9 +26,9 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
 
     @NonNull
     @Override
-    public AccommodationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
-                                                              int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+    public AccommodationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context = parent.getContext();
+        View view = LayoutInflater.from(context)
                 .inflate(R.layout.item_accommodation_res, parent, false);
         return new ViewHolder(view);
     }
@@ -34,31 +38,49 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
             AccommodationsModel accommodation = accommodations.get(position);
-            Log.d("Accommodation log", accommodation.getLocation());
+            MaterialCardView cardView = holder.itemView.findViewById(R.id.accommodation_card);
 
             if (holder.hotelName != null) {
                 holder.hotelName.setText(accommodation.getLocation());
-            } else {
-                Log.e("TAG", "hotelName is null");
             }
 
             if (holder.checkIn != null && holder.checkOut != null) {
                 holder.checkIn.setText("Check-in: " + accommodation.getCheckInDate());
-                holder.checkOut.setText("Check-Out" + accommodation.getCheckOutDate());
-            } else {
-                Log.e("TAG", "timeText is null");
+                holder.checkOut.setText("Check-out: " + accommodation.getCheckOutDate());
             }
+
             if (holder.roomType != null && holder.numberRooms != null) {
-                holder.roomType.setText("Room Type:" + accommodation.getRoomType());
-                holder.numberRooms.setText(accommodation.getNumberOfRooms());
-            } else {
-                Log.e("TAG", "Rooms null");
+                holder.roomType.setText("Room Type: " + accommodation.getRoomType());
+                holder.numberRooms.setText("Rooms: " + accommodation.getNumberOfRooms());
             }
+
+            // Add status indicator
+            if (holder.statusText != null) {
+                if (accommodation.isReservationPassed()) {
+                    holder.statusText.setText("PAST");
+                    holder.statusText.setTextColor(Color.GRAY);
+                    if (cardView != null) {
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.past_reservation));
+                    }
+                } else if (accommodation.isCurrentReservation()) {
+                    holder.statusText.setText("CURRENT");
+                    holder.statusText.setTextColor(Color.GREEN);
+                    if (cardView != null) {
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.current_reservation));
+                    }
+                } else {
+                    holder.statusText.setText("UPCOMING");
+                    holder.statusText.setTextColor(Color.BLUE);
+                    if (cardView != null) {
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.upcoming_reservation));
+                    }
+                }
+            }
+
         } catch (Exception e) {
             Log.e("TAG", "Error binding ViewHolder: " + e.getMessage());
         }
     }
-
 
     @Override
     public int getItemCount() {
@@ -71,6 +93,8 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
         private final TextView checkOut;
         private final TextView numberRooms;
         private final TextView roomType;
+        private final TextView statusText;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             hotelName = itemView.findViewById(R.id.hotelText);
@@ -78,6 +102,7 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
             checkOut = itemView.findViewById(R.id.coTimeText);
             numberRooms = itemView.findViewById(R.id.roomCountText);
             roomType = itemView.findViewById(R.id.roomTypeText);
+            statusText = itemView.findViewById(R.id.statusText);
         }
     }
 }

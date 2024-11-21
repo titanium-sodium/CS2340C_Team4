@@ -3,6 +3,7 @@ package com.example.sprintproject.viewmodels;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
 import com.example.sprintproject.model.AccommodationsDBModel;
 import com.example.sprintproject.model.AccommodationsModel;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import com.example.sprintproject.model.AccommodationsFilterModel;
 
 public class AccommodationsViewModel {
     private DatabaseReference accommodationsDB;
@@ -37,13 +39,6 @@ public class AccommodationsViewModel {
         setupDatabaseListener(); // Reload data for new trip
     }
 
-    public void setSortOrder(boolean ascending, String sortField) {
-        isAscending = ascending;
-        currentSortField = sortField;
-        setupDatabaseListener(); // Reload with new sort order
-    }
-
-    // New method for local sorting
     public void sortAccommodations(boolean ascending) {
         List<AccommodationsModel> currentList = accommodationsLiveData.getValue();
         if (currentList != null) {
@@ -52,22 +47,35 @@ public class AccommodationsViewModel {
         }
     }
 
-    // Helper method to get the appropriate comparator
     private Comparator<AccommodationsModel> getComparator(boolean ascending) {
         Comparator<AccommodationsModel> comparator = (a1, a2) -> {
             switch (currentSortField) {
                 case "checkInDate":
-                    return a1.getCheckInDate().compareTo(a2.getCheckInDate());
+                    return AccommodationsFilterModel.compareAccommodationDates(
+                            a1.getCheckInDate(),
+                            a2.getCheckInDate()
+                    );
                 case "checkOutDate":
-                    return a1.getCheckOutDate().compareTo(a2.getCheckOutDate());
-                case "numberOfRooms":
-                    return Integer.compare(a1.getNumberOfRooms(), a2.getNumberOfRooms());
+                    return AccommodationsFilterModel.compareAccommodationDates(
+                            a1.getCheckOutDate(),
+                            a2.getCheckOutDate()
+                    );
+                case "duration":
+                    return Long.compare(a1.getDuration(), a2.getDuration());
                 default:
-                    return a1.getCheckInDate().compareTo(a2.getCheckInDate());
+                    return AccommodationsFilterModel.compareAccommodationDates(
+                            a1.getCheckInDate(),
+                            a2.getCheckInDate()
+                    );
             }
         };
 
         return ascending ? comparator : comparator.reversed();
+    }
+
+    public void setSortOrder(boolean ascending, String sortField) {
+        this.isAscending = ascending;
+        this.currentSortField = sortField;
     }
 
     private void setupDatabaseListener() {
@@ -94,8 +102,8 @@ public class AccommodationsViewModel {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
                         if (accommodation != null) {
-                            accommodation.setId(snapshot.getKey()); // Save the Firebase key as ID
-                            accommodations.add(accommodation); // Add at end for ascending
+                            accommodation.setId(snapshot.getKey());
+                            accommodations.add(accommodation);
                         }
                     }
                 }
