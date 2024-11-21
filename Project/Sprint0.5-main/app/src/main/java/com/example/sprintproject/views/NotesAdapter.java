@@ -52,16 +52,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         if (holder.usernameText != null) {
             holder.usernameText.setText(note.getUserEmail());
         }
-
-        // Set location if available
-        if (holder.location != null) {
-            if (note.getLocation() != null && !note.getLocation().isEmpty()) {
-                holder.location.setVisibility(View.VISIBLE);
-                holder.location.setText("Location: " + note.getLocation());
-            } else {
-                holder.location.setVisibility(View.GONE);
-            }
-        }
     }
 
     @Override
@@ -112,14 +102,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     static class NoteViewHolder extends RecyclerView.ViewHolder {
         private final TextView noteText;
         private final TextView usernameText;
-        private final TextView location;
 
         NoteViewHolder(View itemView) {
             super(itemView);
             // Updated to match layout IDs
             noteText = itemView.findViewById(R.id.noteText);
             usernameText = itemView.findViewById(R.id.usernameText);
-            location = itemView.findViewById(R.id.location);
         }
     }
 }

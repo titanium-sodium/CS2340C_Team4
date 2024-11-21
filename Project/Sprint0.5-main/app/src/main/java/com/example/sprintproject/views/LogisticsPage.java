@@ -103,7 +103,8 @@ public class LogisticsPage extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.logistics_screen, container, false);
 
-        travelStatsViewModel = new TravelStatsViewModel();
+        travelStatsViewModel = new ViewModelProvider(this).get(TravelStatsViewModel.class);
+        travelStatsViewModel.loadTravelStats(tripId);
         initializeIds();
         initializeViewModel();
         initializeRecyclerViews(view);

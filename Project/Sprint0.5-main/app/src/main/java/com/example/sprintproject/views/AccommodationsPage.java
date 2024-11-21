@@ -59,11 +59,11 @@ public class AccommodationsPage extends Fragment {
         FilterViewModel filterButton = new FilterViewModel(true, "Accommodations",
                 accommodationsViewModel);
 
-        view.findViewById(R.id.newResButton).setOnClickListener(v -> openAccommodationsForm());
+        view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openAccommodationsForm());
         view.findViewById(R.id.filterButton).setOnClickListener(v ->
                 filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
 
-        accommodationRecyclerViewer = view.findViewById(R.id.accommodations_recycler);
+        accommodationRecyclerViewer = view.findViewById(R.id.accommodationsRecycler);
         accommodationRecyclerViewer.setLayoutManager(new LinearLayoutManager(getContext()));
 
         accommodationAdapter = new AccommodationAdapter(accommodationsModels);

@@ -54,23 +54,26 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
                 holder.numberRooms.setText("Rooms: " + accommodation.getNumberOfRooms());
             }
 
-            // Add status indicator
+            // Add status indicator with muted colors
             if (holder.statusText != null) {
                 if (accommodation.isReservationPassed()) {
                     holder.statusText.setText("PAST");
-                    holder.statusText.setTextColor(Color.GRAY);
+                    holder.statusText.setTextColor(Color.parseColor("#737373")); // Muted gray
+                    holder.statusText.setBackgroundResource(R.drawable.status_background);
                     if (cardView != null) {
                         cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.past_reservation));
                     }
                 } else if (accommodation.isCurrentReservation()) {
                     holder.statusText.setText("CURRENT");
-                    holder.statusText.setTextColor(Color.GREEN);
+                    holder.statusText.setTextColor(Color.parseColor("#539355")); // Muted green
+                    holder.statusText.setBackgroundResource(R.drawable.status_background);
                     if (cardView != null) {
                         cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.current_reservation));
                     }
                 } else {
                     holder.statusText.setText("UPCOMING");
-                    holder.statusText.setTextColor(Color.BLUE);
+                    holder.statusText.setTextColor(Color.parseColor("#5771a8")); // Muted blue
+                    holder.statusText.setBackgroundResource(R.drawable.status_background);
                     if (cardView != null) {
                         cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.upcoming_reservation));
                     }
