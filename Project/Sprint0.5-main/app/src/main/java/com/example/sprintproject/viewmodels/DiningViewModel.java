@@ -1,7 +1,6 @@
 package com.example.sprintproject.viewmodels;
 
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,13 +11,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class DiningViewModel extends ViewModel {
-    private MutableLiveData<List<DiningReservation>> reservations;
+    private static final String TAG = "DiningViewModel";
+    private final MutableLiveData<List<DiningReservation>> reservations;
     private String currentUserId;
     private String currentTripId;
     private DatabaseReference diningRef;
@@ -46,40 +45,51 @@ public class DiningViewModel extends ViewModel {
         return currentTripId;
     }
 
+    public void addReservation(DiningReservation reservation) {
+        if (reservation == null) {
+            Log.e(TAG, "Reservation is null");
+            return;
+        }
+
+        if (!reservation.isValid()) {
+            Log.e(TAG, "Invalid reservation data: " + reservation);
+            return;
+        }
+
+        String reservationId = diningRef.push().getKey();
+        if (reservationId == null) {
+            Log.e(TAG, "Failed to generate Firebase key");
+            return;
+        }
+
+        reservation.setId(reservationId);
+        Log.d(TAG, "Saving reservation to path: " + diningRef.child(reservationId).toString());
+        Log.d(TAG, "Reservation data: " + reservation);
+
+        diningRef.child(reservationId).setValue(reservation)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Successfully saved reservation");
+                    List<DiningReservation> currentList = reservations.getValue();
+                    if (currentList != null) {
+                        currentList.add(reservation);
+                        sortReservations(true);
+                        reservations.setValue(currentList);
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(TAG, "Failed to save reservation", e));
+    }
+
     public void sortReservations(boolean ascending) {
         List<DiningReservation> currentList = reservations.getValue();
         if (currentList != null) {
             if (ascending) {
                 Collections.sort(currentList,
-                        (a, b) -> Long.compare(a.getReservationTime(), b.getReservationTime()));
+                        (a, b) -> Long.compare(a.getReservationTimestamp(), b.getReservationTimestamp()));
             } else {
                 Collections.sort(currentList,
-                        (a, b) -> Long.compare(b.getReservationTime(), a.getReservationTime()));
+                        (a, b) -> Long.compare(b.getReservationTimestamp(), a.getReservationTimestamp()));
             }
             reservations.setValue(currentList);
-        }
-    }
-
-    public void addReservation(DiningReservation reservation) {
-        // Generate a new unique ID for the reservation
-        String reservationId = diningRef.push().getKey();
-        if (reservationId != null) {
-            reservation.setId(reservationId);
-
-            // Save to Firebase
-            diningRef.child(reservationId).setValue(reservation)
-                    .addOnSuccessListener(aVoid -> {
-                        // Update local list after successful save
-                        List<DiningReservation> currentList = reservations.getValue();
-                        if (currentList != null) {
-                            currentList.add(reservation);
-                            reservations.setValue(currentList);
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle failure
-                        Log.e("DiningViewModel", "Failed to save reservation", e);
-                    });
         }
     }
 
@@ -89,56 +99,25 @@ public class DiningViewModel extends ViewModel {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<DiningReservation> reservationList = new ArrayList<>();
                 for (DataSnapshot reservationSnapshot : snapshot.getChildren()) {
-                    DiningReservation reservation = reservationSnapshot.getValue(DiningReservation.class);
-                    if (reservation != null) {
-                        reservationList.add(reservation);
+                    try {
+                        DiningReservation reservation = reservationSnapshot.getValue(DiningReservation.class);
+                        if (reservation != null && reservation.isValid()) {
+                            reservation.setId(reservationSnapshot.getKey());
+                            reservationList.add(reservation);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing reservation data: " + e.getMessage());
                     }
                 }
+                Collections.sort(reservationList,
+                        (a, b) -> Long.compare(a.getReservationTimestamp(), b.getReservationTimestamp()));
                 reservations.setValue(reservationList);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("DiningViewModel", "Failed to load reservations", error.toException());
+                Log.e(TAG, "Failed to load reservations", error.toException());
             }
         });
-    }
-
-    public void deleteReservation(String reservationId) {
-        diningRef.child(reservationId).removeValue()
-                .addOnSuccessListener(aVoid -> {
-                    List<DiningReservation> currentList = reservations.getValue();
-                    if (currentList != null) {
-                        currentList.removeIf(reservation ->
-                                reservation.getId().equals(reservationId));
-                        reservations.setValue(currentList);
-                    }
-                })
-                .addOnFailureListener(e ->
-                        Log.e("DiningViewModel", "Failed to delete reservation", e));
-    }
-
-    public void updateReservation(DiningReservation reservation) {
-        if (reservation.getId() != null) {
-            diningRef.child(reservation.getId()).setValue(reservation)
-                    .addOnSuccessListener(aVoid -> {
-                        List<DiningReservation> currentList = reservations.getValue();
-                        if (currentList != null) {
-                            int index = -1;
-                            for (int i = 0; i < currentList.size(); i++) {
-                                if (currentList.get(i).getId().equals(reservation.getId())) {
-                                    index = i;
-                                    break;
-                                }
-                            }
-                            if (index != -1) {
-                                currentList.set(index, reservation);
-                                reservations.setValue(currentList);
-                            }
-                        }
-                    })
-                    .addOnFailureListener(e ->
-                            Log.e("DiningViewModel", "Failed to update reservation", e));
-        }
     }
 }

@@ -5,10 +5,10 @@ import com.example.sprintproject.viewmodels.DiningViewModel;
 public class DiningFilterModel implements FiltersModel {
     private boolean filter;
     private Object viewModel;
-    private static final String SORT_FIELD = "reservationTime";  // Changed to match DiningReservation
+    private static final String SORT_FIELD = "reservationTimestamp";  // Updated to match new field name
 
     public DiningFilterModel() {
-        this.filter = true;
+        this.filter = true;  // true means ascending (oldest first), false means descending (newest first)
     }
 
     @Override
@@ -53,6 +53,8 @@ public class DiningFilterModel implements FiltersModel {
     public void applyFilter(boolean currentFilter, String filterType) {
         if (viewModel instanceof DiningViewModel && filterType.equals(getType())) {
             DiningViewModel diningViewModel = (DiningViewModel) viewModel;
+            // When filter is false, sort descending (newest first)
+            // When filter is true, sort ascending (oldest first)
             diningViewModel.sortReservations(currentFilter);
         }
     }
