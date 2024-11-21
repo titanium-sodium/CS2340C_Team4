@@ -1,9 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SprintProject" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <!-- Base theme -->
+    <style name="Base.Theme.WanderSync" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Material 3 color attributes -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/primary_light</item>
+        <item name="colorOnPrimaryContainer">@color/primary_dark</item>
+
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/secondary_light</item>
+        <item name="colorOnSecondaryContainer">@color/secondary_dark</item>
+
+        <item name="colorTertiary">@color/tertiary</item>
+        <item name="colorOnTertiary">@color/white</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorError">@color/error</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
+
+        <!-- Component styles -->
+        <item name="materialButtonStyle">@style/Widget.WanderSync.Button</item>
+        <item name="textInputStyle">@style/Widget.WanderSync.TextInputLayout</item>
+        <item name="materialCardViewStyle">@style/Widget.WanderSync.CardView</item>
     </style>
 
-    <style name="Theme.SprintProject" parent="Base.Theme.SprintProject" />
+    <!-- Typography styles -->
+    <style name="TextAppearance.WanderSync.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textSize">57sp</item>
+        <item name="android:letterSpacing">-0.0089</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineHeight" tools:targetApi="p">64dp</item>
+    </style>
+
+    <style name="TextAppearance.WanderSync.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textSize">45sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineHeight" tools:targetApi="p">52dp</item>
+    </style>
+
+    <style name="TextAppearance.WanderSync.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineHeight" tools:targetApi="p">40dp</item>
+    </style>
+
+    <style name="TextAppearance.WanderSync.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:lineHeight" tools:targetApi="p">24dp</item>
+    </style>
+
+    <!-- Component styles -->
+    <style name="Widget.WanderSync.Button" parent="Widget.Material3.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.WanderSync.BodyLarge</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+    </style>
+
+    <style name="Widget.WanderSync.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="errorIconDrawable">@null</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="hintTextAppearance">@style/TextAppearance.WanderSync.BodyLarge</item>
+    </style>
+
+    <style name="Widget.WanderSync.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="contentPadding">16dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.WanderSync.BodyLarge</item>
+    </style>
+
+    <!-- Shape styles -->
+    <style name="ShapeAppearance.WanderSync.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.WanderSync.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="ShapeAppearance.WanderSync.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <!-- Main theme -->
+    <style name="Theme.WanderSync" parent="Base.Theme.WanderSync" />
 </resources>

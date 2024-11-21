@@ -9,7 +9,7 @@
         android:id="@+id/headerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Accommodations"
+        android:text="Accommodations"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -18,7 +18,7 @@
         android:layout_marginTop="16dp" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/accommodations_recycler"
+        android:id="@+id/accommodationsRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -29,21 +29,20 @@
         app:layout_constraintVertical_bias="0.023" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/newResButton"
+        android:id="@+id/addReservationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:layout_marginEnd="176dp"
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:layout_marginEnd="176dp"
-        android:src="@drawable/ic_launcher_foreground"
+        android:src="@drawable/ic_filter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

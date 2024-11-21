@@ -3,7 +3,7 @@ package com.example.sprintproject.model;
 public class TravelStats {
     private int allottedDays;
     private int plannedDays;
-    private int plannedPercentage;
+    private float plannedPercentage;
     private int remainingDays;
 
     public TravelStats() {
@@ -24,7 +24,7 @@ public class TravelStats {
         return plannedDays;
     }
 
-    public int getPlannedPercentage() {
+    public float getPlannedPercentage() {
         return plannedPercentage;
     }
 
@@ -41,7 +41,7 @@ public class TravelStats {
         this.plannedDays = plannedDays;
     }
 
-    public void setPlannedPercentage(int plannedPercentage) {
+    public void setPlannedPercentage(float plannedPercentage) {
         this.plannedPercentage = plannedPercentage;
     }
 

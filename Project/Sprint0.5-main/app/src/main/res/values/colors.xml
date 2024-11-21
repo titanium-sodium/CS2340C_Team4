@@ -1,8 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="past_reservation">#F5F5F5</color>
-    <color name="current_reservation">#E8F5E9</color>
-    <color name="upcoming_reservation">#E3F2FD</color>
+
+    <!-- Accommodations Statuses -->
+    <color name="past_reservation">#BEADADAD</color>
+    <color name="current_reservation">#BFA5CCA6</color>
+    <color name="upcoming_reservation">#BFA4B3D1</color>
+
+    <!-- Primary colors -->
+    <color name="primary">#FF6750A4</color>
+    <color name="primary_light">#FF8B79BE</color>
+    <color name="primary_dark">#FF4A3877</color>
+    <color name="on_primary">#FFFFFFFF</color>
+    <color name="primary_container">#FFEADDFF</color>
+    <color name="on_primary_container">#FF21005E</color>
+
+    <!-- Secondary colors -->
+    <color name="secondary">#FF625B71</color>
+    <color name="secondary_light">#FF8B839C</color>
+    <color name="secondary_dark">#FF443C52</color>
+    <color name="on_secondary">#FFFFFFFF</color>
+    <color name="secondary_container">#FFE8DEF8</color>
+    <color name="on_secondary_container">#FF1D192B</color>
+    <color name="gray">#FF757575</color>
+
+    <!-- Tertiary colors -->
+    <color name="tertiary">#FF7D5260</color>
+    <color name="on_tertiary">#FFFFFFFF</color>
+    <color name="tertiary_container">#FFEED8E2</color>
+    <color name="on_tertiary_container">#FF31111D</color>
+
+    <!-- Surface colors -->
+    <color name="background">#FFFFFFFF</color>
+    <color name="on_background">#FF1C1B1F</color>
+    <color name="surface">#FFF3EDF7</color>
+    <color name="on_surface">#FF1C1B1F</color>
+    <color name="surface_variant">#FFE7E0EC</color>
+    <color name="on_surface_variant">#FF49454F</color>
+
+    <!-- Status colors -->
+    <color name="error">#FFB3261E</color>
+    <color name="on_error">#FFFFFFFF</color>
+    <color name="error_container">#FFF9DEDC</color>
+    <color name="on_error_container">#FF410E0B</color>
+    <color name="success">#FF146C2E</color>
+    <color name="warning">#FFB86E00</color>
+    <color name="info">#FF1976D2</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#FF1C1B1F</color>
+    <color name="text_secondary">#FF49454F</color>
+    <color name="text_tertiary">#FF79747E</color>
+    <color name="outline">#FF79747E</color>
+    <color name="nicebrown">#908F6C55</color>
 </resources>

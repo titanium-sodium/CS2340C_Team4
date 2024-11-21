@@ -31,6 +31,7 @@ import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
 import com.example.sprintproject.viewmodels.DestinationViewModel;
 import com.example.sprintproject.viewmodels.TravelStatsViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.*;
 
 public class DestinationsPage extends Fragment {
@@ -72,8 +73,8 @@ public class DestinationsPage extends Fragment {
         allottedDaysText = view.findViewById(R.id.allottedDaysText);
         plannedDaysText = view.findViewById(R.id.plannedDaysText);
 
-        Button travelLogButton = view.findViewById(R.id.travelLogButton);
-        Button calculateTimeButton = view.findViewById(R.id.calculateButton);
+        FloatingActionButton travelLogButton = view.findViewById(R.id.addTravelLogButton);
+        FloatingActionButton calculateTimeButton = view.findViewById(R.id.calculateButton);
 
         if (travelLogButton != null) {
             travelLogButton.setOnClickListener(v -> openTravelLogForm());
