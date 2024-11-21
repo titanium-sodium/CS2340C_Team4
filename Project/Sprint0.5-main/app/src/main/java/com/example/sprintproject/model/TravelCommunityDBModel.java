@@ -7,27 +7,27 @@ public class TravelCommunityDBModel {
     private static TravelCommunityDBModel realTimeDBInstance = null;
     private static DatabaseReference dbRef;
 
-    private TravelCommunityDBModel(String tripId) {
-        dbRef = TripDBModel.getTripReference(tripId).child("travelCommunity");
+    private TravelCommunityDBModel() {
+        dbRef = DBModel.getInstance().child("travelCommunity");
     }
 
-    public static synchronized DatabaseReference getInstance(String tripId) {
-        if (realTimeDBInstance == null || !dbRef.getRef().toString().contains(tripId)) {
-            realTimeDBInstance = new TravelCommunityDBModel(tripId);
+    public static synchronized DatabaseReference getInstance() {
+        if (realTimeDBInstance == null) {
+            realTimeDBInstance = new TravelCommunityDBModel();
         }
         return dbRef;
     }
 
-    public static DatabaseReference createCommunityPost(String tripId) {
-        String postId = getInstance(tripId).push().getKey();
+    public static DatabaseReference createCommunityPost() {
+        String postId = getInstance().push().getKey();
         if (postId != null) {
-            return getInstance(tripId).child(postId);
+            return getInstance().child(postId);
         }
         return null;
     }
 
-    public static Task<Void> saveCommunityPost(String tripId, CommunityPost post) {
-        DatabaseReference postRef = createCommunityPost(tripId);
+    public static Task<Void> saveCommunityPost(CommunityPost post) {
+        DatabaseReference postRef = createCommunityPost();
         if (postRef != null) {
             post.setPostId(postRef.getKey());
             return postRef.setValue(post);
@@ -35,7 +35,7 @@ public class TravelCommunityDBModel {
         return null;
     }
 
-    public static DatabaseReference getCommunityPosts(String tripId) {
-        return getInstance(tripId);
+    public static DatabaseReference getCommunityPosts() {
+        return getInstance();
     }
 }
