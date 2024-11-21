@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprintproject.R;
+import com.example.sprintproject.model.DiningFilterModel;
 import com.example.sprintproject.model.DiningReservation;
 import com.example.sprintproject.viewmodels.DiningViewModel;
+import com.example.sprintproject.viewmodels.FilterViewModel;
 
 import java.util.Calendar;
 
@@ -61,6 +63,13 @@ public class DiningEstablishmentsPage extends Fragment {
 
     private void setupButtons(View view) {
         view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
+        view.findViewById(R.id.filterButton).setOnClickListener(v -> changeFilter());
+    }
+
+    //TODO filters
+    private void changeFilter() {
+        FilterViewModel diningFilterModel = new FilterViewModel(true, "Dining", new DiningViewModel());
+        diningFilterModel.changeFilter(diningFilterModel.getFilter(), "Dining");
     }
 
     private void observeReservations() {
