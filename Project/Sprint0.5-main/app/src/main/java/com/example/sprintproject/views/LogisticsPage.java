@@ -27,6 +27,7 @@ import com.example.sprintproject.R;
 
 import com.example.sprintproject.model.DBModel;
 import com.example.sprintproject.model.NotesModel;
+import com.example.sprintproject.model.TripDBModel;
 import com.example.sprintproject.model.UserModel;
 
 import com.example.sprintproject.viewmodels.ChartViewModel;
@@ -264,7 +265,7 @@ public class LogisticsPage extends Fragment {
 
     private void loadContributors() {
         // Get contributors from the specific trip
-        DBModel.getTripReference().child(tripId).child("contributors")
+        TripDBModel.getTripReference(tripId).child("contributors")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -277,10 +278,14 @@ public class LogisticsPage extends Fragment {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot userDetails) {
                                             UserModel user = userDetails.getValue(UserModel.class);
+
                                             if (user != null) {
+                                                Log.d("User", user.toString());
                                                 users.add(user);
-                                                userAdapter.notifyDataSetChanged();
                                             }
+                                            contributors.clear();
+                                            contributors.addAll(users);
+                                            userAdapter.notifyDataSetChanged();
                                         }
 
                                         @Override
@@ -289,9 +294,6 @@ public class LogisticsPage extends Fragment {
                                         }
                                     });
                         }
-                        contributors.clear();
-                        contributors.addAll(users);
-                        userAdapter.notifyDataSetChanged();
                     }
 
                     @Override
