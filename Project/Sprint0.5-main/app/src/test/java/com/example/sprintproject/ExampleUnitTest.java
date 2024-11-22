@@ -3,6 +3,8 @@ package com.example.sprintproject;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import com.example.sprintproject.model.AccommodationsFilterModel;
 import com.example.sprintproject.model.AccommodationsModel;
@@ -13,6 +15,8 @@ import com.example.sprintproject.model.NotesModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 import com.example.sprintproject.viewmodels.UserViewModel;
+
+import junit.framework.TestCase;
 
 import java.util.ArrayList;
 
@@ -294,4 +298,56 @@ public class ExampleUnitTest {
         assertEquals("Single", accommodationsModel.getRoomType());
         assertEquals("Somewhere", accommodationsModel.getLocation());
     }
+
+
+    //------------------------------travelCommunity---------------------------------------------------//
+
+    @Test
+    public void testCheckEmptyPlannedDays() {
+        try {
+            TravelStats travelstats = new TravelStats(0, 0);
+            fail("There cannot be 0 allottedDays or plannedDays when creating a travel stats");
+        } catch (IllegalArgumentException e) {
+            TestCase.assertEquals("Cannot create TravelStat with 0 allottedDays or plannedDays", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testSetAndGetAllottedDays() {
+        TravelStats stats = new TravelStats();
+        stats.setAllottedDays(10);
+        assertEquals(10, stats.getAllottedDays());
+    }
+
+    @Test
+    public void testSetAndGetPlannedDays() {
+        TravelStats stats = new TravelStats();
+        stats.setPlannedDays(5);
+        assertEquals(5, stats.getPlannedDays());
+    }
+
+    @Test
+    public void testSetAndGetDestination() {
+        TravelStats stats = new TravelStats();
+        stats.setDestination("Paris");
+        assertEquals("Paris", stats.getDestination());
+    }
+
+    @Test
+    public void testTravelStats() {
+        TravelStats stats = new TravelStats(3, 2);
+        assertEquals(3,stats.getAllottedDays());
+        assertEquals(2, stats.getPlannedDays());
+    }
+
+    @Test
+    public void testPlannedDaysExceedAllottedDays() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new TravelStats(3, 5);
+        });
+        TestCase.assertEquals("Cannot have more planned days than total trip days",
+                exception.getMessage());
+    }
+
+
 }

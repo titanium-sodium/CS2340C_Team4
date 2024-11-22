@@ -16,6 +16,10 @@ public class TravelStats {
             throw new IllegalArgumentException(
                     "Cannot have more planned days than total trip days");
         }
+        if (allottedDays == 0 && plannedDays == 0) {
+            throw new IllegalArgumentException(
+                    "Cannot create TravelStat with 0 allottedDays or plannedDays");
+        }
         this.allottedDays = allottedDays;
         this.plannedDays = plannedDays;
     }
