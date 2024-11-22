@@ -113,7 +113,7 @@ public class DestinationsPage extends Fragment {
                     userTripsRef.child(newTripId).setValue(true);
                     currentTripId = newTripId;
                 } else {
-                    currentTripId = snapshot.getChildren().iterator().next().getKey();
+                    currentTripId = MainActivity.getTripId();
                 }
                 loadDestinationsData();
                 loadTravelStats();
