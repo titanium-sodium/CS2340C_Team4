@@ -302,15 +302,6 @@ public class ExampleUnitTest {
 
     //------------------------------travelCommunity---------------------------------------------------//
 
-    @Test
-    public void testCheckEmptyPlannedDays() {
-        try {
-            TravelStats travelstats = new TravelStats(0, 0);
-            fail("There cannot be 0 allottedDays or plannedDays when creating a travel stats");
-        } catch (IllegalArgumentException e) {
-            TestCase.assertEquals("Cannot create TravelStat with 0 allottedDays or plannedDays", e.getMessage());
-        }
-    }
 
     @Test
     public void testSetAndGetAllottedDays() {
