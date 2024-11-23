@@ -50,11 +50,6 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
             userIdText = itemView.findViewById(R.id.userId);
         }
 
-        public TextView getSserEmailText() {
-            return userEmailText;
-        }
-        public TextView getUserIdText() {
-            return userIdText;
-        }
+
     }
 }

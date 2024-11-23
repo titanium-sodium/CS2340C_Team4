@@ -13,6 +13,10 @@ public class TravelStats {
     public TravelStats(int allottedDays, int plannedDays) {
         this.allottedDays = allottedDays;
         this.plannedDays = plannedDays;
+        if (allottedDays < plannedDays) {
+            throw new
+                    IllegalArgumentException("Cannot have more planned days than total trip days");
+        }
     }
 
     // Getters
@@ -22,10 +26,6 @@ public class TravelStats {
 
     public int getPlannedDays() {
         return plannedDays;
-    }
-
-    public float getPlannedPercentage() {
-        return plannedPercentage;
     }
 
     public int getRemainingDays() {

@@ -18,12 +18,4 @@ public class DiningDBModel {
         return dbRef;
     }
 
-    // Helper methods similar to DBModel
-    public static DatabaseReference getDiningForTrip(String tripId) {
-        return getInstance().child(tripId);
-    }
-
-    public static DatabaseReference getDiningReference() {
-        return getInstance();
-    }
 }
