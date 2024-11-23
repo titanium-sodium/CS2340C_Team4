@@ -302,14 +302,14 @@ public class ExampleUnitTest {
 
     //------------------------------travelCommunity---------------------------------------------------//
 
-
+    //test alloted days
     @Test
     public void testSetAndGetAllottedDays() {
         TravelStats stats = new TravelStats();
         stats.setAllottedDays(10);
         assertEquals(10, stats.getAllottedDays());
     }
-
+    //test set and get planned days
     @Test
     public void testSetAndGetPlannedDays() {
         TravelStats stats = new TravelStats();
@@ -317,13 +317,15 @@ public class ExampleUnitTest {
         assertEquals(5, stats.getPlannedDays());
     }
 
+    //test set and get destination
     @Test
     public void testSetAndGetDestination() {
         TravelStats stats = new TravelStats();
-        stats.setDestination("Paris");
-        assertEquals("Paris", stats.getDestination());
+        stats.setDestination("Tokyo");
+        assertEquals("Tokyo", stats.getDestination());
     }
 
+    //test travel stats
     @Test
     public void testTravelStats() {
         TravelStats stats = new TravelStats(3, 2);
@@ -331,6 +333,7 @@ public class ExampleUnitTest {
         assertEquals(2, stats.getPlannedDays());
     }
 
+    //tests when planned dats exceeded allotted days
     @Test
     public void testPlannedDaysExceedAllottedDays() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
