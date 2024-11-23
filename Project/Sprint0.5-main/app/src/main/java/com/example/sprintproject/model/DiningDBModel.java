@@ -1,7 +1,7 @@
 package com.example.sprintproject.model;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+
 
 public class DiningDBModel {
     private static DiningDBModel instance = null;

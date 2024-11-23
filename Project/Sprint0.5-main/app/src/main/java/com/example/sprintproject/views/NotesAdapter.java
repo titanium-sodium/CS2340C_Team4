@@ -11,7 +11,6 @@ import com.example.sprintproject.model.NotesModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,12 +75,12 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     private void sortNotes(SortOrder sortOrder) {
         Collections.sort(notes, (note1, note2) -> {
             switch (sortOrder) {
-                case NEWEST_FIRST:
-                    return Long.compare(note2.getTimestamp(), note1.getTimestamp());
-                case OLDEST_FIRST:
-                    return Long.compare(note1.getTimestamp(), note2.getTimestamp());
-                default:
-                    return 0;
+            case NEWEST_FIRST:
+                return Long.compare(note2.getTimestamp(), note1.getTimestamp());
+            case OLDEST_FIRST:
+                return Long.compare(note1.getTimestamp(), note2.getTimestamp());
+            default:
+                return 0;
             }
         });
     }

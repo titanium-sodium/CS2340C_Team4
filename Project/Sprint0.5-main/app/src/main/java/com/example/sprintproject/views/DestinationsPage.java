@@ -56,7 +56,8 @@ public class DestinationsPage extends Fragment {
             navigateToLogin();
             return;
         }
-        DestinationViewModel destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
+        DestinationViewModel destinationViewModel = new ViewModelProvider(this)
+                .get(DestinationViewModel.class);
         travelStatsViewModel = new ViewModelProvider(this).get(TravelStatsViewModel.class);
         loadOrCreateDefaultTrip();
     }
@@ -129,7 +130,8 @@ public class DestinationsPage extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(), this::updateStatsDisplay);
+        travelStatsViewModel.getTravelStats().observe(getViewLifecycleOwner(),
+                this::updateStatsDisplay);
     }
 
     private void loadDestinationsData() {
@@ -138,37 +140,40 @@ public class DestinationsPage extends Fragment {
             return;
         }
 
-        DestinationModel.loadTripDestinations(currentTripId, new DestinationModel.DestinationLoadCallback() {
-            @Override
+        DestinationModel.loadTripDestinations(
+                currentTripId, new DestinationModel.DestinationLoadCallback() {
+                    @Override
             public void onDestinationsLoaded(ArrayList<DestinationModel> destinationsList) {
-                destinations.clear();
-                destinations.addAll(destinationsList);
+                        destinations.clear();
+                        destinations.addAll(destinationsList);
 
-                int totalPlannedDays = 0;
-                for (DestinationModel destination : destinationsList) {
-                    totalPlannedDays += destination.getDuration();
-                }
+                        int totalPlannedDays = 0;
+                        for (DestinationModel destination : destinationsList) {
+                            totalPlannedDays += destination.getDuration();
+                        }
 
-                travelStatsViewModel.updatePlannedDays(currentTripId, totalPlannedDays);
+                        travelStatsViewModel.updatePlannedDays(currentTripId, totalPlannedDays);
 
-                if (destinationAdapter != null) {
-                    destinationAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
+                        if (destinationAdapter != null) {
+                            destinationAdapter.notifyDataSetChanged();
+                        }
+                    }
+                    @Override
             public void onError(String errorMessage) {
-                Log.e(TAG, "Error loading destinations: " + errorMessage);
-                if (getContext() != null) {
-                    Toast.makeText(getContext(), "Error loading destinations: " + errorMessage,
+                        Log.e(TAG, "Error loading destinations: " + errorMessage);
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(),
+                                    "Error loading destinations: " + errorMessage,
                             Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                        }
+                    }
+                });
     }
 
     private void openTravelLogForm() {
-        if (getContext() == null) return;
+        if (getContext() == null) {
+            return;
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dialogView = getLayoutInflater().inflate(R.layout.travel_log_form, null);

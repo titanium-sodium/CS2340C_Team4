@@ -19,7 +19,8 @@ import java.util.Locale;
 
 public class DiningAdapter extends ListAdapter<DiningReservation, DiningAdapter.ViewHolder> {
     private static final String TAG = "DiningAdapter";
-    private static final SimpleDateFormat DISPLAY_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
+    private static final SimpleDateFormat DISPLAY_FORMAT =
+            new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
 
     private static final DiffUtil.ItemCallback<DiningReservation> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<DiningReservation>() {
@@ -32,10 +33,11 @@ public class DiningAdapter extends ListAdapter<DiningReservation, DiningAdapter.
                 @Override
                 public boolean areContentsTheSame(@NonNull DiningReservation oldItem,
                                                   @NonNull DiningReservation newItem) {
-                    return oldItem.getLocation().equals(newItem.getLocation()) &&
-                            oldItem.getTime().equals(newItem.getTime()) &&
-                            oldItem.getWebsite().equals(newItem.getWebsite()) &&
-                            oldItem.getReservationTimestamp() == newItem.getReservationTimestamp();
+                    return oldItem.getLocation().equals(newItem.getLocation())
+                            && oldItem.getTime().equals(newItem.getTime())
+                            && oldItem.getWebsite().equals(newItem.getWebsite())
+                            && oldItem.getReservationTimestamp()
+                            == newItem.getReservationTimestamp();
                 }
             };
 
@@ -90,7 +92,8 @@ public class DiningAdapter extends ListAdapter<DiningReservation, DiningAdapter.
                 }
 
                 if (timeText != null) {
-                    timeText.setText(DISPLAY_FORMAT.format(new Date(reservation.getReservationTimestamp())));
+                    timeText.setText(
+                            DISPLAY_FORMAT.format(new Date(reservation.getReservationTimestamp())));
                 }
 
                 if (websiteText != null) {

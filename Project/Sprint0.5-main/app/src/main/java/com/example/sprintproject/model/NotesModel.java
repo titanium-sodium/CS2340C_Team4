@@ -19,7 +19,8 @@ public class NotesModel {
     }
 
     // Constructor with all fields
-    public NotesModel(String notes, String userId, String userEmail, String tripId, String location) {
+    public NotesModel(String notes, String userId, String userEmail,
+                      String tripId, String location) {
         this(notes); // Call the basic constructor for validation
         this.userId = userId;
         this.userEmail = userEmail;
@@ -87,19 +88,22 @@ public class NotesModel {
     @NonNull
     @Override
     public String toString() {
-        return "NotesModel{" +
-                "notes='" + notes + '\'' +
-                ", userId='" + userId + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", timestamp=" + timestamp +
-                ", tripId='" + tripId + '\'' +
-                ", location='" + location + '\'' +
+        return "NotesModel{"
+                + "notes='" + notes + '\''
+                + ", userId='" + userId + '\''
+                + ", userEmail='" + userEmail + '\''
+                + ", timestamp=" + timestamp
+                + ", tripId='" + tripId + '\''
+                + ", location='" + location + '\''
+                +
                 '}';
     }
 
     /**
      * Creates a copy of the note with a new timestamp
      * Useful for updating notes while maintaining history
+     * @return NotesModel
+     * @param newNotes notes
      */
     public NotesModel createUpdatedCopy(String newNotes) {
         NotesModel updatedNote = new NotesModel(newNotes);
@@ -115,11 +119,11 @@ public class NotesModel {
      * @return true if the note is valid, false otherwise
      */
     public boolean isValid() {
-        return notes != null && !notes.trim().isEmpty() &&
-                userId != null && !userId.isEmpty() &&
-                userEmail != null && !userEmail.isEmpty() &&
-                tripId != null && !tripId.isEmpty() &&
-                timestamp > 0;
+        return notes != null && !notes.trim().isEmpty()
+                && userId != null && !userId.isEmpty()
+                && userEmail != null && !userEmail.isEmpty()
+                && tripId != null && !tripId.isEmpty()
+                && timestamp > 0;
     }
 
     /**

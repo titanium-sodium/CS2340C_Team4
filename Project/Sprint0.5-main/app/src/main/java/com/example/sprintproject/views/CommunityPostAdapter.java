@@ -13,7 +13,8 @@ import com.example.sprintproject.model.CommunityPost;
 
 import java.util.List;
 
-public class CommunityPostAdapter extends RecyclerView.Adapter<CommunityPostAdapter.PostViewHolder> {
+public class CommunityPostAdapter
+        extends RecyclerView.Adapter<CommunityPostAdapter.PostViewHolder> {
     private List<CommunityPost> posts;
 
     public CommunityPostAdapter(List<CommunityPost> posts) {

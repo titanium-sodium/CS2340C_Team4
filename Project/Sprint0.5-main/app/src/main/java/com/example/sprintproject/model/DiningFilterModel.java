@@ -26,6 +26,7 @@ public class DiningFilterModel implements FiltersModel {
         } else {
             throw new IllegalArgumentException("ViewModel must be of type DiningViewModel");
         }
+
     }
 
     @Override

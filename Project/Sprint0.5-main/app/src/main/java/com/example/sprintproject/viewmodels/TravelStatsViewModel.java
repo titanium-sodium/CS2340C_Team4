@@ -18,7 +18,10 @@ public class TravelStatsViewModel extends ViewModel {
     }
 
     public void loadTravelStats(String tripId) {
-        if (tripId == null) return;
+        if (tripId == null) {
+            return;
+        }
+
 
         // Don't reload if we're already listening to this trip
         if (tripId.equals(currentTripId)) {
@@ -120,7 +123,9 @@ public class TravelStatsViewModel extends ViewModel {
     }
 
     public void updatePlannedDays(String tripId, int plannedDays) {
-        if (tripId == null) return;
+        if (tripId == null) {
+            return;
+        }
 
         DatabaseReference statsRef = TripDBModel.getTripReference(tripId)
                 .child("travelStats");
@@ -139,7 +144,8 @@ public class TravelStatsViewModel extends ViewModel {
             }
 
             @Override
-            public void onComplete(DatabaseError error, boolean committed, DataSnapshot currentData) {
+            public void onComplete(DatabaseError error, boolean committed,
+                                   DataSnapshot currentData) {
                 if (committed && currentData.exists()) {
                     TravelStats updatedStats = currentData.getValue(TravelStats.class);
                     if (updatedStats != null) {
@@ -152,7 +158,9 @@ public class TravelStatsViewModel extends ViewModel {
     }
 
     public void updateAllottedDays(String tripId, int allottedDays) {
-        if (tripId == null) return;
+        if (tripId == null) {
+            return;
+        }
 
         DatabaseReference statsRef = TripDBModel.getTripReference(tripId)
                 .child("travelStats");
@@ -171,7 +179,8 @@ public class TravelStatsViewModel extends ViewModel {
             }
 
             @Override
-            public void onComplete(DatabaseError error, boolean committed, DataSnapshot currentData) {
+            public void onComplete(DatabaseError error, boolean committed,
+                                   DataSnapshot currentData) {
                 if (committed && currentData.exists()) {
                     TravelStats updatedStats = currentData.getValue(TravelStats.class);
                     if (updatedStats != null) {

@@ -22,9 +22,12 @@ public class DestinationModel {
     private static final String TRIPS_NODE = "trips";
     private static final String DESTINATIONS_NODE = "destinations";
 
-    public interface DestinationLoadCallback {
-        void onDestinationsLoaded(ArrayList<DestinationModel> destinations);
-        void onError(String errorMessage);
+    // Database operations
+    private static DatabaseReference getDatabase() {
+        if (database == null) {
+            database = FirebaseDatabase.getInstance().getReference();
+        }
+        return database;
     }
 
     // Constructor for new destinations
@@ -42,16 +45,11 @@ public class DestinationModel {
         calculateDuration();
     }
 
+
     // Empty constructor for Firebase
     public DestinationModel() { }
 
-    // Database operations
-    private static DatabaseReference getDatabase() {
-        if (database == null) {
-            database = FirebaseDatabase.getInstance().getReference();
-        }
-        return database;
-    }
+
 
     // Save destination to a specific trip
     public void saveToTrip(String tripId) {
@@ -78,6 +76,7 @@ public class DestinationModel {
         destinationRef.child("duration").setValue(duration);
     }
 
+
     // Load destinations for a specific trip
     public static void loadTripDestinations(String tripId, final DestinationLoadCallback callback) {
         getDatabase()
@@ -94,9 +93,12 @@ public class DestinationModel {
                                     DestinationModel destination = new DestinationModel();
                                     destination.setId(destinationSnapshot.getKey());
                                     destination.setTripId(tripId);
-                                    destination.setLocation(destinationSnapshot.child("location").getValue(String.class));
-                                    destination.setStartDate(destinationSnapshot.child("startDate").getValue(Long.class));
-                                    destination.setEndDate(destinationSnapshot.child("endDate").getValue(Long.class));
+                                    destination.setLocation(destinationSnapshot
+                                            .child("location").getValue(String.class));
+                                    destination.setStartDate(destinationSnapshot.child(
+                                            "startDate").getValue(Long.class));
+                                    destination.setEndDate(destinationSnapshot.child(
+                                            "endDate").getValue(Long.class));
                                     destination.calculateDuration();
                                     destinations.add(destination);
                                 }
@@ -116,10 +118,14 @@ public class DestinationModel {
 
     // Validate destination data before conversion
     private static boolean isValidDestinationData(DataSnapshot snapshot) {
-        return snapshot.hasChild("location") &&
-                snapshot.hasChild("startDate") &&
-                snapshot.hasChild("endDate");
+        return snapshot.hasChild("location")
+                && snapshot.hasChild("startDate")
+                && snapshot.hasChild("endDate");
     }
+
+
+
+
 
     // Getters and setters
     public String getId() {
@@ -174,4 +180,12 @@ public class DestinationModel {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public interface DestinationLoadCallback {
+        void onDestinationsLoaded(ArrayList<DestinationModel> destinations);
+        void onError(String errorMessage);
+    }
+
+
+
 }

@@ -12,11 +12,6 @@ import android.widget.Button;
 
 import com.example.sprintproject.R;
 import com.example.sprintproject.databinding.ActivityMainBinding;
-import com.example.sprintproject.views.AccommodationsPage;
-import com.example.sprintproject.views.DestinationsPage;
-import com.example.sprintproject.views.DiningEstablishmentsPage;
-import com.example.sprintproject.views.LogisticsPage;
-import com.example.sprintproject.views.TravelCommunityPage;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {

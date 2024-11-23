@@ -18,7 +18,9 @@ public class CommunityPost {
     private String userReflections;
 
     // Empty constructor for Firebase
-    public CommunityPost() {}
+    public CommunityPost() {
+
+    }
 
     public CommunityPost(String tripId, String userId, String duration) {
         this.tripId = tripId;
@@ -27,40 +29,56 @@ public class CommunityPost {
     }
 
     // Getters and setters
-    public String getPostId() { return postId; }
-    public void setPostId(String postId) { this.postId = postId; }
+    public String getPostId() {
+        return postId; }
+    public void setPostId(String postId) {
+        this.postId = postId; }
 
-    public String getTripId() { return tripId; }
-    public void setTripId(String tripId) { this.tripId = tripId; }
+    public String getTripId() {
+        return tripId; }
+    public void setTripId(String tripId) {
+        this.tripId = tripId; }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public String getUserId() {
+        return userId; }
+    public void setUserId(String userId) {
+        this.userId = userId; }
 
-    public String getDuration() { return duration; }
-    public void setDuration(String duration) { this.duration = duration; }
+    public String getDuration() {
+        return duration; }
+    public void setDuration(String duration) {
+        this.duration = duration; }
 
-    public List<String> getDestinations() { return destinations; }
-    public void setDestinations(List<String> destinations) { this.destinations = destinations; }
+    public List<String> getDestinations() {
+        return destinations; }
+    public void setDestinations(List<String> destinations) {
+        this.destinations = destinations; }
 
-    public Map<String, String> getAccommodations() { return accommodations; }
+    public Map<String, String> getAccommodations() {
+        return accommodations; }
     public void setAccommodations(Map<String, String> accommodations) {
         this.accommodations = accommodations;
     }
 
-    public Map<String, String> getDiningReservations() { return diningReservations; }
+    public Map<String, String> getDiningReservations() {
+        return diningReservations; }
     public void setDiningReservations(Map<String, String> diningReservations) {
         this.diningReservations = diningReservations;
     }
 
-    public Map<String, String> getTransportation() { return transportation; }
+    public Map<String, String> getTransportation() {
+        return transportation; }
     public void setTransportation(Map<String, String> transportation) {
         this.transportation = transportation;
     }
 
-    public String getNotes() { return notes; }
-    public void setNotes(String notes) { this.notes = notes; }
+    public String getNotes() {
+        return notes; }
+    public void setNotes(String notes) {
+        this.notes = notes; }
 
-    public String getUserReflections() { return userReflections; }
+    public String getUserReflections() {
+        return userReflections; }
     public void setUserReflections(String userReflections) {
         this.userReflections = userReflections;
     }

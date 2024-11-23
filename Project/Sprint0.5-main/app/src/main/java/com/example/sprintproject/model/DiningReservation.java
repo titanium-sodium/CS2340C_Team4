@@ -4,11 +4,12 @@ import androidx.annotation.NonNull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import android.util.Log;
+
 
 public class DiningReservation {
     private static final String TAG = "DiningReservation";
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
+    private static final SimpleDateFormat TIME_FORMAT =
+            new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.US);
 
     private String id;
     private String tripId;
@@ -19,7 +20,9 @@ public class DiningReservation {
     private long reservationTimestamp;
 
     // Default constructor required for Firebase
-    public DiningReservation() {}
+    public DiningReservation() {
+
+    }
 
     public DiningReservation(String userId, String tripId, String website,
                              String location, String time, long timestamp) {
@@ -32,50 +35,66 @@ public class DiningReservation {
     }
 
     // Getters and setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getId() {
+        return id; }
+    public void setId(String id) {
+        this.id = id; }
 
-    public String getTripId() { return tripId; }
-    public void setTripId(String tripId) { this.tripId = tripId; }
+    public String getTripId() {
+        return tripId; }
+    public void setTripId(String tripId) {
+        this.tripId = tripId; }
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    public String getUserId() {
+        return userId; }
+    public void setUserId(String userId) {
+        this.userId = userId; }
 
-    public String getWebsite() { return website; }
-    public void setWebsite(String website) { this.website = website; }
+    public String getWebsite() {
+        return website; }
+    public void setWebsite(String website) {
+        this.website = website; }
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public String getLocation() {
+        return location; }
+    public void setLocation(String location) {
+        this.location = location; }
 
-    public String getTime() { return time; }
-    public void setTime(String time) { this.time = time; }
+    public String getTime() {
+        return time; }
+    public void setTime(String time) {
+        this.time = time; }
 
-    public long getReservationTimestamp() { return reservationTimestamp; }
-    public void setReservationTimestamp(long timestamp) { this.reservationTimestamp = timestamp; }
+    public long getReservationTimestamp() {
+        return reservationTimestamp; }
+    public void setReservationTimestamp(long timestamp) {
+        this.reservationTimestamp = timestamp; }
 
     public boolean isValid() {
-        return tripId != null && !tripId.isEmpty() &&
-                userId != null && !userId.isEmpty() &&
-                location != null && !location.isEmpty() &&
-                time != null && !time.isEmpty() &&
-                website != null && !website.isEmpty();
+        return tripId != null && !tripId.isEmpty()
+                && userId != null && !userId.isEmpty()
+                && location != null && !location.isEmpty()
+                && time != null && !time.isEmpty()
+                && website != null && !website.isEmpty();
     }
 
     public static String formatDateTime(Date date) {
+
         return TIME_FORMAT.format(date);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "DiningReservation{" +
-                "id='" + id + '\'' +
-                ", tripId='" + tripId + '\'' +
-                ", userId='" + userId + '\'' +
-                ", location='" + location + '\'' +
-                ", time='" + time + '\'' +
-                ", website='" + website + '\'' +
-                ", timestamp='" + reservationTimestamp + '\'' +
+        return "DiningReservation{"
+                + "id='" + id + '\''
+                + ", tripId='" + tripId + '\''
+                + ", userId='" + userId + '\''
+                + ", location='" + location + '\''
+                + ", time='" + time + '\''
+                + ", website='" + website + '\''
+                + ", timestamp='" + reservationTimestamp + '\''
+                +
                 '}';
     }
 }
