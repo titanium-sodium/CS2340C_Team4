@@ -317,6 +317,7 @@ public class ExampleUnitTest {
         assertEquals(5, stats.getPlannedDays());
     }
 
+
     //test set and get destination
     @Test
     public void testSetAndGetDestination() {
@@ -325,14 +326,17 @@ public class ExampleUnitTest {
         assertEquals("Tokyo", stats.getDestination());
     }
 
+
     //test travel stats
+
+
     @Test
     public void testTravelStats() {
         TravelStats stats = new TravelStats(3, 2);
         assertEquals(3,stats.getAllottedDays());
         assertEquals(2, stats.getPlannedDays());
     }
-    //TEST
+    //TESTING
     //tests when planned dats exceeded allotted days
     @Test
     public void testPlannedDaysExceedAllottedDays() {
