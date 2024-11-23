@@ -29,6 +29,7 @@ public class DiningEstablishmentsPage extends Fragment {
     private DiningAdapter reservationAdapter;
     private String tripId;
     private Calendar selectedDateTime;
+    private FilterViewModel filterViewModel;
 
     public DiningEstablishmentsPage(String tripId) {
         this.tripId = tripId;
@@ -41,6 +42,9 @@ public class DiningEstablishmentsPage extends Fragment {
         diningViewModel = new ViewModelProvider(this).get(DiningViewModel.class);
         String userId = MainActivity.getUserId();
         diningViewModel.setCurrentIds(userId, tripId);
+
+        // Initialize FilterViewModel here
+        filterViewModel = new FilterViewModel(true, "Dining", diningViewModel);
     }
 
     @Override
@@ -62,20 +66,35 @@ public class DiningEstablishmentsPage extends Fragment {
 
     private void setupButtons(View view) {
         view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openReservationForm());
-        view.findViewById(R.id.filterButton).setOnClickListener(v -> changeFilter());
-    }
 
-    //TODO filters
-    private void changeFilter() {
-        FilterViewModel diningFilterModel = new FilterViewModel(
-                true, "Dining", new DiningViewModel());
-        diningFilterModel.changeFilter(diningFilterModel.getFilter(), "Dining");
+
+        // Update filter button setup
+        view.findViewById(R.id.filterButton).setOnClickListener(v -> {
+            boolean currentFilter = filterViewModel.getFilter();
+            filterViewModel.changeFilter(currentFilter, "Dining");
+
+            // Add visual feedback
+            Toast.makeText(getContext(),
+                    "Sorting " + (currentFilter ? "Descending" : "Ascending"),
+                    Toast.LENGTH_SHORT).show();
+
+            // Force refresh the view
+            diningViewModel.refreshReservations();
+        });
     }
 
     private void observeReservations() {
         diningViewModel.getReservations().observe(getViewLifecycleOwner(), reservations -> {
-            reservationAdapter.updateReservations(reservations);
+            if (reservations != null) {
+                reservationAdapter.updateReservations(reservations);
+                reservationAdapter.notifyDataSetChanged(); // Force refresh
+            }
         });
+    }
+
+    private void changeFilter() {
+        // Pass the current filter state
+        filterViewModel.changeFilter(filterViewModel.getFilter(), "Dining");
     }
 
     private void openReservationForm() {
