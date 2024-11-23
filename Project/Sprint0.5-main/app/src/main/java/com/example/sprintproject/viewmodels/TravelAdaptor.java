@@ -51,12 +51,6 @@ public class TravelAdaptor extends RecyclerView.Adapter<TravelAdaptor.ViewHolder
             durationIDTextHolder = itemView.findViewById(R.id.durationText);
         }
 
-        public TextView getDestinationText() {
-            return destinationIDTextHolder;
-        }
-        public TextView getDuration() {
-            return durationIDTextHolder;
-        }
 
     }
 }

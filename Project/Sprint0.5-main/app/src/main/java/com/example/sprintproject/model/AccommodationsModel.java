@@ -80,10 +80,6 @@ public class AccommodationsModel {
         this.website = website;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public Long getDuration() {
         return duration;
     }

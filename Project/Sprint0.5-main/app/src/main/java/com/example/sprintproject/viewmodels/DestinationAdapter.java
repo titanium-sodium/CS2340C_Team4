@@ -22,54 +22,6 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         this.destinations = destinations;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView destinationText;
-        private TextView daysText;
-        private TextView startDateText;
-        private TextView endDateText;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            destinationText = itemView.findViewById(R.id.destinationText);
-            daysText = itemView.findViewById(R.id.daysText);
-            startDateText = itemView.findViewById(R.id.startDateText);
-            endDateText = itemView.findViewById(R.id.endDateText);
-        }
-
-        private void setDestinationText(TextView text) {
-            this.destinationText = text;
-        }
-
-        private TextView getDestinationText() {
-            return this.destinationText;
-        }
-
-        private void setdaysText(TextView text) {
-            this.daysText = text;
-        }
-
-        private TextView getDaysText() {
-            return this.daysText;
-        }
-
-        private void setstartDateText(TextView text) {
-            this.startDateText = text;
-        }
-
-        private TextView getstartDateText() {
-            return this.startDateText;
-        }
-
-        private void setendDateText(TextView text) {
-            this.endDateText = text;
-        }
-
-        private TextView getendDateText() {
-            return this.endDateText;
-        }
-
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -98,6 +50,19 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         return destinations.size();
     }
 
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView destinationText;
+        private TextView daysText;
+        private TextView startDateText;
+        private TextView endDateText;
 
+        public ViewHolder(View itemView) {
+            super(itemView);
+            destinationText = itemView.findViewById(R.id.destinationText);
+            daysText = itemView.findViewById(R.id.daysText);
+            startDateText = itemView.findViewById(R.id.startDateText);
+            endDateText = itemView.findViewById(R.id.endDateText);
+        }
 
+    }
 }

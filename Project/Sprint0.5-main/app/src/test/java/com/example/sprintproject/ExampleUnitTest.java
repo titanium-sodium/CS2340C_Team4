@@ -16,7 +16,10 @@ import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 import com.example.sprintproject.viewmodels.UserViewModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -162,13 +165,13 @@ public class ExampleUnitTest {
     public void testAddDiningReservation() {
 
         DiningReservation diningReservation = new DiningReservation("SwawS", "SuS",
-                "www.meem.com", "SaaS", "4:20");
+                "www.meem.com", "SaaS", "4:20", 100L);
 
         assertEquals("SwawS", diningReservation.getUserId());
         assertEquals("SuS", diningReservation.getTripId());
         assertEquals("www.meem.com", diningReservation.getWebsite());
         assertEquals("SaaS", diningReservation.getLocation());
-        assertEquals("4:20", diningReservation.getTime());
+        assertEquals(100L, diningReservation.getDate());
 
     }
 
@@ -196,7 +199,7 @@ public class ExampleUnitTest {
     public void testEmptyLocation() {
         try {
             DiningReservation res = new DiningReservation("123", "abc",
-                    "coolmath.com", "","5");
+                    "coolmath.com", "","5", 5L);
             fail("Reservation must include a location.");
         } catch (IllegalArgumentException e) {
             assertEquals("Reservation must include a location.", e.getMessage());
@@ -208,7 +211,7 @@ public class ExampleUnitTest {
     public void testEmptyTime() {
         try {
             DiningReservation res = new DiningReservation("123", "abc",
-                    "coolmath.com", "Papa John's","");
+                    "coolmath.com", "Papa John's", "", 0);
             fail("Reservation must include a time.");
         } catch (IllegalArgumentException e) {
             assertEquals("Reservation must include a time.", e.getMessage());
@@ -219,11 +222,11 @@ public class ExampleUnitTest {
     @Test
     public void testValidDiningReservation() {
         DiningReservation res = new DiningReservation("123", "abc",
-                "coolmath.com", "Papa John's","5");
+                "coolmath.com", "Papa John's", "5", 5L);
         assertEquals("123", res.getUserId());
         assertEquals("coolmath.com", res.getWebsite());
         assertEquals("Papa John's", res.getLocation());
-        assertEquals("5", res.getTime());
+        assertEquals(5L, res.getDate());
     }
 
     @Test
@@ -233,10 +236,8 @@ public class ExampleUnitTest {
         ArrayList<String> contributors = new ArrayList<>();
         contributors.add("joni");
         DiningReservation res = new DiningReservation("123", "abc",
-                "coolmath.com", "Papa John's","5", 110824, notes, contributors);
+                "coolmath.com", "Papa John's","5", 110824);
         assertEquals(110824, res.getDate());
-        assertEquals(notes, res.getNotes());
-        assertEquals(contributors, res.getContributors());
     }
 
     //---------------------------------------addAccommodations------------------------------------------//

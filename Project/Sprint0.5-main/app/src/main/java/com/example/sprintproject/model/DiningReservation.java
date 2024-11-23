@@ -26,6 +26,12 @@ public class DiningReservation {
 
     public DiningReservation(String userId, String tripId, String website,
                              String location, String time, long timestamp) {
+        if (time.isEmpty()) {
+            throw new IllegalArgumentException("Reservation must include a time.");
+        }
+        if (location.isEmpty()) {
+            throw new IllegalArgumentException("Reservation must include a location.");
+        }
         this.userId = userId;
         this.tripId = tripId;
         this.website = website;
@@ -52,23 +58,18 @@ public class DiningReservation {
 
     public String getWebsite() {
         return website; }
-    public void setWebsite(String website) {
-        this.website = website; }
 
     public String getLocation() {
         return location; }
-    public void setLocation(String location) {
-        this.location = location; }
 
     public String getTime() {
         return time; }
-    public void setTime(String time) {
-        this.time = time; }
+    public long getDate() {
+        return reservationTimestamp;
+    }
 
     public long getReservationTimestamp() {
         return reservationTimestamp; }
-    public void setReservationTimestamp(long timestamp) {
-        this.reservationTimestamp = timestamp; }
 
     public boolean isValid() {
         return tripId != null && !tripId.isEmpty()

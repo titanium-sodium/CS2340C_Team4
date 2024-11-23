@@ -20,14 +20,8 @@ public class UserViewModel extends ViewModel {
     public UserModel getUserModel() {
         return userModel;
     }
-    public String getUserEmail() {
-        return userModel.getEmail();
-    }
     public void setUserEmail(String email) {
         userModel.setEmail(email);
-    }
-    public String getUserUID() {
-        return userModel.getUserId();
     }
     public void setUserUID(String userId) {
         userModel.setUserId(userId);

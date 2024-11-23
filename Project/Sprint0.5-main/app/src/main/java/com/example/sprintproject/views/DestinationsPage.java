@@ -29,7 +29,6 @@ import com.example.sprintproject.R;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.viewmodels.DestinationAdapter;
-import com.example.sprintproject.viewmodels.DestinationViewModel;
 import com.example.sprintproject.viewmodels.TravelStatsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.*;
@@ -56,8 +55,6 @@ public class DestinationsPage extends Fragment {
             navigateToLogin();
             return;
         }
-        DestinationViewModel destinationViewModel = new ViewModelProvider(this)
-                .get(DestinationViewModel.class);
         travelStatsViewModel = new ViewModelProvider(this).get(TravelStatsViewModel.class);
         loadOrCreateDefaultTrip();
     }

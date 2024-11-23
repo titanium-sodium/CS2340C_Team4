@@ -165,20 +165,4 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    // Getter methods
-    public DestinationsPage getDestinationsPage() {
-        return destinationsPage;
-    }
-
-    public DiningEstablishmentsPage getDiningDEstablishmentsPage() {
-        return diningEstablishmentsPage;
-    }
-
-    public AccommodationsPage getAccomodationsPage() {
-        return accommodationsPage;
-    }
-
-    public TravelCommunityPage getTravelCommunityPage() {
-        return travelCommunityPage;
-    }
 }

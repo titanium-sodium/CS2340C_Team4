@@ -22,12 +22,6 @@ public class CommunityPost {
 
     }
 
-    public CommunityPost(String tripId, String userId, String duration) {
-        this.tripId = tripId;
-        this.userId = userId;
-        this.duration = duration;
-    }
-
     // Getters and setters
     public String getPostId() {
         return postId; }
@@ -66,20 +60,9 @@ public class CommunityPost {
         this.diningReservations = diningReservations;
     }
 
-    public Map<String, String> getTransportation() {
-        return transportation; }
-    public void setTransportation(Map<String, String> transportation) {
-        this.transportation = transportation;
-    }
-
     public String getNotes() {
         return notes; }
     public void setNotes(String notes) {
         this.notes = notes; }
 
-    public String getUserReflections() {
-        return userReflections; }
-    public void setUserReflections(String userReflections) {
-        this.userReflections = userReflections;
-    }
 }

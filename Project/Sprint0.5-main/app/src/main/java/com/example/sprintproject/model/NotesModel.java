@@ -18,16 +18,6 @@ public class NotesModel {
         this.timestamp = System.currentTimeMillis();
     }
 
-    // Constructor with all fields
-    public NotesModel(String notes, String userId, String userEmail,
-                      String tripId, String location) {
-        this(notes); // Call the basic constructor for validation
-        this.userId = userId;
-        this.userEmail = userEmail;
-        this.tripId = tripId;
-        this.location = location;
-    }
-
     public NotesModel() {
         // Empty constructor required for Firebase
     }
@@ -77,10 +67,6 @@ public class NotesModel {
         this.tripId = tripId;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
     public void setLocation(String location) {
         this.location = location;
     }
@@ -97,21 +83,6 @@ public class NotesModel {
                 + ", location='" + location + '\''
                 +
                 '}';
-    }
-
-    /**
-     * Creates a copy of the note with a new timestamp
-     * Useful for updating notes while maintaining history
-     * @return NotesModel
-     * @param newNotes notes
-     */
-    public NotesModel createUpdatedCopy(String newNotes) {
-        NotesModel updatedNote = new NotesModel(newNotes);
-        updatedNote.setUserId(this.userId);
-        updatedNote.setUserEmail(this.userEmail);
-        updatedNote.setTripId(this.tripId);
-        updatedNote.setLocation(this.location);
-        return updatedNote;
     }
 
     /**
@@ -148,11 +119,6 @@ public class NotesModel {
 
         public Builder withTripId(String tripId) {
             note.setTripId(tripId);
-            return this;
-        }
-
-        public Builder withLocation(String location) {
-            note.setLocation(location);
             return this;
         }
 

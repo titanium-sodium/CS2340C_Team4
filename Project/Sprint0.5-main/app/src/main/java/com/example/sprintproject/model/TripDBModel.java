@@ -21,18 +21,4 @@ public class TripDBModel {
         return DBModel.getInstance().child("trips").child(tripId);
     }
 
-    public static DatabaseReference createCommunityPost(String tripId) {
-        String postId = DBModel.getCommunityPostsReference().push().getKey();
-        return DBModel.getCommunityPostsReference().child(postId);
-    }
-
-    public static void shareTrip(String tripId, String targetUserId) {
-        DatabaseReference tripRef = getTripReference(tripId);
-        DatabaseReference sharedRef = DBModel.getSharedTripsReference()
-                .child(tripId)
-                .child("contributors")
-                .child(targetUserId);
-
-        sharedRef.setValue(true);
-    }
 }

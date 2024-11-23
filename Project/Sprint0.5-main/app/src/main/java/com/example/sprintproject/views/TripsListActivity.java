@@ -191,10 +191,12 @@ public class TripsListActivity extends AppCompatActivity {
                     globalTripsRef.child(tripId).child("tripName").setValue(newName)
                             .addOnSuccessListener(aVoid2 ->
                                     Toast.makeText(TripsListActivity.this,
-                                            "Trip name updated successfully", Toast.LENGTH_SHORT).show())
+                                            "Trip name updated successfully",
+                                            Toast.LENGTH_SHORT).show())
                             .addOnFailureListener(e ->
                                     Toast.makeText(TripsListActivity.this,
-                                            "Failed to update global trip name", Toast.LENGTH_SHORT).show());
+                                            "Failed to update global trip name",
+                                            Toast.LENGTH_SHORT).show());
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(TripsListActivity.this,
@@ -202,8 +204,8 @@ public class TripsListActivity extends AppCompatActivity {
     }
 
     private static class TripItem {
-        String id;
-        String name;
+        private String id;
+        private String name;
 
         TripItem(String id, String name) {
             this.id = id;
@@ -247,7 +249,7 @@ public class TripsListActivity extends AppCompatActivity {
         }
 
         class TripViewHolder extends RecyclerView.ViewHolder {
-            TextView tripNameTextView;
+            private TextView tripNameTextView;
 
             TripViewHolder(View itemView) {
                 super(itemView);

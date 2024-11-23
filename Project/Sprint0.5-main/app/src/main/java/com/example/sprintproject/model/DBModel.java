@@ -28,14 +28,6 @@ public class DBModel {
         return getInstance().child("trips");
     }
 
-    public static DatabaseReference getDestinationsReference() {
-        return getInstance().child("destinations");
-    }
-
-    public static DatabaseReference getTravelCommunityReference(String tripId) {
-        return getTripReference().child(tripId).child("travelCommunity");
-    }
-
     public static DatabaseReference getCommunityPostsReference() {
         return getInstance().child("communityPosts");
     }

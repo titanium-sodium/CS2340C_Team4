@@ -86,19 +86,4 @@ public class AccommodationsFilterModel implements FiltersModel {
         }
     }
 
-    // Get descriptive text for current sort state
-    public String getSortDescription() {
-        String direction = filter ? "Ascending" : "Descending";
-        String field = SORT_FIELDS[currentSortFieldIndex];
-        switch (field) {
-        case "checkInDate":
-            return "Check-in Date " + direction;
-        case "checkOutDate":
-            return "Check-out Date " + direction;
-        case "duration":
-            return "Duration " + direction;
-        default:
-            return "Sorted " + direction;
-        }
-    }
 }
