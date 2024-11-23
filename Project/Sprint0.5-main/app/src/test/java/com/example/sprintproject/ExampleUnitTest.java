@@ -332,7 +332,7 @@ public class ExampleUnitTest {
         assertEquals(3,stats.getAllottedDays());
         assertEquals(2, stats.getPlannedDays());
     }
-
+    //TEST
     //tests when planned dats exceeded allotted days
     @Test
     public void testPlannedDaysExceedAllottedDays() {
