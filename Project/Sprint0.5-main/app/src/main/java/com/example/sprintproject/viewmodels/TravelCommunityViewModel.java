@@ -62,7 +62,8 @@ public class TravelCommunityViewModel extends ViewModel {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        errorMessage.setValue("Failed to load community posts: " + error.getMessage());
+                        errorMessage.setValue("Failed to load community posts: "
+                                + error.getMessage());
                         isLoading.setValue(false);
                     }
                 });

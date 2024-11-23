@@ -81,7 +81,8 @@ public class CreateAccountPage extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            String userId = user.getUid(); // Use Firebase UID instead of random UUID
+                            String userId = user.getUid();
+                            // Use Firebase UID instead of random UUID
 
                             userViewModel.setUserEmail(email);
                             userViewModel.setUserUID(userId);
@@ -91,8 +92,10 @@ public class CreateAccountPage extends AppCompatActivity {
 
                             // Create initial trip
                             String tripId = UUID.randomUUID().toString();
-                            DBModel.getUsersReference().child(userId).child("trips").child(tripId).setValue(true);
-                            DBModel.getTripReference().child(tripId).child("userID").setValue(userId);
+                            DBModel.getUsersReference().child(userId).child("trips")
+                                    .child(tripId).setValue(true);
+                            DBModel.getTripReference().child(tripId).child("userID")
+                                    .setValue(userId);
 
                             Toast.makeText(CreateAccountPage.this,
                                     "Account created successfully",

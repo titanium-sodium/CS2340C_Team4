@@ -15,7 +15,7 @@ public class AccommodationsModel {
     private String location;
     private String website;
     private Long duration;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
 
     public AccommodationsModel(String checkInDate, String checkOutDate,
                                int numberOfRooms, String roomType, String location)
@@ -90,8 +90,8 @@ public class AccommodationsModel {
 
     private void calculateDuration() {
         try {
-            Date checkIn = sdf.parse(checkInDate);
-            Date checkOut = sdf.parse(checkOutDate);
+            Date checkIn = SDF.parse(checkInDate);
+            Date checkOut = SDF.parse(checkOutDate);
             if (checkIn != null && checkOut != null) {
                 duration = TimeUnit.MILLISECONDS.toDays(checkOut.getTime() - checkIn.getTime()) + 1;
                 if (duration < 0) {
@@ -106,12 +106,12 @@ public class AccommodationsModel {
     }
 
     public static SimpleDateFormat getDateFormat() {
-        return sdf;
+        return SDF;
     }
 
     public boolean isReservationPassed() {
         try {
-            Date checkOut = sdf.parse(checkOutDate);
+            Date checkOut = SDF.parse(checkOutDate);
             Date currentDate = new Date();
             return checkOut != null && checkOut.before(currentDate);
         } catch (ParseException e) {
@@ -122,11 +122,11 @@ public class AccommodationsModel {
 
     public boolean isCurrentReservation() {
         try {
-            Date checkIn = sdf.parse(checkInDate);
-            Date checkOut = sdf.parse(checkOutDate);
+            Date checkIn = SDF.parse(checkInDate);
+            Date checkOut = SDF.parse(checkOutDate);
             Date currentDate = new Date();
-            return checkIn != null && checkOut != null &&
-                    !checkIn.after(currentDate) && !checkOut.before(currentDate);
+            return checkIn != null && checkOut != null
+                    && !checkIn.after(currentDate) && !checkOut.before(currentDate);
         } catch (ParseException e) {
             e.printStackTrace();
             return false;

@@ -240,8 +240,10 @@ public class DBViewModel extends ViewModel {
                                 DBModel.getUsersReference().child(contributorId)
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
-                                            public void onDataChange(@NonNull DataSnapshot userDetails) {
-                                                UserModel contributor = userDetails.getValue(UserModel.class);
+                                            public void onDataChange(
+                                                    @NonNull DataSnapshot userDetails) {
+                                                UserModel contributor = userDetails
+                                                        .getValue(UserModel.class);
                                                 if (contributor != null) {
                                                     contributors.add(contributor);
                                                     contributorsLiveData.setValue(contributors);
@@ -250,7 +252,8 @@ public class DBViewModel extends ViewModel {
 
                                             @Override
                                             public void onCancelled(@NonNull DatabaseError error) {
-                                                Log.e(TAG, "Error loading contributor details", error.toException());
+                                                Log.e(TAG, "Error loading contributor details",
+                                                        error.toException());
                                             }
                                         });
                             }
@@ -295,7 +298,8 @@ public class DBViewModel extends ViewModel {
      * @param note The note text to add
      */
     public void addNote(String note) {
-        if (currentUserId == null || currentTripId == null || note == null || note.trim().isEmpty()) {
+        if (currentUserId == null || currentTripId == null || note == null
+                || note.trim().isEmpty()) {
             Log.e(TAG, "Cannot add note: missing requirements");
             return;
         }

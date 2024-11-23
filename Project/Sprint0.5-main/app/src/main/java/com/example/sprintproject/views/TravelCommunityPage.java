@@ -17,7 +17,7 @@ import android.widget.ProgressBar;
 import com.example.sprintproject.R;
 import com.example.sprintproject.model.CommunityPost;
 import com.example.sprintproject.viewmodels.TravelCommunityViewModel;
-import com.google.firebase.auth.FirebaseAuth;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;

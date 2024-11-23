@@ -1,7 +1,6 @@
 package com.example.sprintproject.views;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -20,13 +19,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Objects;
+
 import java.util.UUID;
 
 public class LoginPage extends AppCompatActivity {
@@ -69,27 +67,42 @@ public class LoginPage extends AppCompatActivity {
                                                         Toast.LENGTH_SHORT).show();
 
                                                 // Get user reference directly from email
-                                                DatabaseReference usersRef = DBModel.getUsersReference();
+                                                DatabaseReference usersRef =
+                                                        DBModel.getUsersReference();
                                                 usersRef.orderByChild("email").equalTo(email)
-                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                if (snapshot.exists()) {
-                                                                    // Get the first (and should be only) user with this email
-                                                                    DataSnapshot userSnapshot = snapshot.getChildren().iterator().next();
-                                                                    String userId = userSnapshot.getKey();
-                                                                    checkUserTrips(userId);
+                                                        .addListenerForSingleValueEvent(
+                                                                new ValueEventListener() {
+                                                                    @Override
+                                                            public void onDataChange(
+                                                                        @NonNull
+                                                                        DataSnapshot snapshot) {
+                                                                    if (snapshot.exists()) {
+                                                                        // Get the first
+                                                                        // (and should be only)
+                                                                        // user with this email
+                                                                        DataSnapshot userSnapshot =
+                                                                            snapshot.getChildren()
+                                                                                    .iterator()
+                                                                                    .next();
+                                                                        String userId =
+                                                                            userSnapshot.getKey();
+                                                                        checkUserTrips(userId);
+                                                                    }
                                                                 }
-                                                            }
 
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
-                                                                Log.e("Firebase", "Error finding user", error.toException());
-                                                                Toast.makeText(LoginPage.this,
-                                                                        "Error retrieving user data",
+                                                                @Override
+                                                            public void onCancelled(
+                                                                    @NonNull DatabaseError error) {
+                                                                    Log.e("Firebase",
+                                                                        "Error finding user",
+                                                                        error.toException());
+                                                                    Toast.makeText(
+                                                                        LoginPage.this,
+                                                                        "Error retrieving "
+                                                                                + "user data",
                                                                         Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        });
+                                                                }
+                                                            });
                                             } else {
                                                 Toast.makeText(LoginPage.this,
                                                         "Authentication failed.",

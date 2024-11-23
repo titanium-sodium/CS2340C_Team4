@@ -1,5 +1,7 @@
 package com.example.sprintproject;
 
+import static junit.framework.TestCase.assertEquals;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -294,4 +296,50 @@ public class ExampleUnitTest {
         assertEquals("Single", accommodationsModel.getRoomType());
         assertEquals("Somewhere", accommodationsModel.getLocation());
     }
+
+
+
+
+
+
+
+    //---------------------------- TravelStats-------------------------------------------------//
+    @Test
+    public void testSetAndGetAllottedDays() {//DONE
+        TravelStats stats = new TravelStats();
+        stats.setAllottedDays(10);
+        assertEquals(10, stats.getAllottedDays());
+    }
+
+    @Test
+    public void testSetAndGetPlannedDays() {//DONE
+        TravelStats stats = new TravelStats();
+        stats.setPlannedDays(5);
+        assertEquals(5, stats.getPlannedDays());
+    }
+
+    @Test
+    public void testSetAndGetRemainingDays() {//DONE
+        TravelStats stats = new TravelStats();
+        stats.setRemainingDays(2);
+        assertEquals(2, stats.getRemainingDays());
+    }
+
+    @Test
+    public void testTravelStats() { //DONE
+        TravelStats stats = new TravelStats(3, 2);
+        assertEquals(3, stats.getAllottedDays());
+        assertEquals(2, stats.getPlannedDays());
+    }
+
+
+    @Test
+    public void testPlannedDaysExceedAllottedDays() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new TravelStats(3, 5); // plannedDays > allottedDays
+        });
+        assertEquals("Cannot have more planned days than total trip days", exception.getMessage());
+    }
+
+
 }

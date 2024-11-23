@@ -84,10 +84,12 @@ public class DiningViewModel extends ViewModel {
         if (currentList != null) {
             if (ascending) {
                 Collections.sort(currentList,
-                        (a, b) -> Long.compare(a.getReservationTimestamp(), b.getReservationTimestamp()));
+                        (a, b) -> Long.compare(a.getReservationTimestamp(),
+                                b.getReservationTimestamp()));
             } else {
                 Collections.sort(currentList,
-                        (a, b) -> Long.compare(b.getReservationTimestamp(), a.getReservationTimestamp()));
+                        (a, b) -> Long.compare(b.getReservationTimestamp(),
+                                a.getReservationTimestamp()));
             }
             reservations.setValue(currentList);
         }
@@ -100,7 +102,8 @@ public class DiningViewModel extends ViewModel {
                 List<DiningReservation> reservationList = new ArrayList<>();
                 for (DataSnapshot reservationSnapshot : snapshot.getChildren()) {
                     try {
-                        DiningReservation reservation = reservationSnapshot.getValue(DiningReservation.class);
+                        DiningReservation reservation = reservationSnapshot
+                                .getValue(DiningReservation.class);
                         if (reservation != null && reservation.isValid()) {
                             reservation.setId(reservationSnapshot.getKey());
                             reservationList.add(reservation);
@@ -110,7 +113,8 @@ public class DiningViewModel extends ViewModel {
                     }
                 }
                 Collections.sort(reservationList,
-                        (a, b) -> Long.compare(a.getReservationTimestamp(), b.getReservationTimestamp()));
+                        (a, b) -> Long.compare(a.getReservationTimestamp(),
+                                b.getReservationTimestamp()));
                 reservations.setValue(reservationList);
             }
 

@@ -50,23 +50,23 @@ public class AccommodationsViewModel {
     private Comparator<AccommodationsModel> getComparator(boolean ascending) {
         Comparator<AccommodationsModel> comparator = (a1, a2) -> {
             switch (currentSortField) {
-                case "checkInDate":
-                    return AccommodationsFilterModel.compareAccommodationDates(
-                            a1.getCheckInDate(),
-                            a2.getCheckInDate()
-                    );
-                case "checkOutDate":
-                    return AccommodationsFilterModel.compareAccommodationDates(
-                            a1.getCheckOutDate(),
-                            a2.getCheckOutDate()
-                    );
-                case "duration":
-                    return Long.compare(a1.getDuration(), a2.getDuration());
-                default:
-                    return AccommodationsFilterModel.compareAccommodationDates(
-                            a1.getCheckInDate(),
-                            a2.getCheckInDate()
-                    );
+            case "checkInDate":
+                return AccommodationsFilterModel.compareAccommodationDates(
+                        a1.getCheckInDate(),
+                        a2.getCheckInDate()
+                );
+            case "checkOutDate":
+                return AccommodationsFilterModel.compareAccommodationDates(
+                        a1.getCheckOutDate(),
+                        a2.getCheckOutDate()
+                );
+            case "duration":
+                return Long.compare(a1.getDuration(), a2.getDuration());
+            default:
+                return AccommodationsFilterModel.compareAccommodationDates(
+                        a1.getCheckInDate(),
+                        a2.getCheckInDate()
+                );
             }
         };
 
@@ -92,15 +92,18 @@ public class AccommodationsViewModel {
                 // If descending order, we need to add items at the beginning of the list
                 if (!isAscending) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
+                        AccommodationsModel accommodation =
+                                snapshot.getValue(AccommodationsModel.class);
                         if (accommodation != null) {
                             accommodation.setId(snapshot.getKey()); // Save the Firebase key as ID
-                            accommodations.add(0, accommodation); // Add at beginning for descending
+                            accommodations.add(0, accommodation);
+                            // Add at beginning for descending
                         }
                     }
                 } else {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        AccommodationsModel accommodation = snapshot.getValue(AccommodationsModel.class);
+                        AccommodationsModel accommodation =
+                                snapshot.getValue(AccommodationsModel.class);
                         if (accommodation != null) {
                             accommodation.setId(snapshot.getKey());
                             accommodations.add(accommodation);
@@ -119,15 +122,16 @@ public class AccommodationsViewModel {
 
     public void addAccommodations(AccommodationsModel accommodationsModel) {
         String accommodationId = UUID.randomUUID().toString();
-        Log.d("AccommodationsViewModel", "Adding accommodation with rooms: " +
-                accommodationsModel.getNumberOfRooms());
+        Log.d("AccommodationsViewModel", "Adding accommodation with rooms: "
+                + accommodationsModel.getNumberOfRooms());
 
         accommodationsDB.child(accommodationId).setValue(accommodationsModel)
                 .addOnSuccessListener(aVoid -> {
                     Log.d("AccommodationsViewModel", "Accommodation added successfully");
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("AccommodationsViewModel", "Error adding accommodation: " + e.getMessage());
+                    Log.e("AccommodationsViewModel", "Error adding accommodation: "
+                            + e.getMessage());
                 });
     }
 

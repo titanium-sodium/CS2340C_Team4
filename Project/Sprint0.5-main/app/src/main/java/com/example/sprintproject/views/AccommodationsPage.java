@@ -59,7 +59,8 @@ public class AccommodationsPage extends Fragment {
         FilterViewModel filterButton = new FilterViewModel(true, "Accommodations",
                 accommodationsViewModel);
 
-        view.findViewById(R.id.addReservationButton).setOnClickListener(v -> openAccommodationsForm());
+        view.findViewById(R.id.addReservationButton).setOnClickListener(
+                v -> openAccommodationsForm());
         view.findViewById(R.id.filterButton).setOnClickListener(v ->
                 filterButton.changeFilter(filterButton.getFilter(), filterButton.getType()));
 

@@ -1,6 +1,6 @@
 package com.example.sprintproject.model;
 
-import com.example.sprintproject.model.FiltersModel;
+
 import com.example.sprintproject.viewmodels.AccommodationsViewModel;
 
 import java.text.ParseException;
@@ -11,7 +11,7 @@ import java.util.Locale;
 public class AccommodationsFilterModel implements FiltersModel {
     private boolean filter;
     private Object viewModel;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
     private static final String[] SORT_FIELDS = {"checkInDate", "checkOutDate", "duration"};
     private int currentSortFieldIndex = 0;
 
@@ -61,8 +61,8 @@ public class AccommodationsFilterModel implements FiltersModel {
 
     public static int compareAccommodationDates(String date1, String date2) {
         try {
-            Date d1 = sdf.parse(date1);
-            Date d2 = sdf.parse(date2);
+            Date d1 = SDF.parse(date1);
+            Date d2 = SDF.parse(date2);
             if (d1 != null && d2 != null) {
                 return d1.compareTo(d2);
             }
@@ -91,14 +91,14 @@ public class AccommodationsFilterModel implements FiltersModel {
         String direction = filter ? "Ascending" : "Descending";
         String field = SORT_FIELDS[currentSortFieldIndex];
         switch (field) {
-            case "checkInDate":
-                return "Check-in Date " + direction;
-            case "checkOutDate":
-                return "Check-out Date " + direction;
-            case "duration":
-                return "Duration " + direction;
-            default:
-                return "Sorted " + direction;
+        case "checkInDate":
+            return "Check-in Date " + direction;
+        case "checkOutDate":
+            return "Check-out Date " + direction;
+        case "duration":
+            return "Duration " + direction;
+        default:
+            return "Sorted " + direction;
         }
     }
 }

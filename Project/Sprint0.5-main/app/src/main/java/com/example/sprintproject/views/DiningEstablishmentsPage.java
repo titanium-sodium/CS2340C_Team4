@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sprintproject.R;
-import com.example.sprintproject.model.DiningFilterModel;
 import com.example.sprintproject.model.DiningReservation;
 import com.example.sprintproject.viewmodels.DiningViewModel;
 import com.example.sprintproject.viewmodels.FilterViewModel;
@@ -68,7 +67,8 @@ public class DiningEstablishmentsPage extends Fragment {
 
     //TODO filters
     private void changeFilter() {
-        FilterViewModel diningFilterModel = new FilterViewModel(true, "Dining", new DiningViewModel());
+        FilterViewModel diningFilterModel = new FilterViewModel(
+                true, "Dining", new DiningViewModel());
         diningFilterModel.changeFilter(diningFilterModel.getFilter(), "Dining");
     }
 
@@ -107,7 +107,8 @@ public class DiningEstablishmentsPage extends Fragment {
                                         currentTripId,
                                         website,
                                         location,
-                                        DiningReservation.formatDateTime(selectedDateTime.getTime()),
+                                        DiningReservation.formatDateTime(
+                                                selectedDateTime.getTime()),
                                         selectedDateTime.getTimeInMillis()
                                 );
 
@@ -134,7 +135,9 @@ public class DiningEstablishmentsPage extends Fragment {
     }
 
     private void showDateTimePicker(EditText timeInput) {
-        if (getContext() == null) return;
+        if (getContext() == null) {
+            return;
+        }
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 getContext(),

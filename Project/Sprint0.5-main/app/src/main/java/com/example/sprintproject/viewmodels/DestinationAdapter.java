@@ -23,10 +23,10 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView destinationText;
-        public TextView daysText;
-        public TextView startDateText;
-        public TextView endDateText;
+        private TextView destinationText;
+        private TextView daysText;
+        private TextView startDateText;
+        private TextView endDateText;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -35,6 +35,39 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
             startDateText = itemView.findViewById(R.id.startDateText);
             endDateText = itemView.findViewById(R.id.endDateText);
         }
+
+        private void setDestinationText(TextView text) {
+            this.destinationText = text;
+        }
+
+        private TextView getDestinationText() {
+            return this.destinationText;
+        }
+
+        private void setdaysText(TextView text) {
+            this.daysText = text;
+        }
+
+        private TextView getDaysText() {
+            return this.daysText;
+        }
+
+        private void setstartDateText(TextView text) {
+            this.startDateText = text;
+        }
+
+        private TextView getstartDateText() {
+            return this.startDateText;
+        }
+
+        private void setendDateText(TextView text) {
+            this.endDateText = text;
+        }
+
+        private TextView getendDateText() {
+            return this.endDateText;
+        }
+
     }
 
     @NonNull
@@ -64,4 +97,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     public int getItemCount() {
         return destinations.size();
     }
+
+
+
 }

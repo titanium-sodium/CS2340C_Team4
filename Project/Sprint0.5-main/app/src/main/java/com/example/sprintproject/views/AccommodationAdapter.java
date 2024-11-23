@@ -26,7 +26,8 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
 
     @NonNull
     @Override
-    public AccommodationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AccommodationAdapter.ViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.item_accommodation_res, parent, false);
@@ -61,21 +62,24 @@ public class AccommodationAdapter extends RecyclerView.Adapter<AccommodationAdap
                     holder.statusText.setTextColor(Color.parseColor("#737373")); // Muted gray
                     holder.statusText.setBackgroundResource(R.drawable.status_background);
                     if (cardView != null) {
-                        cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.past_reservation));
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(
+                                context, R.color.past_reservation));
                     }
                 } else if (accommodation.isCurrentReservation()) {
                     holder.statusText.setText("CURRENT");
                     holder.statusText.setTextColor(Color.parseColor("#539355")); // Muted green
                     holder.statusText.setBackgroundResource(R.drawable.status_background);
                     if (cardView != null) {
-                        cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.current_reservation));
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(
+                                context, R.color.current_reservation));
                     }
                 } else {
                     holder.statusText.setText("UPCOMING");
                     holder.statusText.setTextColor(Color.parseColor("#5771a8")); // Muted blue
                     holder.statusText.setBackgroundResource(R.drawable.status_background);
                     if (cardView != null) {
-                        cardView.setCardBackgroundColor(ContextCompat.getColor(context, R.color.upcoming_reservation));
+                        cardView.setCardBackgroundColor(ContextCompat.getColor(
+                                context, R.color.upcoming_reservation));
                     }
                 }
             }
