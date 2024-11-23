@@ -1,8 +1,8 @@
 package com.example.sprintproject.viewmodels;
 
-import com.example.sprintproject.model.FiltersModel;
-import com.example.sprintproject.model.DiningFilterModel;
 import com.example.sprintproject.model.AccommodationsFilterModel;
+import com.example.sprintproject.model.DiningFilterModel;
+import com.example.sprintproject.model.FiltersModel;
 
 public class FilterViewModel {
     private boolean filter;
@@ -15,40 +15,27 @@ public class FilterViewModel {
         this.filter = filter;
         this.type = type;
 
-        // Initialize the appropriate filter model and viewModel based on type
         if (type.equals("Dining")) {
             this.diningViewModel = (DiningViewModel) viewModel;
             this.filterModel = new DiningFilterModel();
+            this.filterModel.setViewModel(this.diningViewModel);
         } else if (type.equals("Accommodations")) {
             this.accommodationsViewModel = (AccommodationsViewModel) viewModel;
             this.filterModel = new AccommodationsFilterModel();
+            this.filterModel.setViewModel(this.accommodationsViewModel);
         }
     }
 
     public void changeFilter(boolean currentFilter, String filterType) {
         if (filterType.equals(this.type)) {
-            // Get the new filter state from the model
-            this.filter = filterModel.changeFilter(filterType);
-
-            // Apply sorting based on the type
-            if (type.equals("Dining") && diningViewModel != null) {
-                applySort(diningViewModel);
-            } else if (type.equals("Accommodations") && accommodationsViewModel != null) {
-                applySort(accommodationsViewModel);
-            }
+            this.filter = !currentFilter;
+            this.filterModel.applyFilter(this.filter, filterType);
         }
     }
 
-    private void applySort(DiningViewModel viewModel) {
-        viewModel.sortReservations(this.filter);
-    }
-
-    private void applySort(AccommodationsViewModel viewModel) {
-        viewModel.sortAccommodations(this.filter);
-    }
-
+    // Add getter method for filter state
     public boolean getFilter() {
-        return filter;
+        return this.filter;
     }
 
     public String getType() {

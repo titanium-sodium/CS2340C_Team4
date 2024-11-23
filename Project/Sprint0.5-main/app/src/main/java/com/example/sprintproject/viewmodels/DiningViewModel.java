@@ -21,10 +21,8 @@ public class DiningViewModel extends ViewModel {
     private String currentUserId;
     private String currentTripId;
     private DatabaseReference diningRef;
-
-    public DiningViewModel() {
-        reservations = new MutableLiveData<>(new ArrayList<>());
-    }
+    private boolean ascendingSort = true;
+    private List<DiningReservation> currentReservations = new ArrayList<>();
 
     public void setCurrentIds(String userId, String tripId) {
         this.currentUserId = userId;
@@ -79,9 +77,15 @@ public class DiningViewModel extends ViewModel {
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to save reservation", e));
     }
 
+    public DiningViewModel() {
+        reservations = new MutableLiveData<>(new ArrayList<>());
+    }
+
     public void sortReservations(boolean ascending) {
-        List<DiningReservation> currentList = reservations.getValue();
-        if (currentList != null) {
+        this.ascendingSort = ascending;
+        List<DiningReservation> currentList = new ArrayList<>(currentReservations);
+
+        if (currentList != null && !currentList.isEmpty()) {
             if (ascending) {
                 Collections.sort(currentList,
                         (a, b) -> Long.compare(a.getReservationTimestamp(), b.getReservationTimestamp()));
@@ -91,6 +95,11 @@ public class DiningViewModel extends ViewModel {
             }
             reservations.setValue(currentList);
         }
+    }
+
+    public void refreshReservations() {
+        // Re-apply current sort to force update
+        sortReservations(ascendingSort);
     }
 
     private void loadReservations() {
@@ -109,9 +118,8 @@ public class DiningViewModel extends ViewModel {
                         Log.e(TAG, "Error parsing reservation data: " + e.getMessage());
                     }
                 }
-                Collections.sort(reservationList,
-                        (a, b) -> Long.compare(a.getReservationTimestamp(), b.getReservationTimestamp()));
-                reservations.setValue(reservationList);
+                currentReservations = reservationList; // Store the current list
+                sortReservations(ascendingSort); // Apply current sort
             }
 
             @Override
