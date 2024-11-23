@@ -4,11 +4,28 @@ import com.example.sprintproject.viewmodels.DiningViewModel;
 
 public class DiningFilterModel implements FiltersModel {
     private boolean filter;
-    private Object viewModel;
-    private static final String SORT_FIELD = "reservationTimestamp";  // Updated to match new field name
+    private DiningViewModel viewModel;
+    private static final String SORT_FIELD = "reservationTimestamp";
 
     public DiningFilterModel() {
-        this.filter = true;  // true means ascending (oldest first), false means descending (newest first)
+        this.filter = true;
+    }
+
+    @Override
+    public void applyFilter(boolean currentFilter, String filterType) {
+        if (viewModel != null && filterType.equals(getType())) {
+            // Apply the sort directly to the ViewModel
+            viewModel.sortReservations(currentFilter);
+        }
+    }
+
+    @Override
+    public void setViewModel(Object viewModel) {
+        if (viewModel instanceof DiningViewModel) {
+            this.viewModel = (DiningViewModel) viewModel;
+        } else {
+            throw new IllegalArgumentException("ViewModel must be of type DiningViewModel");
+        }
     }
 
     @Override
@@ -38,24 +55,5 @@ public class DiningFilterModel implements FiltersModel {
     @Override
     public Object getViewModel() {
         return viewModel;
-    }
-
-    @Override
-    public void setViewModel(Object viewModel) {
-        if (viewModel instanceof DiningViewModel) {
-            this.viewModel = viewModel;
-        } else {
-            throw new IllegalArgumentException("ViewModel must be of type DiningViewModel");
-        }
-    }
-
-    @Override
-    public void applyFilter(boolean currentFilter, String filterType) {
-        if (viewModel instanceof DiningViewModel && filterType.equals(getType())) {
-            DiningViewModel diningViewModel = (DiningViewModel) viewModel;
-            // When filter is false, sort descending (newest first)
-            // When filter is true, sort ascending (oldest first)
-            diningViewModel.sortReservations(currentFilter);
-        }
     }
 }
