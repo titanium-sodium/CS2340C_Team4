@@ -1,6 +1,7 @@
 package com.example.sprintproject;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNull;
 
 import org.junit.Test;
 
@@ -8,6 +9,7 @@ import static org.junit.Assert.*;
 
 import com.example.sprintproject.model.AccommodationsFilterModel;
 import com.example.sprintproject.model.AccommodationsModel;
+import com.example.sprintproject.model.CommunityPost;
 import com.example.sprintproject.model.DestinationModel;
 import com.example.sprintproject.model.DiningFilterModel;
 import com.example.sprintproject.model.DiningReservation;
@@ -16,10 +18,8 @@ import com.example.sprintproject.model.TravelStats;
 import com.example.sprintproject.model.UserModel;
 import com.example.sprintproject.viewmodels.UserViewModel;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
+import java.util.HashMap;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -342,5 +342,87 @@ public class ExampleUnitTest {
         assertEquals("Cannot have more planned days than total trip days", exception.getMessage());
     }
 
+    //---------------------------------CommunityPost---------------------------------------//
+    @Test
+    public void testEmptyPost() {
+
+        CommunityPost emptyPost = new CommunityPost();
+
+        assertNull(emptyPost.getPostId());
+        assertNull(emptyPost.getAccommodations());
+        assertNull(emptyPost.getDestinations());
+        assertNull(emptyPost.getDuration());
+        assertNull(emptyPost.getDiningReservations());
+        assertNull(emptyPost.getNotes());
+        assertNull(emptyPost.getTripId());
+        assertNull(emptyPost.getUserId());
+
+    }
+
+    @Test
+    public void testSingleFieldPost(){
+
+        CommunityPost singleFieldPost = new CommunityPost();
+
+        singleFieldPost.setPostId("SwawS");
+
+        assertEquals("SwawS",singleFieldPost.getPostId());
+        assertNull(singleFieldPost.getAccommodations());
+        assertNull(singleFieldPost.getDestinations());
+        assertNull(singleFieldPost.getDuration());
+        assertNull(singleFieldPost.getDiningReservations());
+        assertNull(singleFieldPost.getNotes());
+        assertNull(singleFieldPost.getTripId());
+        assertNull(singleFieldPost.getUserId());
+
+    }
+
+    @Test
+    public void setGetAccommodations() {
+
+        CommunityPost accommodationsPost = new CommunityPost();
+
+        HashMap<String, String> accommodations = new HashMap<>();
+        accommodations.put("MeeM", "SooS");
+        accommodationsPost.setAccommodations(accommodations);
+
+        assertTrue(accommodationsPost.getAccommodations().containsKey("MeeM")
+                && accommodationsPost.getAccommodations().containsValue("SooS"));
+
+    }
+
+    @Test
+    public void testFullPost() {
+
+        CommunityPost fullPost = new CommunityPost();
+
+        fullPost.setPostId("SwawS");
+        fullPost.setDuration("SuS");
+        fullPost.setUserId("SeeS");
+        fullPost.setTripId("SaaS");
+
+        HashMap<String, String> accommodations = new HashMap<>();
+        accommodations.put("MeeM", "SooS");
+        fullPost.setAccommodations(accommodations);
+
+        ArrayList<String> destinations = new ArrayList<String>();
+        destinations.add("SiiS");
+        fullPost.setDestinations(destinations);
+
+        HashMap<String,String> diningReservations = new HashMap<>();
+        diningReservations.put("KeK", "Swooce");
+        fullPost.setDiningReservations(diningReservations);
+
+        assertEquals("SwawS", fullPost.getPostId());
+        assertEquals("SuS", fullPost.getDuration());
+        assertEquals("SeeS", fullPost.getUserId());
+        assertEquals("SaaS", fullPost.getTripId());
+        assertTrue(fullPost.getAccommodations().containsKey("MeeM")
+                && fullPost.getAccommodations().containsValue("SooS"));
+        assertTrue(fullPost.getDestinations().contains("SiiS"));
+        assertTrue(fullPost.getDiningReservations().containsKey("KeK")
+                && fullPost.getDiningReservations().containsValue("Swooce"));
+        
+    }
 
 }
