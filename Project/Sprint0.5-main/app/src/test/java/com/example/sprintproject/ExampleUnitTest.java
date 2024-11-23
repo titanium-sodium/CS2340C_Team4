@@ -304,48 +304,44 @@ public class ExampleUnitTest {
 
     //test alloted days
     @Test
-    public void testSetAndGetAllottedDays() {
-        TravelStats stats = new TravelStats();
-        stats.setAllottedDays(10);
-        assertEquals(10, stats.getAllottedDays());
+
+    public void testGetAllottedDats() {
+        TravelStats stat = new TravelStats();
+        stat.setAllottedDays(9);
+        assertEquals(9, stat.getAllottedDays());
+
     }
-    //test set and get planned days
+
     @Test
-    public void testSetAndGetPlannedDays() {
-        TravelStats stats = new TravelStats();
-        stats.setPlannedDays(5);
-        assertEquals(5, stats.getPlannedDays());
+    public void testTravel() {
+        TravelStats stat = new TravelStats(4,2);
+        assertEquals(4, stat.getAllottedDays());
+        assertEquals(2, stat.getPlannedDays());
     }
 
-
-    //test set and get destination
-    @Test
-    public void testSetAndGetDestination() {
-        TravelStats stats = new TravelStats();
-        stats.setDestination("Tokyo");
-        assertEquals("Tokyo", stats.getDestination());
-    }
-
-
-    //test travel stats
 
 
     @Test
-    public void testTravelStats() {
-        TravelStats stats = new TravelStats(3, 2);
-        assertEquals(3,stats.getAllottedDays());
-        assertEquals(2, stats.getPlannedDays());
+    public void testGetPlannedDays() {
+        TravelStats stat = new TravelStats();
+        stat.setPlannedDays(6);
+        assertEquals(6, stat.getPlannedDays());
     }
-    //TESTING
-    //tests when planned dats exceeded allotted days
+
+    @Test
+    public void testGetDestination() {
+        TravelStats stats = new TravelStats();
+        stats.setDestination("Paris");
+        TestCase.assertEquals("Paris", stats.getDestination());
+    }
+
     @Test
     public void testPlannedDaysExceedAllottedDays() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            new TravelStats(3, 5);
+            new TravelStats(3, 5); // plannedDays > allottedDays
         });
         TestCase.assertEquals("Cannot have more planned days than total trip days",
                 exception.getMessage());
     }
-
 
 }
