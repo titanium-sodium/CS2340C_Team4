@@ -158,6 +158,7 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
+
     //------------------------------------SPRINT 3-------------------------------------//
 
     //------------------------------------AddDiningReservation-------------------------------------//
@@ -289,7 +290,25 @@ public class ExampleUnitTest {
     }
 
     @Test
+    public void testNoInOrOut() {
+        try {
+            AccommodationsModel accommodationsModel = new AccommodationsModel("", "", 2, "Double", "Somewhere");
+            fail("Accommodation must include a check-in and check-out date.");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Dates cannot be null or empty", e.getMessage());
+        }
+    }
+
+    @Test
     public void testValidAccommodation() {
+        AccommodationsModel accommodationsModel = new AccommodationsModel("111224", "111324", 0, "", "Cancun");
+        assertEquals("111224", accommodationsModel.getCheckInDate());
+        assertEquals("111324", accommodationsModel.getCheckOutDate());
+        assertEquals("Cancun", accommodationsModel.getLocation());
+    }
+
+    @Test
+    public void testValidFullAccommodation() {
         AccommodationsModel accommodationsModel = new AccommodationsModel("123", "456", 1, "Single", "Somewhere");
         assertEquals("123", accommodationsModel.getCheckInDate());
         assertEquals("456", accommodationsModel.getCheckOutDate());
@@ -331,6 +350,13 @@ public class ExampleUnitTest {
         TravelStats stats = new TravelStats(3, 2);
         assertEquals(3, stats.getAllottedDays());
         assertEquals(2, stats.getPlannedDays());
+    }
+
+    @Test
+    public void testEmptyTravelStats() { //DONE
+        TravelStats stats = new TravelStats(0, 0);
+        assertEquals(0, stats.getAllottedDays());
+        assertEquals(0, stats.getPlannedDays());
     }
 
 
