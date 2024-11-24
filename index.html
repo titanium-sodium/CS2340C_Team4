@@ -16,20 +16,59 @@
             Our software is user-friendly and promotes real-time collaboration to keep everyone in sync. </p>
     </section>
 
+    <section class="introduction2">
+        <br><p> This project is our Fall 2024 CS 2340 group project at Georgia Tech. WanderSync is a fully functional android app,
+            developed using Android Studio, programmed in Java, and hosted on Github. We used Google Firebase to implement real-time collaboration.
+            We learned about the software development process, specifically Agile development. We created UML diagrams, practiced iterating our project in sprints,
+            wrote test cases for our program, and presented our work in both writing and in live in-person demos. </p></br>
+    </section>
+
     <section class="design-architecture">
         <h1>Design & Architecture</h1>
         <p> Aiding WanderSyncs development was our commitment to prioritizing project definition and design to establish an effective workflow.
             Keeping track of our app’s objectives and progress through a collaborative environment such as Notion, then representing functionality,
             user interaction and use cases through UML diagrams before implementation lead to a smooth development process. </p>
-        <p> To give more insight in our pre-implementation design and more of WanderSyncs functionality, we showcase two diagrams. </p>
+        <br><p> To give more insight in our pre-implementation design and more of WanderSyncs functionality, we showcase two diagrams. </p></br>
+            <h3>Design Class Diagram</h3>
+            <p> A design class diagram represents the relationships between classes, their methods and attributes to the project as a whole. 
+                Our DCD (used in our third sprint) shows that a User includes travel statistics. They can create destinations, dining reservations
+                and room accommodations and add notes for each of these. </p>
+            <br><p> Let’s highlight some of the methods and attributes of the class DiningReservation. 
+                A dining reservation has a website, location, date and time. A user is able to create a dining reservation,
+                input and view information about the reservation, and add notes and other participants. </p></br>     
+            <div id="dcd">
+                <img src="https://cdn.discordapp.com/attachments/1284360439366422588/1304569985439498280/DCD.drawio.png?ex=6743a57a&is=674253fa&hm=397e8b730664aa56a75e4d1bb32893153de521318adaa010862bba60b0a2761d&" alt="dcd-image">
+            </div>
+
+            <h3>Sequence Diagram</h3>
+            <p> A sequence diagram is a way to represent a use case broken down into methods and a clear flow. 
+                This SD shows the fundamental use case of WanderSync – a user creating and modifying a destination. </p>
+            <br><p> It starts by the user adding a new travel destination. This triggers a new form to input the destination information.
+                Once created, our app takes the data in the form and displays the information, including calculated data, such as the 
+                total vacation duration on the Travel Logs page. We also store this data and create visualizations in our travel statistics section. 
+                Finally, our SD shows a user inviting collaborators via email. Optionally, a user can add and edit notes for the destination. </p></br>
+            <div id="sd">
+                <img src="https://cdn.discordapp.com/attachments/1284360439366422588/1304620007698858004/Screenshot_2024-11-08_at_8.33.43_PM.png?ex=67432b50&is=6741d9d0&hm=2d751f499ee195ebd5c4ef224a77cd0035f23cf40bdcfec4ae62e716e7b6066d&" alt="sd-image">
+            </div>
     </section>
 
     <section class="ui">
         <h1>User Interface (UI)</h1>
+        <div id="ui-images">
+            <img src="https://cdn.discordapp.com/attachments/1148720550764613784/1310078525667151982/Screenshot_2024-11-23_at_9.48.11_PM.png?ex=6743e934&is=674297b4&hm=9e3ad0d8a60ae4f1d31f61473c145a1468958343f2a3428da6207dc810388386&" alt="img1">
+            <img src="https://cdn.discordapp.com/attachments/1148720550764613784/1310078525944107081/Screenshot_2024-11-23_at_9.48.24_PM.png?ex=6743e934&is=674297b4&hm=b18fd99fedc13385e2e445738d674458223a3d1d9f10992d3d481ac367bce909&" alt="img2">
+            <img src="https://cdn.discordapp.com/attachments/1148720550764613784/1310078526409412680/Screenshot_2024-11-23_at_9.48.42_PM.png?ex=6743e934&is=674297b4&hm=eaf1290835c91ff104c7c6c61f9c3b7c25ad294b9f77d33540500aeb8dd25843&" alt="img3">
+            <img src="https://cdn.discordapp.com/attachments/1148720550764613784/1310078526669721621/Screenshot_2024-11-23_at_9.48.54_PM.png?ex=6743e934&is=674297b4&hm=e241c9dac7482120074b9f6d8383233feada9e0a96f28009439672407435acb5&" alt="img4">
+            <img src="https://cdn.discordapp.com/attachments/1148720550764613784/1310078526925439006/Screenshot_2024-11-23_at_9.49.03_PM.png?ex=6743e934&is=674297b4&hm=cf99f4c480ce51694eb6936c4ef50615fd25e0135f80a254c8f5ec8507cfb3d4&" alt="img5">
+            <img src="https://cdn.discordapp.com/attachments/1148720550764613784/1310078527198203924/Screenshot_2024-11-23_at_9.49.10_PM.png?ex=6743e934&is=674297b4&hm=5b930bcc7cc24c99c00f7b55e760d409a5977e8dadbb64fecdb69088744ebe43&" alt="img6">
+        </div>
     </section>
 
     <section class="functionality">
         <h1>Functionality</h1>
+        <div id="func-video">
+            <iframe src="https://drive.google.com/file/d/1KVPoCzVksp48Xce30QcMsmnMAT9Qhizi/preview" width="640" height="480" allow="autoplay"></iframe>
+        </div>
     </section>
 
     <section class="conclusions">
@@ -38,7 +77,7 @@
             Not only did we consistently complete the rubric requirements for each sprint, 
             we went above and beyond to make WanderSync a simple and clean app — a piece of software
             our own team members would be interested in downloading. </p>
-        <p> Our group prioritized collaboration, we found it non-negotiable that each team be involved
+        <br><p> Our group prioritized collaboration, we found it non-negotiable that each team be involved
             in every step of the process, from the requirements engineering to implementation. 
             We utilized our group members strengths and everyone excelled in their own domain. 
             We acknowledge everyone’s contributions in each step, however we also feel it is just as important
@@ -51,23 +90,23 @@
             the code through test cases. Joni and Tina were the cornerstones of the group. They were essential in maintaining
             a smooth development process. They would translate the engineering requirements into UML diagrams and user cases that
             substantially made implementation more effective. They also focused on turning our project from just software into an actual product, 
-            by writing user-friendly explanations of WanderSync’s functionality and compiling and documenting the developer process. </p>
+            by writing user-friendly explanations of WanderSync’s functionality and compiling and documenting the developer process. </p></br>
         <p> Our team was hard-working and goal-oriented from the start to end, however, that doesn’t mean that we didn’t also run into some challenges.
             During one of the sprints, our team collaboration was not as high as it needed to be. This led to unnecessary stress and great pressure for 
             those who had work unfairly hoisted upon them. Though our collaboration fell through, our communication had not. Immediately after we had completed
             our deadlines, we had a group discussion about how we could improve and avoid any more complications in the future. This small hitch in our journey 
             actually led the team to be stronger and more productive than we had any of the previous sprints. </p>
-        <p> This project was a holistic overview of software development, thus, as a team, we learned immeasurably valuable information that will be utilized 
+        <br><p> This project was a holistic overview of software development, thus, as a team, we learned immeasurably valuable information that will be utilized 
             throughout our computer science education and career. We got real world experience through being on a team and creating actual software. We applied
             the industry principles requirements engineering, design, implementation and verification and validation taught in lecture. We used the agile software
             process and iterated our work by using one to two week long sprints. We hosted our project on github, kept a Notion where we kept track of our backlog
             and deadlines. We designed UML diagrams and translated them into code, using Android Studio in the language Java to create our app. We required our code
-            be validated by another team member before pushing it into main. This encouraged constant collaboration and solid teamwork throughout the semester. </p>
+            be validated by another team member before pushing it into main. This encouraged constant collaboration and solid teamwork throughout the semester. </p></br>
     </section>
 
     <section class="contributors">
         <h1>Contributors</h1>
-        <p> Everyone was instrumental to both developing the final project and contributing to the showcase website’s deployment. </p>
+        <br><p> Everyone was instrumental to both developing the final project and contributing to the showcase website’s deployment. </p></br>
         <p> Thank you, </p>
         <p> Julian McCorkle, Andres Quast, Benjamin Liu, Zachary Doran, Tina Chen, Jacqueline “Joni” Isbell </p>
     </section>
