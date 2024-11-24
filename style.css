@@ -16,6 +16,7 @@ body {
     background-position: center;
     padding: 100px 20px;
     text-align: center;
+    z-index: 1;
 }
 
 .introduction::before {
@@ -29,12 +30,14 @@ body {
 }
 
 .introduction h1 {
+    position: relative;
     margin-bottom: 20px;
     color: black;
 }
 
 .introduction p {
-    color: white;
+    position: relative;
+    color: #e6e6e6;
     max-width: 900px;
     margin: 20px auto;
 }
