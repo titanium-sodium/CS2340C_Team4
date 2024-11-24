@@ -1,0 +1,78 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.introduction {
+    position: relative;
+    background-image: url('https://media.cntraveler.com/photos/59cd14cb9465da68882fb4f4/16:9/w_2560%2Cc_limit/Debate_GettyImages-585587819.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.introduction::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(86, 86, 86, 0.4);
+}
+
+.introduction h1 {
+    margin-bottom: 20px;
+    color: black;
+}
+
+.introduction p {
+    color: white;
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+.introduction2 p {
+    text-align: center;
+}
+
+section {
+    padding: 40px 20px;
+    margin: 20px 0;
+}
+
+section h1 {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.design-architecture, .ui, .functionality, .conclusions, .contributors {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#dcd img, #sd img {
+    display: block;
+    max-width: 65%;
+    margin: 20px auto;
+}
+
+#func-video {
+    display: flex;
+    padding: 20px;
+}
+
+#ui-images img {
+    max-width: 150px;  /* Adjust the size as needed */
+    height: auto;  /* Maintain aspect ratio */
+    border-radius: 8px;  /* Optional: adds rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Optional: adds a shadow effect */
+}
