@@ -71,8 +71,8 @@ section h1 {
 }
 
 #ui-images img {
-    max-width: 150px;  /* Adjust the size as needed */
-    height: auto;  /* Maintain aspect ratio */
-    border-radius: 8px;  /* Optional: adds rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Optional: adds a shadow effect */
+    max-width: 150px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
